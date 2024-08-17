@@ -1,20 +1,20 @@
 ---
+import type { PageHeader } from "../common/types";
+import Head from "../components/Head.astro";
+import type { SupportedLanguage } from "../i18n/types";
+
 interface Props {
-	title: string;
+	lang: SupportedLanguage;
+	header: PageHeader;
 }
 
-const { title } = Astro.props;
+const { lang, header } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
+		<Head lang={lang} {...header} />
 	</head>
 	<body>
 		<slot />

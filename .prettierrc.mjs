@@ -16,7 +16,7 @@ export default {
 	],
 	overrides: [
 		{
-			files: ["*.json", "*.md", "*.toml", "*.yml"],
+			files: ["*.json", "*.md", "*.toml", "*.yml", "*.webmanifest"],
 			options: {
 				useTabs: false,
 			},

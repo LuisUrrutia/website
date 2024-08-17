@@ -3,11 +3,14 @@ import { defineConfig } from "astro/config";
 import browserslist from "browserslist";
 import { browserslistToTargets } from "lightningcss";
 
+const isProd = import.meta.env.PROD;
+
 // https://astro.build/config
 export default defineConfig({
-	compressHTML: true,
+	compressHTML: isProd,
 	prefetch: true,
 	integrations: [tailwind()],
+	site: "https://urrutia.me",
 	vite: {
 		css: {
 			devSourcemap: true,

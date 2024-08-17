@@ -1,0 +1,28 @@
+---
+import { SUPPORTED_LANGUAGES } from "../../i18n/constants";
+import translations from "../../i18n/pages/main";
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+	const paths = [];
+	for (const lang of SUPPORTED_LANGUAGES) {
+		paths.push({
+			params: {
+				lang,
+			},
+			props: {
+				lang: lang,
+				t: translations[lang],
+			},
+		});
+	}
+
+	return paths;
+}
+
+const { lang, t } = Astro.props;
+---
+
+<Layout lang={lang} header={t.header}>
+	<h1>{t.content.hi}</h1>
+</Layout>
