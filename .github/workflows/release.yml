@@ -71,7 +71,7 @@ jobs:
           path: ./
       
       - name: Extract release artifact
-        run: tar -xzvf ./dist/dist.tar.gz -C ./dist
+        run: tar -xzvf ./dist.tar.gz -C ./dist
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
