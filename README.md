@@ -42,6 +42,10 @@ All commands are run from the root of the project, from a terminal:
 | `npm run dev`             | Starts local dev server at `localhost:4321`      |
 | `npm run build`           | Build your production site to `./dist/`          |
 | `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run check`           | Runs astro diagnostics                           |
+| `npm run lint`            | Runs code linting                                |
+| `npm run prettier`        | Runs prettier checking                           |
+| `npm run prettier:fix`    | Runs prettier and fix issues                     |
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
 
