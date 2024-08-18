@@ -1,9 +1,13 @@
-name: Generate a release
+name: Generate a release and deploy
 
 on:
   push:
     branches:
       - main
+
+env:
+  PROJECT_NAME: personal-website
+  BUILD_DIR: dist
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,7 +16,7 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
-    name: Release
+    name: Create Release
     permissions:
       contents: write
       pull-requests: write
@@ -55,6 +59,32 @@ jobs:
           name: last-release-artifact
           path: /tmp/dist.tar.gz
   
+  deploy:
+    needs: release
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Pages
+    steps:
+      - name: Download release artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: last-release-artifact
+          path: ./dist
+
+      - name: Display structure of downloaded files
+        run: ls -R ./dist
+      
+      - name: Extract release artifact
+        run: tar -xzvf ./dist/dist.tar.gz
+
+      - name: Display structure of downloaded files
+        run: ls -R ./dist
+      
+      # - name: Deploy
+      #   uses: cloudflare/wrangler-action@v3
+      #   with:
+      #     apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      #     accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      #     command: pages deploy ${{ env.BUILD_DIR }} --project-name=${{ env.PROJECT_NAME }}
   # deploy:
   #   runs-on: ubuntu-latest
   #   name: Deploy to Cloudflare Pages
