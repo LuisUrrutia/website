@@ -73,10 +73,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: last-release-artifact
-          path: /tmp/artifact
+          path: ./
 
       - name: Extract release artifact
-        run: mkdir ./dist && tar -xzvf /tmp/artifact/dist.tar.gz -C ./dist
+        run: tar -xzvf dist.tar.gz
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
