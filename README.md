@@ -51,7 +51,25 @@ All commands are run from the root of the project, from a terminal:
 
 ## 👀 Want to learn more?
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Check out the documentation on the different tools I'm using in this project:
+
+- [Astro](https://docs.astro.build)
+- [TypeScript](https://www.typescriptlang.org/docs/)
+- [Prettier](https://prettier.io/docs/en/) - Checks the formatting on almost evey file of this project.
+- [Oxlint](https://oxc.rs/docs/guide/usage/linter) - Faster alternative to `eslint`
+- [LintStaged](https://github.com/lint-staged/lint-staged) - Allows to run checks only on modified files.
+- [EditorConfig](https://editorconfig.org/) - Related to `.editorconfig` file.
+- [Tailwind](https://tailwindcss.com/docs/installation) - CSS Framework.
+- [Semantic Release](https://semantic-release.gitbook.io/semantic-release) - Related to Github Actions to automaticaly create new releases in Github.
+- [Github Actions](https://docs.github.com/es/actions)
+- [asdf](https://asdf-vm.com/) / [mise](https://mise.jdx.dev/getting-started.html) - My prefered runtime version manger over `nvm`.
+- [CommitLint](https://commitlint.js.org/) - I like to stick to conventional commits and it's also a way to easily generate a changelog with `semantic-release`.
+- [PNPM](https://pnpm.io/) - Faster Package Manager than `npm`.
+- [Husky](https://typicode.github.io/husky/) - Related to git pre-commit and commit hooks.
+- [Visual Studio Code](https://code.visualstudio.com/) - My prefered code editor.
+- [Cloudflare Pages](https://pages.cloudflare.com/)
+- [Lightning CSS](https://lightningcss.dev/)
+- [PostCSS](https://postcss.org/)
 
 ## License
 
