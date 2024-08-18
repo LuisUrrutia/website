@@ -68,10 +68,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: last-release-artifact
-          path: ./
+          path: /tmp
       
       - name: Extract release artifact
-        run: tar -xzvf ./dist.tar.gz -C ./dist
+        run: tar -xzvf /tmp/dist.tar.gz -C ./dist
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
