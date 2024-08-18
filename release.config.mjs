@@ -9,7 +9,7 @@ export default {
 		[
 			"@semantic-release/github",
 			{
-				assets: ["dist/**"],
+				assets: [{ path: "/tmp/dist.tar.gz", label: "Static Site" }],
 			},
 		],
 		[

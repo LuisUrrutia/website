@@ -44,12 +44,15 @@ jobs:
 
       - name: Build
         run: pnpm run build
+      
+      - name: Compress dist folder
+        run: |
+          tar -czvf /tmp/dist.tar.gz dist/
 
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
-
 
   # deploy:
   #   runs-on: ubuntu-latest
