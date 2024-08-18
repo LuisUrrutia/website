@@ -9,10 +9,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  PROJECT_NAME: personal-website
-  BUILD_DIR: dist
-
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -54,13 +50,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: last-release-artifact
+          path: /tmp/dist.tar.gz
+  
   # deploy:
   #   runs-on: ubuntu-latest
   #   name: Deploy to Cloudflare Pages
   #   steps:
-  #     - name: Deploy
-  #       uses: cloudflare/wrangler-action@v3
-  #       with:
-  #         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-  #         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-  #         command: pages deploy ${{ env.BUILD_DIR }} --project-name=${{ env.PROJECT_NAME }}
+
