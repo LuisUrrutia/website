@@ -7,7 +7,6 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    name: Verify PR
     steps:
       - name: Checkout
         uses: actions/checkout@v4
