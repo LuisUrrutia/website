@@ -22,6 +22,7 @@
     "@commitlint/cli": "^19.4.0",
     "@commitlint/config-conventional": "^19.2.2",
     "browserslist": "^4.23.3",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
     "husky": "^9.1.4",
     "lightningcss": "^1.26.0",
     "lint-staged": "^15.2.9",
