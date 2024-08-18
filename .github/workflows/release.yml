@@ -53,7 +53,7 @@ jobs:
         id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release | tee output.log
+        run: npx semantic-release
 
       - uses: actions/upload-artifact@v4
         if: ${{ steps.create_release.outputs.next_version != '' }}
