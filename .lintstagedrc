@@ -1,3 +1,4 @@
 {
-	"**/*.{js,mjs,cjs,ts,astro}": ["oxlint --import-plugin --deny-warnings", "prettier --check"]
+	"**/*.{js,mjs,cjs,ts,astro}": ["oxlint --import-plugin --deny-warnings", "prettier --check"],
+	"**/*.{md,yml}": ["prettier --check"]
 }
