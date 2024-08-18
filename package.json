@@ -26,7 +26,7 @@
     "browserslist": "^4.23.3",
     "husky": "^9.1.4",
     "lightningcss": "^1.26.0",
-    "lint-staged": "^15.2.8",
+    "lint-staged": "^15.2.9",
     "oxlint": "^0.7.0",
     "postcss-import": "^16.1.0",
     "postcss-nesting": "^13.0.0",
