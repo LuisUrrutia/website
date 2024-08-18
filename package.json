@@ -25,6 +25,7 @@
   "devDependencies": {
     "@commitlint/cli": "^19.4.0",
     "@commitlint/config-conventional": "^19.2.2",
+    "@semantic-release/exec": "^6.0.3",
     "browserslist": "^4.23.3",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "husky": "^9.1.4",
