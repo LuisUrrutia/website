@@ -7,7 +7,7 @@ on:
 
 env:
   PROJECT_NAME: personal-website
-  BUILD_DIR: dist
+  BUILD_DIR: dist/
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
