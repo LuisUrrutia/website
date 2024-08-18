@@ -27,7 +27,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
-  
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -37,14 +37,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: .tool-versions
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
 
       - name: Build
         run: pnpm run build
-      
+
       - name: Compress dist folder
         run: |
           tar -czvf /tmp/dist.tar.gz dist/
@@ -74,7 +74,7 @@ jobs:
         with:
           name: last-release-artifact
           path: /tmp/artifact
-      
+
       - name: Extract release artifact
         run: mkdir ./dist && tar -xzvf /tmp/artifact/dist.tar.gz -C ./dist
 
