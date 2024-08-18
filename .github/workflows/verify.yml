@@ -7,6 +7,7 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    name: Basic Checks
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,3 +37,27 @@ jobs:
 
       - name: Dependency audits
         run: pnpm audit signatures
+
+  build:
+    runs-on: ubuntu-latest
+    name: Check Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm run build
