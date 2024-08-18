@@ -50,16 +50,21 @@ jobs:
           tar -czvf /tmp/dist.tar.gz dist/
 
       - name: Create Release
+        id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: npx semantic-release | tee output.log
 
       - uses: actions/upload-artifact@v4
+        if: ${{ steps.create_release.outputs.next_version != '' }}
         with:
           name: last-release-artifact
           path: /tmp/dist.tar.gz
-  
+    outputs:
+      NEXT_VERSION: ${{ steps.create_release.outputs.next_version }}
+
   deploy:
+    if: ${{ needs.release.outputs.NEXT_VERSION != '' }}
     needs: release
     runs-on: ubuntu-latest
     name: Deploy to Cloudflare Pages
