@@ -69,12 +69,9 @@ jobs:
         with:
           name: last-release-artifact
           path: /tmp/artifact
-
-      - name: Display structure of downloaded files
-        run: ls -R /tmp/artifact
       
       - name: Extract release artifact
-        run: tar -xzvf /tmp/artifact/dist.tar.gz -C ./dist
+        run: mkdir ./dist && tar -xzvf /tmp/artifact/dist.tar.gz -C ./dist
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
