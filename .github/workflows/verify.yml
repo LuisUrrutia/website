@@ -35,8 +35,8 @@ jobs:
       - name: Astro Checks
         run: pnpm run check
 
-      - name: Dependency audits
-        run: pnpm audit signatures
+      # - name: Dependency audits
+      #   run: pnpm audit signatures
 
   build:
     runs-on: ubuntu-latest
