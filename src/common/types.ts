@@ -1,5 +1,7 @@
 import type { SupportedLanguage } from "../i18n/types";
 
+export type SocialNetwork = "facebook" | "twitter" | "linkedin" | "whatsapp" | "mail";
+
 export type Alternate = {
 	lang: SupportedLanguage;
 	href: string;

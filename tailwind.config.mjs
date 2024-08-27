@@ -8,7 +8,11 @@ export default {
 			fontFamily: {
 				sans: ["Inter Variable", ...defaultTheme.fontFamily.sans],
 			},
+			colors: {
+				background: "var(--background)",
+			},
 		},
 	},
 	plugins: [],
+	darkMode: "class",
 };
