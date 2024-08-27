@@ -26,59 +26,62 @@ const canonicalURL = new URL(determineCanonicalURL(), Astro.site);
 const manifest = new URL(`/manifest-${lang}.json`, Astro.url);
 ---
 
-<title>{title}</title>
+<head>
+	<title>{title}</title>
 
-<meta charset="UTF-8" />
-<meta name="description" content={description} />
-<link rel="canonical" href={canonicalURL} />
-<meta name="viewport" content="width=device-width" />
-<meta name="theme-color" content="#d5ff00" />
+	<meta charset="UTF-8" />
+	<meta name="description" content={description} />
+	<link rel="canonical" href={canonicalURL} />
+	<meta name="viewport" content="width=device-width" />
+	<meta name="theme-color" content="#d5ff00" />
 
-<link rel="preload" href={inter} as="font" type="font/woff2" crossorigin />
+	<link rel="preload" href={inter} as="font" type="font/woff2" crossorigin />
 
-{kwords && <meta name="keywords" content={kwords} />}
+	{kwords && <meta name="keywords" content={kwords} />}
 
-<meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
-<meta property="og:url" content={Astro.url} />
-{siteName && <meta property="og:site_name" content={siteName} />}
-<meta property="og:type" content="website" />
-<meta property="og:locale" content={lang} />
+	<meta property="og:title" content={title} />
+	<meta property="og:description" content={description} />
+	<meta property="og:url" content={Astro.url} />
+	{siteName && <meta property="og:site_name" content={siteName} />}
+	<meta property="og:type" content="website" />
+	<meta property="og:locale" content={lang} />
 
-<>
-	{
-		alternates &&
-			alternates.map((alt) => (
+	<>
+		{
+			alternates &&
+				alternates.map((alt) => (
+					<>
+						<meta property="og:locale:alternate" content={alt.lang} />
+
+						<link rel="alternate" href={alt.href} hreflang={alt.lang} />
+					</>
+				))
+		}
+		{
+			image && (
 				<>
-					<meta property="og:locale:alternate" content={alt.lang} />
+					<meta property="og:image" content={new URL(image, Astro.url)} />
 
-					<link rel="alternate" href={alt.href} hreflang={alt.lang} />
+					<meta name="twitter:image" content={new URL(image, Astro.url)} />
 				</>
-			))
-	}
-	{
-		image && (
-			<>
-				<meta property="og:image" content={new URL(image, Astro.url)} />
+			)
+		}
+	</>
 
-				<meta name="twitter:image" content={new URL(image, Astro.url)} />
-			</>
-		)
-	}
-</>
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:creator" content="@luisurrutiaf" />
+	<meta name="twitter:title" content={title} />
+	<meta name="twitter:description" content={description} />
 
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:creator" content="@luisurrutiaf" />
-<meta name="twitter:title" content={title} />
-<meta name="twitter:description" content={description} />
+	<meta name="robots" content="index, follow" />
+	<meta name="googlebot" content="index, follow" />
 
-<meta name="robots" content="index, follow" />
-<meta name="googlebot" content="index, follow" />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	<link rel="apple-touch-icon" href="/img/icons/apple-touch-icon.png" />
 
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="apple-touch-icon" href="/img/icons/apple-touch-icon.png" />
+	<meta name="msapplication-config" content="/browserconfig.xml" />
 
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<meta name="msapplication-config" content="/browserconfig.xml" />
+	<link rel="manifest" href={manifest} />
 
-<link rel="manifest" href={manifest} />
+	<slot />
+</head>

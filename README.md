@@ -49,7 +49,7 @@ All commands are run from the root of the project, from a terminal:
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
 
-## 👀 Want to learn more?
+## 🛠️ Tools
 
 Check out the documentation on the different tools I'm using in this project:
 
@@ -70,6 +70,15 @@ Check out the documentation on the different tools I'm using in this project:
 - [Cloudflare Pages](https://pages.cloudflare.com/)
 - [Lightning CSS](https://lightningcss.dev/)
 - [PostCSS](https://postcss.org/)
+
+## 👀 References
+
+Projects I did take a look to guide me on how to do things better.
+
+- [onwidget/astrowind](https://github.com/onwidget/astrowind)
+- [withastro/docs](https://github.com/withastro/docs)
+- [ccbikai/BroadcastChannel](https://github.com/ccbikai/BroadcastChannel)
+- [midudev/la-velada-web-oficial](https://github.com/midudev/la-velada-web-oficial)
 
 ## License
 
