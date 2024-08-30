@@ -20,7 +20,7 @@
     "@astrojs/check": "^0.9.3",
     "@astrojs/tailwind": "^5.1.0",
     "@fontsource-variable/inter": "^5.0.20",
-    "astro": "^4.14.5",
+    "astro": "^4.15.1",
     "astro-icon": "^1.1.1"
   },
   "devDependencies": {
