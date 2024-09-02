@@ -32,7 +32,7 @@
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "husky": "^9.1.5",
     "lightningcss": "^1.26.0",
-    "lint-staged": "^15.2.9",
+    "lint-staged": "^15.2.10",
     "oxlint": "^0.8.0",
     "postcss-import": "^16.1.0",
     "postcss-nesting": "^13.0.0",
