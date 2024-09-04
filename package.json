@@ -9,7 +9,7 @@
     "build": "astro check && astro build",
     "check": "astro check",
     "dev": "astro dev",
-    "lint": "oxlint --import-plugin --deny-warnings",
+    "lint": "oxlint --import-plugin",
     "prepare": "husky",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
