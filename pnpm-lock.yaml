@@ -15,8 +15,8 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0(astro@4.15.3(@types/node@22.2.0)(lightningcss@1.26.0)(rollup@4.20.0)(typescript@5.5.4))(tailwindcss@3.4.10)
       '@fontsource-variable/inter':
-        specifier: ^5.0.20
-        version: 5.0.20
+        specifier: ^5.0.21
+        version: 5.0.21
       astro:
         specifier: ^4.15.3
         version: 4.15.3(@types/node@22.2.0)(lightningcss@1.26.0)(rollup@4.20.0)(typescript@5.5.4)
@@ -489,8 +489,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@fontsource-variable/inter@5.0.20':
-    resolution: {integrity: sha512-dhzG4Zls/tIrf8h0FhTNi8jT/uFwNhdTY2vKe6DYqoXDYOfEcTVZDyh1hKml1rlLT44Y7OoKoGz8w7czDW7twQ==}
+  '@fontsource-variable/inter@5.0.21':
+    resolution: {integrity: sha512-1spQ5vjooBWzUSdug8njhxi0lDpIDGVV4q9Piv32X5wIati/5OvESsIxOM0kDZVWzl0uSR8kHOmsqoP8A6WqVA==}
 
   '@iconify-json/hugeicons@1.2.0':
     resolution: {integrity: sha512-jlvqjvzAECReUzdJ/m5ziW2fOooK/n0Sy8Fryu56KqeFJMgCDgZKvLHZVpt0D0PkyAkEj+pbqtwG0RFcPX/bnw==}
@@ -4320,7 +4320,7 @@ snapshots:
   '@esbuild/win32-x64@0.21.5':
     optional: true
 
-  '@fontsource-variable/inter@5.0.20': {}
+  '@fontsource-variable/inter@5.0.21': {}
 
   '@iconify-json/hugeicons@1.2.0':
     dependencies:
