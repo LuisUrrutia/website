@@ -33,7 +33,7 @@
     "husky": "^9.1.5",
     "lightningcss": "^1.26.0",
     "lint-staged": "^15.2.10",
-    "oxlint": "^0.9.2",
+    "oxlint": "^0.9.5",
     "postcss-import": "^16.1.0",
     "postcss-nesting": "^13.0.0",
     "prettier": "^3.3.3",
