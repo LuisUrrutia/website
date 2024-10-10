@@ -31,8 +31,8 @@ importers:
         specifier: ^19.5.0
         version: 19.5.0
       '@iconify-json/hugeicons':
-        specifier: ^1.2.0
-        version: 1.2.0
+        specifier: ^1.2.1
+        version: 1.2.1
       '@semantic-release/exec':
         specifier: ^6.0.3
         version: 6.0.3(semantic-release@24.1.0(typescript@5.6.3))
@@ -513,8 +513,8 @@ packages:
   '@fontsource-variable/inter@5.1.0':
     resolution: {integrity: sha512-Wj2dUGP0vUpxRGQTXQTCNJO+aLcFcQm+gUPXfj/aS877bQkEPBPv9JvZJpwdm2vzelt8NTZ+ausKlBCJjh2XIg==}
 
-  '@iconify-json/hugeicons@1.2.0':
-    resolution: {integrity: sha512-jlvqjvzAECReUzdJ/m5ziW2fOooK/n0Sy8Fryu56KqeFJMgCDgZKvLHZVpt0D0PkyAkEj+pbqtwG0RFcPX/bnw==}
+  '@iconify-json/hugeicons@1.2.1':
+    resolution: {integrity: sha512-IedWO3xgMuRdRaolyl8kLOMA01xQ2QhldCKWrqtIxEpalndU7hoh1dUR00ackhWLFDwpKdGQGzuF5/Szaw40CQ==}
 
   '@iconify/tools@4.0.5':
     resolution: {integrity: sha512-l8KoA1lxlN/FFjlMd3vjfD7BtcX/QnFWtlBapILMlJSBgM5zhDYak/ldw/LkKG3258q/0YmXa48sO/QpxX7ptg==}
@@ -4421,7 +4421,7 @@ snapshots:
 
   '@fontsource-variable/inter@5.1.0': {}
 
-  '@iconify-json/hugeicons@1.2.0':
+  '@iconify-json/hugeicons@1.2.1':
     dependencies:
       '@iconify/types': 2.0.0
 
