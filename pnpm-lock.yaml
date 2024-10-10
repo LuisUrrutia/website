@@ -67,8 +67,8 @@ importers:
         specifier: ^0.14.1
         version: 0.14.1
       prettier-plugin-astro-organize-imports:
-        specifier: ^0.4.9
-        version: 0.4.9(prettier-plugin-astro@0.14.1)(prettier-plugin-tailwindcss@0.6.6(prettier-plugin-astro@0.14.1)(prettier-plugin-organize-imports@4.0.0(prettier@3.3.3)(typescript@5.6.3))(prettier@3.3.3))(prettier@3.3.3)
+        specifier: ^0.4.10
+        version: 0.4.10(prettier-plugin-astro@0.14.1)(prettier-plugin-tailwindcss@0.6.6(prettier-plugin-astro@0.14.1)(prettier-plugin-organize-imports@4.0.0(prettier@3.3.3)(typescript@5.6.3))(prettier@3.3.3))(prettier@3.3.3)
       prettier-plugin-organize-imports:
         specifier: ^4.0.0
         version: 4.0.0(prettier@3.3.3)(typescript@5.6.3)
@@ -2987,8 +2987,8 @@ packages:
     resolution: {integrity: sha512-gYBeFTZLu055D8Vv3cSPox/0iTPtkzxpLroSYYA7WXgRi31WCJ51Uyl8ZiPeUUjyvs2MBzK+S8v9JVUgHU/Sqw==}
     engines: {node: '>=18.12'}
 
-  prettier-plugin-astro-organize-imports@0.4.9:
-    resolution: {integrity: sha512-iMiTSTOs3YDVDojSUZKIZanovqbonGqX2hxp6XM3l2tWXTyQZodpOSLcK3p2PB2rMVu0K5OgUVv3J+ypIO5Evw==}
+  prettier-plugin-astro-organize-imports@0.4.10:
+    resolution: {integrity: sha512-knlsAfs+sMFSQOo+CVGyJxcjf7cebnLfc6OgMIiFBoptXthxqhTXr96UjyR8yQKbFLJdUQdA0rIUWGNzY7LFmw==}
     peerDependencies:
       prettier: ^3.0
       prettier-plugin-astro: '*'
@@ -7107,9 +7107,9 @@ snapshots:
       find-yarn-workspace-root2: 1.2.16
       which-pm: 3.0.0
 
-  prettier-plugin-astro-organize-imports@0.4.9(prettier-plugin-astro@0.14.1)(prettier-plugin-tailwindcss@0.6.6(prettier-plugin-astro@0.14.1)(prettier-plugin-organize-imports@4.0.0(prettier@3.3.3)(typescript@5.6.3))(prettier@3.3.3))(prettier@3.3.3):
+  prettier-plugin-astro-organize-imports@0.4.10(prettier-plugin-astro@0.14.1)(prettier-plugin-tailwindcss@0.6.6(prettier-plugin-astro@0.14.1)(prettier-plugin-organize-imports@4.0.0(prettier@3.3.3)(typescript@5.6.3))(prettier@3.3.3))(prettier@3.3.3):
     dependencies:
-      '@astrojs/compiler': 2.10.2
+      '@astrojs/compiler': 2.10.3
       prettier: 3.3.3
       typescript: 5.6.3
     optionalDependencies:
