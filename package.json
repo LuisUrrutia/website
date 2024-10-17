@@ -30,7 +30,7 @@
     "@semantic-release/exec": "^6.0.3",
     "browserslist": "^4.24.0",
     "conventional-changelog-conventionalcommits": "^8.0.0",
-    "husky": "^9.1.5",
+    "husky": "^9.1.6",
     "lightningcss": "^1.27.0",
     "lint-staged": "^15.2.10",
     "oxlint": "^0.9.10",
