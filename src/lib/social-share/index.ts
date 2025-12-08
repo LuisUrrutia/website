@@ -22,14 +22,14 @@ export type { ShareParams, SocialProviderType } from "./types";
  * ```
  */
 export function createShareUrl(
-	provider: SocialProviderType,
-	params: ShareParams
+  provider: SocialProviderType,
+  params: ShareParams,
 ): string {
-	if (!params.url) {
-		throw new Error("Share URL is required");
-	}
+  if (!params.url) {
+    throw new Error("Share URL is required");
+  }
 
-	return providers[provider].buildShareUrl(params);
+  return providers[provider].buildShareUrl(params);
 }
 
 /**
@@ -47,5 +47,5 @@ export function createShareUrl(
  * ```
  */
 export function getAvailableProviders(): SocialProviderType[] {
-	return Object.keys(providers) as SocialProviderType[];
+  return Object.keys(providers) as SocialProviderType[];
 }

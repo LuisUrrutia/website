@@ -7,20 +7,21 @@
  * 3. Type derivation ensures single source of truth
  */
 export const SocialProvider = {
-	Facebook: "facebook",
-	Twitter: "twitter",
-	LinkedIn: "linkedin",
-	WhatsApp: "whatsapp",
-	Email: "email",
+  Facebook: "facebook",
+  Twitter: "twitter",
+  LinkedIn: "linkedin",
+  WhatsApp: "whatsapp",
+  Email: "email",
 } as const;
 
-export type SocialProviderType = (typeof SocialProvider)[keyof typeof SocialProvider];
+export type SocialProviderType =
+  (typeof SocialProvider)[keyof typeof SocialProvider];
 
 export interface ShareParams {
-	url: string;
-	text?: string;
+  url: string;
+  text?: string;
 }
 
 export interface ProviderConfig {
-	buildShareUrl: (params: ShareParams) => string;
+  buildShareUrl: (params: ShareParams) => string;
 }
