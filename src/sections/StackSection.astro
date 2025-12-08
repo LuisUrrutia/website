@@ -1,13 +1,13 @@
 ---
 import Card from "@/components/Card.astro";
-import IconChevronDown from "@/components/icons/IconChevronDown.astro";
 import IconClose from "@/components/icons/IconClose.astro";
+import ViewMoreButton from "@/components/ViewMoreButton.astro";
 
 type Category = "frameworks" | "languages" | "tools";
 
 interface Technology {
 	name: string;
-	icon: `${string}.svg`;
+	icon: string;
 	experience: number;
 	category: Category;
 }
@@ -96,15 +96,7 @@ const formatExperience = (years: number) => {
 			}
 		</ul>
 
-		<button
-			type="button"
-			class="stack-view-more flex flex-col items-center gap-1 mx-auto px-4 py-2 border-none bg-transparent text-subtitle text-sm cursor-pointer transition-colors hover:text-title"
-		>
-			<span class="stack-view-more-text">View More</span>
-			<IconChevronDown
-				class="stack-view-more-icon size-4 transition-transform"
-			/>
-		</button>
+		<ViewMoreButton class="stack-view-more" />
 	</div>
 </Card>
 
@@ -188,16 +180,10 @@ const formatExperience = (years: number) => {
 	@keyframes item-disappear {
 		from {
 			opacity: 1;
-			transform: translateY(0);
 		}
 		to {
 			opacity: 0;
-			transform: translateY(-10px);
 		}
-	}
-
-	.stack-view-more.expanded .stack-view-more-icon {
-		transform: rotate(180deg);
 	}
 </style>
 
@@ -215,8 +201,8 @@ const formatExperience = (years: number) => {
 		const items = section.querySelectorAll<HTMLLIElement>(".stack-item");
 		const viewMoreBtn =
 			section.querySelector<HTMLButtonElement>(".stack-view-more");
-		const viewMoreText = section.querySelector<HTMLSpanElement>(
-			".stack-view-more-text",
+		const viewMoreText = viewMoreBtn?.querySelector<HTMLSpanElement>(
+			".view-more-btn-text",
 		);
 
 		let activeCategories = new Set<string>();
@@ -321,7 +307,9 @@ const formatExperience = (years: number) => {
 			if (viewMoreBtn && viewMoreText) {
 				const hasMore = totalVisible > initialVisible;
 				viewMoreBtn.classList.toggle("hidden", !hasMore);
-				viewMoreText.textContent = isExpanded ? "View Less" : "View More";
+				viewMoreText.textContent = isExpanded
+					? viewMoreBtn.dataset.expandedText || "View Less"
+					: viewMoreBtn.dataset.collapsedText || "View More";
 				viewMoreBtn.classList.toggle("expanded", isExpanded);
 			}
 		}

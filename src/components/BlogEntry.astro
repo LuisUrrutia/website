@@ -1,0 +1,47 @@
+---
+import IconClock from "@/components/icons/IconClock.astro";
+import IconEye from "@/components/icons/IconEye.astro";
+
+interface Props {
+	title: string;
+	description: string;
+	date: Date;
+	views: number;
+	href?: string;
+}
+
+const { title, description, date, views, href } = Astro.props;
+
+const formattedDate = date.toLocaleDateString("en-US", {
+	day: "numeric",
+	month: "long",
+	year: "numeric",
+});
+---
+
+<article class="flex flex-col gap-2">
+	<h3 class="text-xl font-semibold text-title">
+		{
+			href ? (
+				<a href={href} class="hover:underline">
+					{title}
+				</a>
+			) : (
+				title
+			)
+		}
+	</h3>
+	<p class="text-subtitle text-sm leading-relaxed line-clamp-2">
+		{description}
+	</p>
+	<div class="flex gap-4 text-subtitle text-sm">
+		<span class="flex items-center gap-1.5">
+			<IconClock class="size-4" />
+			{formattedDate}
+		</span>
+		<span class="flex items-center gap-1.5">
+			<IconEye class="size-4" />
+			{views}
+		</span>
+	</div>
+</article>

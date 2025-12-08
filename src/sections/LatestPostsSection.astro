@@ -1,0 +1,100 @@
+---
+import Card from "@/components/Card.astro";
+import BlogEntry from "@/components/BlogEntry.astro";
+import ViewMoreButton from "@/components/ViewMoreButton.astro";
+
+interface Post {
+	title: string;
+	description: string;
+	date: Date;
+	views: number;
+	href?: string;
+}
+
+interface Props {
+	posts: Post[];
+	initialVisible?: number;
+}
+
+const { posts, initialVisible = 3 } = Astro.props;
+---
+
+<Card>
+	<div
+		class="flex flex-col gap-6"
+		data-posts-section
+		data-initial-visible={initialVisible}
+	>
+		<h2 class="text-2xl font-semibold text-title">Latest posts</h2>
+
+		<ul class="flex flex-col gap-6 list-none p-0 m-0">
+			{
+				posts.map((post, index) => (
+					<li class:list={["posts-item", { hidden: index >= initialVisible }]}>
+						<BlogEntry
+							title={post.title}
+							description={post.description}
+							date={post.date}
+							views={post.views}
+							href={post.href}
+						/>
+					</li>
+				))
+			}
+		</ul>
+
+		{
+			posts.length > initialVisible && (
+				<ViewMoreButton
+					class="posts-view-more"
+					collapsedText="Read More"
+					expandedText="Read Less"
+				/>
+			)
+		}
+	</div>
+</Card>
+
+<script>
+	function initPostsSection() {
+		const section = document.querySelector(
+			"[data-posts-section]",
+		) as HTMLElement;
+		if (!section) return;
+
+		const initialVisible = parseInt(section.dataset.initialVisible || "3", 10);
+		const items = section.querySelectorAll<HTMLLIElement>(".posts-item");
+		const viewMoreBtn =
+			section.querySelector<HTMLButtonElement>(".posts-view-more");
+		const viewMoreText = viewMoreBtn?.querySelector<HTMLSpanElement>(
+			".view-more-btn-text",
+		);
+
+		let isExpanded = false;
+
+		function updateVisibility() {
+			items.forEach((item, index) => {
+				if (index >= initialVisible) {
+					item.classList.toggle("hidden", !isExpanded);
+				}
+			});
+
+			if (viewMoreBtn && viewMoreText) {
+				viewMoreText.textContent = isExpanded
+					? viewMoreBtn.dataset.expandedText || "Read Less"
+					: viewMoreBtn.dataset.collapsedText || "Read More";
+				viewMoreBtn.classList.toggle("expanded", isExpanded);
+			}
+		}
+
+		viewMoreBtn?.addEventListener("click", () => {
+			isExpanded = !isExpanded;
+			updateVisibility();
+		});
+
+		updateVisibility();
+	}
+
+	initPostsSection();
+	document.addEventListener("astro:after-swap", initPostsSection);
+</script>
