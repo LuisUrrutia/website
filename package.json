@@ -9,6 +9,7 @@
     "astro": "astro",
     "lint": "oxlint --type-aware",
     "fmt": "prettier . --check",
+    "fmt:fix": "prettier . --write",
     "prepare": "husky"
   },
   "dependencies": {
