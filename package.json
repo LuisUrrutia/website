@@ -8,7 +8,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "lint": "oxlint --type-aware",
-    "fmt": "prettier . --check"
+    "fmt": "prettier . --check",
+    "prepare": "husky"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
@@ -17,8 +18,13 @@
   },
   "devDependencies": {
     "@prettier/plugin-oxc": "0.1.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "oxlint": "^1.32.0",
     "oxlint-tsgolint": "^0.8.4",
     "prettier": "3.7.4"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   }
 }
