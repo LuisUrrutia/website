@@ -1,0 +1,497 @@
+---
+import Card from "@/components/Card.astro";
+import IconChevronDown from "@/components/icons/IconChevronDown.astro";
+import IconClose from "@/components/icons/IconClose.astro";
+
+type Category = "frameworks" | "languages" | "tools";
+
+interface Technology {
+	name: string;
+	icon: `${string}.svg`;
+	experience: number;
+	category: Category;
+}
+
+interface Props {
+	technologies: Technology[];
+	initialVisible?: number;
+}
+
+const { technologies, initialVisible = 9 } = Astro.props;
+
+const categories: { id: Category; label: string }[] = [
+	{ id: "frameworks", label: "Frameworks" },
+	{ id: "languages", label: "Languages" },
+	{ id: "tools", label: "Tools" },
+];
+
+const formatExperience = (years: number) => {
+	return years === 1
+		? "+1 year of experience"
+		: `+${years} years of experience`;
+};
+---
+
+<Card>
+	<div class="stack-section" data-initial-visible={initialVisible}>
+		<header class="stack-header">
+			<h2 class="text-2xl font-semibold text-title">Stack</h2>
+			<div class="stack-filters">
+				<button
+					type="button"
+					class="stack-clear hidden"
+					aria-label="Clear filters"
+				>
+					<IconClose class="size-4" />
+				</button>
+				{
+					categories.map(({ id, label }) => (
+						<button
+							type="button"
+							class="stack-filter"
+							data-category={id}
+							aria-pressed="false"
+						>
+							{label}
+						</button>
+					))
+				}
+			</div>
+		</header>
+
+		<ul class="stack-grid" role="list">
+			{
+				technologies.map((tech, index) => (
+					<li
+						class:list={["stack-item", { hidden: index >= initialVisible }]}
+						data-category={tech.category}
+					>
+						<img
+							src={tech.icon}
+							alt={`${tech.name} logo`}
+							class="stack-icon"
+							width="48"
+							height="48"
+						/>
+						<div class="stack-info">
+							<span class="stack-name">{tech.name}</span>
+							<span class="stack-experience">
+								{formatExperience(tech.experience)}
+							</span>
+						</div>
+					</li>
+				))
+			}
+		</ul>
+
+		<button type="button" class="stack-view-more">
+			<span class="stack-view-more-text">View More</span>
+			<IconChevronDown class="stack-view-more-icon size-4" />
+		</button>
+	</div>
+</Card>
+
+<style>
+	.stack-section {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.stack-header {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		justify-content: space-between;
+		align-items: flex-start;
+	}
+
+	@media (width >= 40rem) {
+		.stack-header {
+			flex-direction: row;
+			align-items: center;
+		}
+	}
+
+	.stack-filters {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+	}
+
+	.stack-filter {
+		padding: 0.375rem 1rem;
+		border: 1px solid var(--color-subtitle);
+		border-radius: 9999px;
+		background: transparent;
+		color: var(--color-subtitle);
+		font-size: 0.875rem;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.stack-filter:hover {
+		border-color: var(--color-title);
+		color: var(--color-title);
+	}
+
+	.stack-filter[aria-pressed="true"] {
+		border-color: var(--color-title);
+		background: var(--color-title);
+		color: var(--color-card);
+	}
+
+	.stack-clear {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 2rem;
+		height: 2rem;
+		border: 1px solid var(--color-subtitle);
+		border-radius: 50%;
+		background: transparent;
+		color: var(--color-subtitle);
+		cursor: pointer;
+		transition:
+			border-color 0.2s ease,
+			color 0.2s ease,
+			opacity 0.2s ease,
+			transform 0.2s ease;
+		opacity: 1;
+		transform: rotate(0deg) scale(1);
+	}
+
+	.stack-clear:hover {
+		border-color: var(--color-title);
+		color: var(--color-title);
+		transform: rotate(90deg) scale(1.1);
+	}
+
+	.stack-clear.hidden {
+		opacity: 0;
+		transform: scale(0.5);
+		pointer-events: none;
+	}
+
+	.stack-clear.appearing {
+		animation: clear-appear 0.25s ease forwards;
+	}
+
+	.stack-clear.disappearing {
+		animation: clear-disappear 0.25s ease forwards;
+	}
+
+	@keyframes clear-appear {
+		from {
+			opacity: 0;
+			transform: rotate(-90deg) scale(0.5);
+		}
+		to {
+			opacity: 1;
+			transform: rotate(0deg) scale(1);
+		}
+	}
+
+	@keyframes clear-disappear {
+		from {
+			opacity: 1;
+			transform: rotate(0deg) scale(1);
+		}
+		to {
+			opacity: 0;
+			transform: rotate(90deg) scale(0.5);
+		}
+	}
+
+	.stack-grid {
+		display: grid;
+		grid-template-columns: repeat(1, 1fr);
+		gap: 1rem;
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	@media (width >= 30rem) {
+		.stack-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (width >= 48rem) {
+		.stack-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	.stack-item {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.5rem;
+		opacity: 1;
+		transform: translateY(0);
+		transition:
+			opacity 0.3s ease,
+			transform 0.3s ease;
+	}
+
+	.stack-item.hidden {
+		display: none;
+	}
+
+	.stack-item.filtered {
+		display: none;
+	}
+
+	.stack-item.appearing {
+		animation: item-appear 0.3s ease forwards;
+	}
+
+	.stack-item.disappearing {
+		animation: item-disappear 0.2s ease forwards;
+	}
+
+	@keyframes item-appear {
+		from {
+			opacity: 0;
+			transform: translateY(-10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.stack-item.appearing {
+		animation-duration: 0.2s;
+	}
+
+	@keyframes item-disappear {
+		from {
+			opacity: 1;
+			transform: translateY(0);
+		}
+		to {
+			opacity: 0;
+			transform: translateY(-10px);
+		}
+	}
+
+	.stack-icon {
+		width: 3rem;
+		height: 3rem;
+		object-fit: contain;
+	}
+
+	.stack-info {
+		display: flex;
+		flex-direction: column;
+		gap: 0.125rem;
+	}
+
+	.stack-name {
+		font-size: 1.125rem;
+		font-weight: 500;
+		color: var(--color-title);
+	}
+
+	.stack-experience {
+		font-size: 0.875rem;
+		color: var(--color-subtitle);
+	}
+
+	.stack-view-more {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.25rem;
+		margin: 0 auto;
+		padding: 0.5rem 1rem;
+		border: none;
+		background: transparent;
+		color: var(--color-subtitle);
+		font-size: 0.875rem;
+		cursor: pointer;
+		transition: color 0.2s ease;
+	}
+
+	.stack-view-more:hover {
+		color: var(--color-title);
+	}
+
+	.stack-view-more.hidden {
+		display: none;
+	}
+
+	.stack-view-more-icon {
+		transition: transform 0.2s ease;
+	}
+
+	.stack-view-more.expanded .stack-view-more-icon {
+		transform: rotate(180deg);
+	}
+</style>
+
+<script>
+	function initStackSection() {
+		const section = document.querySelector(".stack-section") as HTMLElement;
+		if (!section) return;
+
+		const initialVisible = parseInt(section.dataset.initialVisible || "9", 10);
+		const filters =
+			section.querySelectorAll<HTMLButtonElement>(".stack-filter");
+		const clearBtn = section.querySelector<HTMLButtonElement>(".stack-clear");
+		const items = section.querySelectorAll<HTMLLIElement>(".stack-item");
+		const viewMoreBtn =
+			section.querySelector<HTMLButtonElement>(".stack-view-more");
+		const viewMoreText = section.querySelector<HTMLSpanElement>(
+			".stack-view-more-text",
+		);
+
+		let activeCategories = new Set<string>();
+		let isExpanded = false;
+
+		function updateVisibility(animate = false) {
+			let visibleCount = 0;
+			let totalVisible = 0;
+			let appearingIndex = 0;
+
+			items.forEach((item) => {
+				const category = item.dataset.category;
+				const matchesFilter =
+					activeCategories.size === 0 || activeCategories.has(category || "");
+
+				const wasHidden = item.classList.contains("hidden");
+
+				// Reset animation classes only
+				item.classList.remove("appearing", "disappearing");
+
+				if (!matchesFilter) {
+					item.classList.remove("hidden");
+					item.classList.add("filtered");
+				} else {
+					item.classList.remove("filtered");
+					totalVisible++;
+					visibleCount++;
+					const shouldHide = !isExpanded && visibleCount > initialVisible;
+
+					if (shouldHide) {
+						if (animate && !wasHidden) {
+							// Animate out - all at once, then hide after all animations complete
+							item.classList.add("disappearing");
+						} else if (!animate) {
+							item.classList.add("hidden");
+						}
+					} else if (wasHidden) {
+						item.classList.remove("hidden");
+						if (animate) {
+							// Animate in with stagger - start hidden via opacity
+							const delay = appearingIndex * 30;
+							appearingIndex++;
+							item.style.opacity = "0";
+							setTimeout(() => {
+								item.style.opacity = "";
+								item.classList.add("appearing");
+								item.addEventListener(
+									"animationend",
+									() => item.classList.remove("appearing"),
+									{ once: true },
+								);
+							}, delay);
+						}
+					}
+				}
+			});
+
+			// Hide disappearing items after animation
+			if (animate) {
+				const disappearingItems = section.querySelectorAll(
+					".stack-item.disappearing",
+				);
+				if (disappearingItems.length > 0) {
+					const lastItem = disappearingItems[disappearingItems.length - 1];
+					lastItem.addEventListener(
+						"animationend",
+						() => {
+							disappearingItems.forEach((item) => {
+								item.classList.add("hidden");
+								item.classList.remove("disappearing");
+							});
+						},
+						{ once: true },
+					);
+				}
+			}
+
+			// Update clear button
+			if (clearBtn) {
+				const shouldShow = activeCategories.size > 0;
+				const isCurrentlyHidden = clearBtn.classList.contains("hidden");
+
+				if (shouldShow && isCurrentlyHidden) {
+					clearBtn.classList.remove("hidden", "disappearing");
+					clearBtn.classList.add("appearing");
+				} else if (!shouldShow && !isCurrentlyHidden) {
+					clearBtn.classList.remove("appearing");
+					clearBtn.classList.add("disappearing");
+					clearBtn.addEventListener(
+						"animationend",
+						() => {
+							if (clearBtn.classList.contains("disappearing")) {
+								clearBtn.classList.add("hidden");
+							}
+						},
+						{ once: true },
+					);
+				}
+			}
+
+			// Update view more button
+			if (viewMoreBtn && viewMoreText) {
+				const hasMore = totalVisible > initialVisible;
+				viewMoreBtn.classList.toggle("hidden", !hasMore);
+				viewMoreText.textContent = isExpanded ? "View Less" : "View More";
+				viewMoreBtn.classList.toggle("expanded", isExpanded);
+			}
+		}
+
+		filters.forEach((filter) => {
+			filter.addEventListener("click", () => {
+				const category = filter.dataset.category;
+				if (!category) return;
+
+				const isPressed = filter.getAttribute("aria-pressed") === "true";
+				filter.setAttribute("aria-pressed", String(!isPressed));
+
+				if (isPressed) {
+					activeCategories.delete(category);
+				} else {
+					activeCategories.add(category);
+				}
+
+				updateVisibility();
+			});
+		});
+
+		clearBtn?.addEventListener("click", () => {
+			activeCategories.clear();
+			filters.forEach((filter) => filter.setAttribute("aria-pressed", "false"));
+			updateVisibility();
+		});
+
+		viewMoreBtn?.addEventListener("click", () => {
+			isExpanded = !isExpanded;
+			updateVisibility(true);
+		});
+
+		// Initial render
+		updateVisibility();
+	}
+
+	// Run on initial load
+	initStackSection();
+
+	// Re-run on Astro page transitions
+	document.addEventListener("astro:after-swap", initStackSection);
+</script>

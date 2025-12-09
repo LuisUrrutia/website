@@ -5,48 +5,48 @@ import "../styles/global.css";
 ---
 
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Luis Urrutia</title>
+<html lang="en" class="scrollbar-gutter-stable">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Luis Urrutia</title>
 
-    <!-- Favicons -->
-    <link rel="icon" type="image/svg+xml" href="/favicons/favicon.svg" />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="/favicons/favicon-32x32.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="/favicons/favicon-16x16.png"
-    />
+		<!-- Favicons -->
+		<link rel="icon" type="image/svg+xml" href="/favicons/favicon.svg" />
+		<link
+			rel="icon"
+			type="image/png"
+			sizes="32x32"
+			href="/favicons/favicon-32x32.png"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			sizes="16x16"
+			href="/favicons/favicon-16x16.png"
+		/>
 
-    <!-- Apple Touch Icons -->
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="/favicons/favicon-180x180.png"
-    />
+		<!-- Apple Touch Icons -->
+		<link
+			rel="apple-touch-icon"
+			sizes="180x180"
+			href="/favicons/favicon-180x180.png"
+		/>
 
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="/site.webmanifest" />
+		<!-- Web App Manifest -->
+		<link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Windows Tiles -->
-    <meta name="msapplication-TileColor" content="#FBFBF9" />
-    <meta name="msapplication-config" content="/browserconfig.xml" />
+		<!-- Windows Tiles -->
+		<meta name="msapplication-TileColor" content="#FBFBF9" />
+		<meta name="msapplication-config" content="/browserconfig.xml" />
 
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#FBFBF9" />
+		<!-- Theme Color -->
+		<meta name="theme-color" content="#FBFBF9" />
 
-    <ClientRouter />
-  </head>
-  <body class="bg-background text-foreground py-6 m-0">
-    <slot />
-  </body>
+		<ClientRouter />
+	</head>
+	<body class="bg-background text-foreground py-6 m-0">
+		<slot />
+	</body>
 </html>

@@ -4,3 +4,7 @@
  * Only truly global utilities belong here.
  * Component-specific styles should live in their respective components.
  */
+
+@utility scrollbar-gutter-stable {
+	scrollbar-gutter: stable;
+}

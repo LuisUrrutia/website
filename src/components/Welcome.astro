@@ -1,36 +1,178 @@
 ---
-import WorkStatusBadge from "./WorkStatusBadge.astro";
-import SocialLinks from "./SocialLinks.astro";
-import LocationBadge from "./LocationBadge.astro";
-import Card from "./Card.astro";
 import Container from "./Container.astro";
 import HeroSection from "../sections/HeroSection.astro";
+import StackSection from "../sections/StackSection.astro";
+
+const technologies = [
+	// Frameworks
+	{
+		name: "React",
+		icon: "/tech/react.svg",
+		experience: 8,
+		category: "frameworks" as const,
+	},
+	{
+		name: "Next.js",
+		icon: "/tech/next.svg",
+		experience: 3,
+		category: "frameworks" as const,
+	},
+	{
+		name: "Astro",
+		icon: "/tech/astro.svg",
+		experience: 1,
+		category: "frameworks" as const,
+	},
+	{
+		name: "Svelte",
+		icon: "/tech/svelte.svg",
+		experience: 1,
+		category: "frameworks" as const,
+	},
+	{
+		name: "Tailwind",
+		icon: "/tech/tailwind.svg",
+		experience: 4,
+		category: "frameworks" as const,
+	},
+	// Languages
+	{
+		name: "JavaScript",
+		icon: "/tech/javascript.svg",
+		experience: 10,
+		category: "languages" as const,
+	},
+	{
+		name: "TypeScript",
+		icon: "/tech/typescript.svg",
+		experience: 4,
+		category: "languages" as const,
+	},
+	{
+		name: "Go",
+		icon: "/tech/go.svg",
+		experience: 4,
+		category: "languages" as const,
+	},
+	{
+		name: "Python",
+		icon: "/tech/python.svg",
+		experience: 4,
+		category: "languages" as const,
+	},
+	{
+		name: "Rust",
+		icon: "/tech/rust.svg",
+		experience: 1,
+		category: "languages" as const,
+	},
+	{
+		name: "Solidity",
+		icon: "/tech/solidity.svg",
+		experience: 2,
+		category: "languages" as const,
+	},
+	// Tools
+	{
+		name: "GitHub",
+		icon: "/tech/github.svg",
+		experience: 6,
+		category: "tools" as const,
+	},
+	{
+		name: "Docker",
+		icon: "/tech/docker.svg",
+		experience: 5,
+		category: "tools" as const,
+	},
+	{
+		name: "Kubernetes",
+		icon: "/tech/kubernetes.svg",
+		experience: 3,
+		category: "tools" as const,
+	},
+	{
+		name: "AWS",
+		icon: "/tech/aws.svg",
+		experience: 5,
+		category: "tools" as const,
+	},
+	{
+		name: "Terraform",
+		icon: "/tech/terraform.svg",
+		experience: 2,
+		category: "tools" as const,
+	},
+	{
+		name: "PostgreSQL",
+		icon: "/tech/postgresql.svg",
+		experience: 6,
+		category: "tools" as const,
+	},
+	{
+		name: "MongoDB",
+		icon: "/tech/mongodb.svg",
+		experience: 4,
+		category: "tools" as const,
+	},
+	{
+		name: "Redis",
+		icon: "/tech/redis.svg",
+		experience: 4,
+		category: "tools" as const,
+	},
+	{
+		name: "DynamoDB",
+		icon: "/tech/dynamodb.svg",
+		experience: 3,
+		category: "tools" as const,
+	},
+	{
+		name: "Figma",
+		icon: "/tech/figma.svg",
+		experience: 1,
+		category: "tools" as const,
+	},
+	{
+		name: "ChatGPT",
+		icon: "/tech/chatgpt.svg",
+		experience: 2,
+		category: "tools" as const,
+	},
+	{
+		name: "Claude",
+		icon: "/tech/claude.svg",
+		experience: 1,
+		category: "tools" as const,
+	},
+];
 ---
 
-<Container>
-  <HeroSection />
+<Container class="flex flex-col gap-6">
+	<HeroSection />
+	<StackSection technologies={technologies} />
 </Container>
 
 <style>
-  #container {
-    font-family:
-      Inter, Roboto, "Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial,
-      sans-serif;
-    height: 100%;
-  }
+	#container {
+		font-family:
+			Inter, Roboto, "Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial,
+			sans-serif;
+		height: 100%;
+	}
 
-  main {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-  }
+	main {
+		height: 100%;
+		display: flex;
+		justify-content: center;
+	}
 
-  #hero {
-    display: flex;
-    align-items: start;
-    flex-direction: column;
-    justify-content: center;
-    gap: 1rem;
-    padding: 16px;
-  }
+	#hero {
+		display: flex;
+		align-items: start;
+		flex-direction: column;
+		justify-content: center;
+		gap: 1rem;
+		padding: 16px;
+	}
 </style>
