@@ -1,0 +1,28 @@
+---
+import type { HTMLTag, Polymorphic } from "astro/types";
+
+type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
+  class?: string;
+};
+
+const { as: Element = "div", class: className, ...props } = Astro.props;
+---
+
+<Element class:list={["container", className]} {...props}>
+  <slot />
+</Element>
+
+<style>
+  .container {
+    width: 100%;
+    max-width: 800px;
+    margin-inline: 1rem;
+    padding-inline: 1rem;
+  }
+
+  @media (width >= 40rem) {
+    .container {
+      margin-inline: auto;
+    }
+  }
+</style>

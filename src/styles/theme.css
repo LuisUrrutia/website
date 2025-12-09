@@ -34,13 +34,20 @@
 
 /* Primitive color tokens - light theme */
 :root {
-  --oklch-background: 100% 0 0;
-  --oklch-title: 20% 0.02 270;
-  --oklch-subtitle: 55% 0.01 270;
+  /* hsl(240 20% 98%) */
+  --oklch-background: 98.3% 0.005 270;
+  /* hsl(240 14% 30%) */
+  --oklch-title: 37% 0.03 270;
+  /* hsl(240 14% 60%) */
+  --oklch-subtitle: 66% 0.025 270;
+  /* hsl(0 0% 100%) */
   --oklch-card: 100% 0 0;
-  --oklch-card-foreground: 20% 0.02 270;
-  --oklch-available: 95% 0.05 145;
-  --oklch-available-foreground: 45% 0.15 145;
+  /* hsl(240 14% 60%) */
+  --oklch-card-foreground: 66% 0.025 270;
+  /* hsl(141 88% 90%) */
+  --oklch-available: 94% 0.08 150;
+  /* hsl(140 82% 26%) */
+  --oklch-available-foreground: 44% 0.14 150;
 }
 
 /* Primitive color tokens - dark theme */
