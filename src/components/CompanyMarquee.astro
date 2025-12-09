@@ -1,0 +1,116 @@
+---
+import IconGitCommit from "@/components/icons/IconGitCommit.astro";
+
+interface Company {
+	name: string;
+	logo: `${string}.svg`;
+}
+
+type Direction = "left" | "right";
+
+interface Props {
+	companies: Company[];
+	duration?: number;
+	direction?: Direction;
+}
+
+const { companies, duration = 45, direction = "left" } = Astro.props;
+---
+
+<div
+	class="marquee-container"
+	aria-label="Companies I've worked with"
+	role="marquee"
+	style={`--marquee-duration: ${duration}s`}
+>
+	<div
+		class:list={[
+			"marquee-track",
+			{ "marquee-track--reverse": direction === "right" },
+		]}
+	>
+		{
+			[...Array(2)].map(() => (
+				<div class="marquee-content" aria-hidden="true">
+					{companies.map((company, index) => (
+						<>
+							{index > 0 && <IconGitCommit class="marquee-separator" />}
+							<img src={company.logo} alt={company.name} class="marquee-logo" />
+						</>
+					))}
+					<IconGitCommit class="marquee-separator" />
+				</div>
+			))
+		}
+	</div>
+</div>
+
+<style>
+	.marquee-container {
+		overflow: hidden;
+		-webkit-mask-image: linear-gradient(
+			to right,
+			transparent,
+			black 5%,
+			black 95%,
+			transparent
+		);
+		mask-image: linear-gradient(
+			to right,
+			transparent,
+			black 5%,
+			black 95%,
+			transparent
+		);
+	}
+
+	.marquee-track {
+		display: flex;
+		width: max-content;
+		animation: marquee var(--marquee-duration) linear infinite;
+		transform: translateZ(0);
+		will-change: transform;
+	}
+
+	.marquee-track--reverse {
+		animation-direction: reverse;
+	}
+
+	.marquee-container:hover .marquee-track {
+		animation-play-state: paused;
+	}
+
+	.marquee-content {
+		display: flex;
+		align-items: center;
+		gap: 2rem;
+		padding-right: 2rem;
+	}
+
+	.marquee-logo {
+		height: 1.75rem;
+		width: auto;
+		filter: brightness(0) saturate(100%) invert(78%) sepia(12%) saturate(935%)
+			hue-rotate(203deg) brightness(95%) contrast(93%);
+	}
+
+	.marquee-separator {
+		color: var(--color-separator, oklch(78% 0.06 270));
+		flex-shrink: 0;
+	}
+
+	@keyframes marquee {
+		from {
+			transform: translateX(0);
+		}
+		to {
+			transform: translateX(-50%);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.marquee-track {
+			animation: none;
+		}
+	}
+</style>
