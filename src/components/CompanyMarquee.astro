@@ -10,32 +10,45 @@ type Direction = "left" | "right";
 
 interface Props {
 	companies: Company[];
+	label?: string;
 	duration?: number;
 	direction?: Direction;
 }
 
-const { companies, duration = 45, direction = "left" } = Astro.props;
+const {
+	companies,
+	label = "Companies I've worked with",
+	duration = 45,
+	direction = "left",
+} = Astro.props;
 ---
 
 <div
 	class="marquee-container"
-	aria-label="Companies I've worked with"
-	role="marquee"
+	aria-roledescription="carousel"
+	aria-label={label}
 	style={`--marquee-duration: ${duration}s`}
 >
+	<!-- Visually hidden list for screen readers -->
+	<ul class="sr-only">
+		{companies.map((company) => <li>{company.name}</li>)}
+	</ul>
+
+	<!-- Visual marquee (hidden from screen readers) -->
 	<div
 		class:list={[
 			"marquee-track",
 			{ "marquee-track--reverse": direction === "right" },
 		]}
+		aria-hidden="true"
 	>
 		{
-			[...Array(2)].map(() => (
-				<div class="marquee-content" aria-hidden="true">
+			[0, 1].map(() => (
+				<div class="marquee-content">
 					{companies.map((company, index) => (
 						<>
 							{index > 0 && <IconGitCommit class="marquee-separator" />}
-							<img src={company.logo} alt={company.name} class="marquee-logo" />
+							<img src={company.logo} alt="" class="marquee-logo" />
 						</>
 					))}
 					<IconGitCommit class="marquee-separator" />
@@ -47,6 +60,7 @@ const { companies, duration = 45, direction = "left" } = Astro.props;
 
 <style>
 	.marquee-container {
+		position: relative;
 		overflow: hidden;
 		-webkit-mask-image: linear-gradient(
 			to right,
