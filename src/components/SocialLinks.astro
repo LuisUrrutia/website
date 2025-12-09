@@ -1,0 +1,123 @@
+---
+import IconGitHub from "@/components/icons/IconGitHub.astro";
+import IconInstagram from "@/components/icons/IconInstagram.astro";
+import IconLinkedIn from "@/components/icons/IconLinkedIn.astro";
+import IconX from "@/components/icons/IconX.astro";
+
+interface SocialLink {
+  url: string;
+  label?: string;
+}
+
+interface Props {
+  github?: SocialLink | string;
+  linkedin?: SocialLink | string;
+  instagram?: SocialLink | string;
+  x?: SocialLink | string;
+}
+
+const { github, linkedin, instagram, x } = Astro.props;
+
+const socialConfig = [
+  { key: "github", link: github, icon: IconGitHub, defaultLabel: "GitHub" },
+  {
+    key: "linkedin",
+    link: linkedin,
+    icon: IconLinkedIn,
+    defaultLabel: "LinkedIn",
+  },
+  {
+    key: "instagram",
+    link: instagram,
+    icon: IconInstagram,
+    defaultLabel: "Instagram",
+  },
+  { key: "x", link: x, icon: IconX, defaultLabel: "X" },
+] as const;
+
+const links = socialConfig
+  .map(({ key, link, icon, defaultLabel }) => {
+    if (!link) return null;
+
+    const normalized = typeof link === "string" ? { url: link } : link;
+
+    return {
+      key,
+      icon,
+      url: normalized.url,
+      label: normalized.label || defaultLabel,
+    };
+  })
+  .filter((link) => link !== null);
+---
+
+{
+  links.length > 0 && (
+    <nav aria-label="Social links" class="flex items-center gap-3.5">
+      {links.map(({ key, icon: Icon, url, label }) => (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class:list={["social-link", `social-link--${key}`]}
+          aria-label={label}
+        >
+          <Icon class="size-6 sm:size-4" />
+        </a>
+      ))}
+    </nav>
+  )
+}
+
+<style>
+  .social-link {
+    position: relative;
+    color: var(--color-title);
+  }
+
+  /*
+	 * Glow effect using radial gradient on pseudo-element.
+	 * Only opacity animates for GPU-friendly performance.
+	 * will-change: opacity hints browser to promote to compositor layer.
+	 * Used sparingly here (max 4 small elements) to avoid memory overhead.
+	 */
+  .social-link::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      var(--glow-color) 0%,
+      oklch(from var(--glow-color) l c h / 0.4) 20%,
+      oklch(from var(--glow-color) l c h / 0.15) 45%,
+      oklch(from var(--glow-color) l c h / 0) 70%
+    );
+    opacity: 0;
+    z-index: -1;
+    transform: translateZ(0);
+    transition: opacity 0.2s ease;
+    will-change: opacity;
+  }
+
+  .social-link:hover::before {
+    opacity: 1;
+  }
+
+  /* Brand colors */
+  .social-link--github {
+    --glow-color: oklch(40% 0.2 285 / 0.6);
+  }
+
+  .social-link--linkedin {
+    --glow-color: oklch(50% 0.18 250 / 0.6);
+  }
+
+  .social-link--instagram {
+    --glow-color: oklch(65% 0.25 350 / 0.6);
+  }
+
+  .social-link--x {
+    --glow-color: oklch(30% 0 0 / 0.6);
+  }
+</style>
