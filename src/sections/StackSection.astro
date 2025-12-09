@@ -66,7 +66,7 @@ const formatExperience = (years: number) => {
 		</header>
 
 		<ul
-			class="stack-grid grid grid-cols-1 gap-4 list-none p-0 m-0 sm:grid-cols-2 md:grid-cols-3"
+			class="stack-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 list-none p-0 m-0"
 			role="list"
 		>
 			{
@@ -157,34 +157,6 @@ const formatExperience = (years: number) => {
 	.stack-item.filtered {
 		display: none;
 	}
-
-	.stack-item.appearing {
-		animation: item-appear 0.2s ease forwards;
-	}
-
-	.stack-item.disappearing {
-		animation: item-disappear 0.2s ease forwards;
-	}
-
-	@keyframes item-appear {
-		from {
-			opacity: 0;
-			transform: translateY(-10px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
-	@keyframes item-disappear {
-		from {
-			opacity: 1;
-		}
-		to {
-			opacity: 0;
-		}
-	}
 </style>
 
 <script>
@@ -208,20 +180,14 @@ const formatExperience = (years: number) => {
 		let activeCategories = new Set<string>();
 		let isExpanded = false;
 
-		function updateVisibility(animate = false) {
+		function updateVisibility() {
 			let visibleCount = 0;
 			let totalVisible = 0;
-			let appearingIndex = 0;
 
 			items.forEach((item) => {
 				const category = item.dataset.category;
 				const matchesFilter =
 					activeCategories.size === 0 || activeCategories.has(category || "");
-
-				const wasHidden = item.classList.contains("hidden");
-
-				// Reset animation classes only
-				item.classList.remove("appearing", "disappearing");
 
 				if (!matchesFilter) {
 					item.classList.remove("hidden");
@@ -233,52 +199,12 @@ const formatExperience = (years: number) => {
 					const shouldHide = !isExpanded && visibleCount > initialVisible;
 
 					if (shouldHide) {
-						if (animate && !wasHidden) {
-							// Animate out - all at once, then hide after all animations complete
-							item.classList.add("disappearing");
-						} else if (!animate) {
-							item.classList.add("hidden");
-						}
-					} else if (wasHidden) {
+						item.classList.add("hidden");
+					} else {
 						item.classList.remove("hidden");
-						if (animate) {
-							// Animate in with stagger - start hidden via opacity
-							const delay = appearingIndex * 30;
-							appearingIndex++;
-							item.style.opacity = "0";
-							setTimeout(() => {
-								item.style.opacity = "";
-								item.classList.add("appearing");
-								item.addEventListener(
-									"animationend",
-									() => item.classList.remove("appearing"),
-									{ once: true },
-								);
-							}, delay);
-						}
 					}
 				}
 			});
-
-			// Hide disappearing items after animation
-			if (animate) {
-				const disappearingItems = section.querySelectorAll(
-					".stack-item.disappearing",
-				);
-				if (disappearingItems.length > 0) {
-					const lastItem = disappearingItems[disappearingItems.length - 1];
-					lastItem.addEventListener(
-						"animationend",
-						() => {
-							disappearingItems.forEach((item) => {
-								item.classList.add("hidden");
-								item.classList.remove("disappearing");
-							});
-						},
-						{ once: true },
-					);
-				}
-			}
 
 			// Update clear button
 			if (clearBtn) {
@@ -340,7 +266,7 @@ const formatExperience = (years: number) => {
 
 		viewMoreBtn?.addEventListener("click", () => {
 			isExpanded = !isExpanded;
-			updateVisibility(true);
+			updateVisibility();
 		});
 
 		// Initial render
