@@ -33,13 +33,19 @@ const formatExperience = (years: number) => {
 ---
 
 <Card>
-	<div class="stack-section" data-initial-visible={initialVisible}>
-		<header class="stack-header">
+	<div
+		class="flex flex-col gap-6"
+		data-stack-section
+		data-initial-visible={initialVisible}
+	>
+		<header
+			class="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
+		>
 			<h2 class="text-2xl font-semibold text-title">Stack</h2>
-			<div class="stack-filters">
+			<div class="flex gap-2 items-center">
 				<button
 					type="button"
-					class="stack-clear hidden"
+					class="stack-clear hidden order-1 sm:order-first size-8 items-center justify-center border border-subtitle rounded-full bg-transparent text-subtitle cursor-pointer transition-all hover:border-title hover:text-title"
 					aria-label="Clear filters"
 				>
 					<IconClose class="size-4" />
@@ -48,7 +54,7 @@ const formatExperience = (years: number) => {
 					categories.map(({ id, label }) => (
 						<button
 							type="button"
-							class="stack-filter"
+							class="stack-filter py-1.5 px-4 border border-subtitle rounded-full bg-transparent text-subtitle text-sm cursor-pointer transition-all hover:border-title hover:text-title"
 							data-category={id}
 							aria-pressed="false"
 						>
@@ -59,23 +65,29 @@ const formatExperience = (years: number) => {
 			</div>
 		</header>
 
-		<ul class="stack-grid" role="list">
+		<ul
+			class="stack-grid grid grid-cols-1 gap-4 list-none p-0 m-0 sm:grid-cols-2 md:grid-cols-3"
+			role="list"
+		>
 			{
 				technologies.map((tech, index) => (
 					<li
-						class:list={["stack-item", { hidden: index >= initialVisible }]}
+						class:list={[
+							"stack-item flex items-center gap-3 p-2",
+							{ hidden: index >= initialVisible },
+						]}
 						data-category={tech.category}
 					>
 						<img
 							src={tech.icon}
 							alt={`${tech.name} logo`}
-							class="stack-icon"
+							class="size-12 object-contain"
 							width="48"
 							height="48"
 						/>
-						<div class="stack-info">
-							<span class="stack-name">{tech.name}</span>
-							<span class="stack-experience">
+						<div class="flex flex-col gap-0.5">
+							<span class="text-lg font-medium text-title">{tech.name}</span>
+							<span class="text-sm text-subtitle">
 								{formatExperience(tech.experience)}
 							</span>
 						</div>
@@ -84,57 +96,19 @@ const formatExperience = (years: number) => {
 			}
 		</ul>
 
-		<button type="button" class="stack-view-more">
+		<button
+			type="button"
+			class="stack-view-more flex flex-col items-center gap-1 mx-auto px-4 py-2 border-none bg-transparent text-subtitle text-sm cursor-pointer transition-colors hover:text-title"
+		>
 			<span class="stack-view-more-text">View More</span>
-			<IconChevronDown class="stack-view-more-icon size-4" />
+			<IconChevronDown
+				class="stack-view-more-icon size-4 transition-transform"
+			/>
 		</button>
 	</div>
 </Card>
 
 <style>
-	.stack-section {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-	}
-
-	.stack-header {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		justify-content: space-between;
-		align-items: flex-start;
-	}
-
-	@media (width >= 40rem) {
-		.stack-header {
-			flex-direction: row;
-			align-items: center;
-		}
-	}
-
-	.stack-filters {
-		display: flex;
-		gap: 0.5rem;
-		align-items: center;
-	}
-
-	.stack-filter {
-		padding: 0.375rem 1rem;
-		border: 1px solid var(--color-subtitle);
-		border-radius: 9999px;
-		background: transparent;
-		color: var(--color-subtitle);
-		font-size: 0.875rem;
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.stack-filter:hover {
-		border-color: var(--color-title);
-		color: var(--color-title);
-	}
-
 	.stack-filter[aria-pressed="true"] {
 		border-color: var(--color-title);
 		background: var(--color-title);
@@ -143,27 +117,11 @@ const formatExperience = (years: number) => {
 
 	.stack-clear {
 		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 2rem;
-		height: 2rem;
-		border: 1px solid var(--color-subtitle);
-		border-radius: 50%;
-		background: transparent;
-		color: var(--color-subtitle);
-		cursor: pointer;
-		transition:
-			border-color 0.2s ease,
-			color 0.2s ease,
-			opacity 0.2s ease,
-			transform 0.2s ease;
 		opacity: 1;
 		transform: rotate(0deg) scale(1);
 	}
 
 	.stack-clear:hover {
-		border-color: var(--color-title);
-		color: var(--color-title);
 		transform: rotate(90deg) scale(1.1);
 	}
 
@@ -203,49 +161,13 @@ const formatExperience = (years: number) => {
 		}
 	}
 
-	.stack-grid {
-		display: grid;
-		grid-template-columns: repeat(1, 1fr);
-		gap: 1rem;
-		list-style: none;
-		padding: 0;
-		margin: 0;
-	}
-
-	@media (width >= 30rem) {
-		.stack-grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
-
-	@media (width >= 48rem) {
-		.stack-grid {
-			grid-template-columns: repeat(3, 1fr);
-		}
-	}
-
-	.stack-item {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		padding: 0.5rem;
-		opacity: 1;
-		transform: translateY(0);
-		transition:
-			opacity 0.3s ease,
-			transform 0.3s ease;
-	}
-
-	.stack-item.hidden {
-		display: none;
-	}
-
+	.stack-item.hidden,
 	.stack-item.filtered {
 		display: none;
 	}
 
 	.stack-item.appearing {
-		animation: item-appear 0.3s ease forwards;
+		animation: item-appear 0.2s ease forwards;
 	}
 
 	.stack-item.disappearing {
@@ -263,10 +185,6 @@ const formatExperience = (years: number) => {
 		}
 	}
 
-	.stack-item.appearing {
-		animation-duration: 0.2s;
-	}
-
 	@keyframes item-disappear {
 		from {
 			opacity: 1;
@@ -278,56 +196,6 @@ const formatExperience = (years: number) => {
 		}
 	}
 
-	.stack-icon {
-		width: 3rem;
-		height: 3rem;
-		object-fit: contain;
-	}
-
-	.stack-info {
-		display: flex;
-		flex-direction: column;
-		gap: 0.125rem;
-	}
-
-	.stack-name {
-		font-size: 1.125rem;
-		font-weight: 500;
-		color: var(--color-title);
-	}
-
-	.stack-experience {
-		font-size: 0.875rem;
-		color: var(--color-subtitle);
-	}
-
-	.stack-view-more {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.25rem;
-		margin: 0 auto;
-		padding: 0.5rem 1rem;
-		border: none;
-		background: transparent;
-		color: var(--color-subtitle);
-		font-size: 0.875rem;
-		cursor: pointer;
-		transition: color 0.2s ease;
-	}
-
-	.stack-view-more:hover {
-		color: var(--color-title);
-	}
-
-	.stack-view-more.hidden {
-		display: none;
-	}
-
-	.stack-view-more-icon {
-		transition: transform 0.2s ease;
-	}
-
 	.stack-view-more.expanded .stack-view-more-icon {
 		transform: rotate(180deg);
 	}
@@ -335,7 +203,9 @@ const formatExperience = (years: number) => {
 
 <script>
 	function initStackSection() {
-		const section = document.querySelector(".stack-section") as HTMLElement;
+		const section = document.querySelector(
+			"[data-stack-section]",
+		) as HTMLElement;
 		if (!section) return;
 
 		const initialVisible = parseInt(section.dataset.initialVisible || "9", 10);
