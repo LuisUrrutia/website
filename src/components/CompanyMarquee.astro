@@ -4,6 +4,7 @@ import IconGitCommit from "@/components/icons/IconGitCommit.astro";
 interface Company {
 	name: string;
 	logo: `${string}.svg`;
+	url: string;
 }
 
 type Direction = "left" | "right";
@@ -31,7 +32,15 @@ const {
 >
 	<!-- Visually hidden list for screen readers -->
 	<ul class="sr-only">
-		{companies.map((company) => <li>{company.name}</li>)}
+		{
+			companies.map((company) => (
+				<li>
+					<a href={company.url} target="_blank" rel="noopener noreferrer">
+						{company.name}
+					</a>
+				</li>
+			))
+		}
 	</ul>
 
 	<!-- Visual marquee (hidden from screen readers) -->
@@ -48,7 +57,18 @@ const {
 					{companies.map((company, index) => (
 						<>
 							{index > 0 && <IconGitCommit class="marquee-separator" />}
-							<img src={company.logo} alt="" class="marquee-logo" />
+							<a
+								href={company.url}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="marquee-link"
+							>
+								<img
+									src={company.logo}
+									alt={`${company.name} logo`}
+									class="marquee-logo"
+								/>
+							</a>
 						</>
 					))}
 					<IconGitCommit class="marquee-separator" />
@@ -99,6 +119,15 @@ const {
 		align-items: center;
 		gap: 2rem;
 		padding-right: 2rem;
+	}
+
+	.marquee-link {
+		display: block;
+		transition: opacity 0.2s ease;
+	}
+
+	.marquee-link:hover {
+		opacity: 0.7;
 	}
 
 	.marquee-logo {
