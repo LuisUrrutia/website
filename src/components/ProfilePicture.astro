@@ -1,0 +1,77 @@
+---
+import { getImage } from "astro:assets";
+import horizontalPhoto from "@/assets/images/me-horizontal.jpeg";
+import verticalPhoto from "@/assets/images/me-vertical.jpeg";
+
+interface Props {
+  alt: string;
+  class?: string;
+}
+
+const { alt, class: className } = Astro.props;
+
+const HEIGHT = 224;
+
+const [horizontalAvif, horizontalWebp, verticalAvif, verticalWebp] =
+  await Promise.all([
+    getImage({
+      src: horizontalPhoto,
+      height: HEIGHT,
+      widths: [600, 1200, 1800],
+      format: "avif",
+    }),
+    getImage({
+      src: horizontalPhoto,
+      height: HEIGHT,
+      widths: [600, 1200, 1800],
+      format: "webp",
+    }),
+    getImage({
+      src: verticalPhoto,
+      height: HEIGHT,
+      widths: [168, 336, 504],
+      format: "avif",
+    }),
+    getImage({
+      src: verticalPhoto,
+      height: HEIGHT,
+      widths: [168, 336, 504],
+      format: "webp",
+    }),
+  ]);
+---
+
+<picture class={className}>
+  {/* Mobile: horizontal photo */}
+  <source
+    type="image/avif"
+    srcset={horizontalAvif.srcSet.attribute}
+    media="(max-width: 767px)"
+    sizes="600px"
+  />
+  <source
+    type="image/webp"
+    srcset={horizontalWebp.srcSet.attribute}
+    media="(max-width: 767px)"
+    sizes="600px"
+  />
+  {/* Desktop: vertical photo */}
+  <source
+    type="image/avif"
+    srcset={verticalAvif.srcSet.attribute}
+    media="(min-width: 768px)"
+    sizes="168px"
+  />
+  <source
+    type="image/webp"
+    srcset={verticalWebp.srcSet.attribute}
+    media="(min-width: 768px)"
+    sizes="168px"
+  />
+  <img
+    src={horizontalWebp.src}
+    alt={alt}
+    loading="eager"
+    class="h-full w-full rounded-xl object-cover md:w-[168px]"
+  />
+</picture>

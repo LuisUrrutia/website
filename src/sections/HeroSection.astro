@@ -1,0 +1,51 @@
+---
+import Card from "@/components/Card.astro";
+import Highlight from "@/components/Highlight.astro";
+import LocationBadge from "@/components/LocationBadge.astro";
+import ProfilePicture from "@/components/ProfilePicture.astro";
+import SocialLinks from "@/components/SocialLinks.astro";
+import WorkStatusBadge from "@/components/WorkStatusBadge.astro";
+---
+
+<Card class="flex flex-col gap-4 md:flex-row">
+  <ProfilePicture alt="Photo of Luis Urrutia" />
+
+  <div class="flex flex-1 flex-col gap-4">
+    <div class="flex flex-row justify-between gap-5 py-2 md:py-0">
+      <WorkStatusBadge status="open" />
+      <SocialLinks
+        instagram={{
+          url: "https://www.instagram.com/luisurrutiaf/",
+          label: "Luis Urrutia Instagram",
+        }}
+        github={{
+          url: "https://github.com/LuisUrrutia",
+          label: "Luis Urrutia GitHub",
+        }}
+        linkedin={{
+          url: "https://www.linkedin.com/in/luisurrutiaf/",
+          label: "Luis Urrutia LinkedIn",
+        }}
+        x={{
+          url: "https://x.com/luisurrutia_dev",
+          label: "Luis Urrutia X",
+        }}
+      />
+    </div>
+
+    <div class="flex flex-col gap-2.5 py-2.5">
+      <h1 class="text-4xl font-semibold text-title">
+        Hi there!
+        <span class="block sm:inline">I'm Luis Urrutia</span>
+      </h1>
+      <p class="relative text-pretty text-base font-light lg:w-11/12">
+        I'm a <Highlight color="sky">Software Engineer</Highlight> with over <Highlight
+          color="orange">12 years of experience</Highlight
+        >, excelling in tackling technological challenges and driving growth
+        through innovative solutions
+      </p>
+    </div>
+
+    <LocationBadge location="Santiago, Chile" />
+  </div>
+</Card>

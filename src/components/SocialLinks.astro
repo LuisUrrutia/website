@@ -72,6 +72,7 @@ const links = socialConfig
 <style>
   .social-link {
     position: relative;
+    isolation: isolate;
     color: var(--color-title);
   }
 
@@ -88,10 +89,10 @@ const links = socialConfig
     border-radius: 50%;
     background: radial-gradient(
       circle,
-      var(--glow-color) 0%,
-      oklch(from var(--glow-color) l c h / 0.4) 20%,
-      oklch(from var(--glow-color) l c h / 0.15) 45%,
-      oklch(from var(--glow-color) l c h / 0) 70%
+      var(--glow-color-40) 0%,
+      var(--glow-color-40) 15%,
+      var(--glow-color-15) 40%,
+      transparent 70%
     );
     opacity: 0;
     z-index: -1;
@@ -107,17 +108,25 @@ const links = socialConfig
   /* Brand colors */
   .social-link--github {
     --glow-color: oklch(40% 0.2 285 / 0.6);
+    --glow-color-40: oklch(40% 0.2 285 / 0.24);
+    --glow-color-15: oklch(40% 0.2 285 / 0.09);
   }
 
   .social-link--linkedin {
     --glow-color: oklch(50% 0.18 250 / 0.6);
+    --glow-color-40: oklch(50% 0.18 250 / 0.24);
+    --glow-color-15: oklch(50% 0.18 250 / 0.09);
   }
 
   .social-link--instagram {
     --glow-color: oklch(65% 0.25 350 / 0.6);
+    --glow-color-40: oklch(65% 0.25 350 / 0.24);
+    --glow-color-15: oklch(65% 0.25 350 / 0.09);
   }
 
   .social-link--x {
     --glow-color: oklch(30% 0 0 / 0.6);
+    --glow-color-40: oklch(30% 0 0 / 0.24);
+    --glow-color-15: oklch(30% 0 0 / 0.09);
   }
 </style>

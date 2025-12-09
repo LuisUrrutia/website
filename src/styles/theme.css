@@ -18,12 +18,15 @@
 	 * Using oklch() for better color interpolation and P3 gamut support.
 	 */
   --color-background: oklch(var(--oklch-background));
+  --color-foreground: oklch(var(--oklch-foreground));
   --color-title: oklch(var(--oklch-title));
   --color-subtitle: oklch(var(--oklch-subtitle));
   --color-card: oklch(var(--oklch-card));
   --color-card-foreground: oklch(var(--oklch-card-foreground));
   --color-available: oklch(var(--oklch-available));
   --color-available-foreground: oklch(var(--oklch-available-foreground));
+  --color-highlight-sky: oklch(var(--oklch-highlight-sky));
+  --color-highlight-orange: oklch(var(--oklch-highlight-orange));
 
   /* Shadows */
   --shadow-soft:
@@ -36,8 +39,9 @@
 :root {
   /* hsl(240 20% 98%) */
   --oklch-background: 98.3% 0.005 270;
+  --oklch-foreground: 38.78% 0.0354 284.63;
   /* hsl(240 14% 30%) */
-  --oklch-title: 37% 0.03 270;
+  --oklch-title: 38.78% 0.0354 284.63;
   /* hsl(240 14% 60%) */
   --oklch-subtitle: 66% 0.025 270;
   /* hsl(0 0% 100%) */
@@ -48,15 +52,22 @@
   --oklch-available: 94% 0.08 150;
   /* hsl(140 82% 26%) */
   --oklch-available-foreground: 44% 0.14 150;
+  /* #D3EDFF - light sky blue */
+  --oklch-highlight-sky: 93.27% 0.037 238.08;
+  /* #FFECD8 - warm peach/cream */
+  --oklch-highlight-orange: 0.95 0.04 68.83;
 }
 
 /* Primitive color tokens - dark theme */
 .dark {
   --oklch-background: 15% 0.02 270;
+  --oklch-foreground: 95% 0 0;
   --oklch-title: 95% 0 0;
   --oklch-subtitle: 70% 0.01 270;
   --oklch-card: 20% 0.02 270;
   --oklch-card-foreground: 95% 0 0;
   --oklch-available: 65% 0.18 145;
   --oklch-available-foreground: 95% 0.02 145;
+  --oklch-highlight-sky: 50% 0.12 220;
+  --oklch-highlight-orange: 55% 0.14 70;
 }
