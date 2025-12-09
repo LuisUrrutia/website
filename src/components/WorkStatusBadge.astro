@@ -1,0 +1,94 @@
+---
+import IconCircle from "@/components/icons/IconCircle.astro";
+import IconLaptop from "@/components/icons/IconLaptop.astro";
+
+type WorkStatus = "open" | "busy";
+
+interface Props {
+  status: WorkStatus;
+  texts?: {
+    open?: string;
+    busy?: string;
+  };
+}
+
+const DEFAULT_TEXTS = {
+  open: "Open to work",
+  busy: "Currently working",
+} as const;
+
+const { status, texts } = Astro.props;
+
+const isOpen = status === "open";
+const statusText = isOpen
+  ? (texts?.open ?? DEFAULT_TEXTS.open)
+  : (texts?.busy ?? DEFAULT_TEXTS.busy);
+---
+
+<div class="relative">
+  {
+    !isOpen && (
+      <div class="gradient-border absolute -left-px -top-px box-content size-full rounded-3xl p-px" />
+    )
+  }
+
+  <div
+    class:list={[
+      "relative inline-flex w-fit cursor-pointer items-center justify-center gap-2.5 rounded-3xl px-3 py-1.5 text-center text-xs",
+      isOpen ? "bg-available text-available-foreground" : "bg-white text-title",
+    ]}
+  >
+    {
+      isOpen ? (
+        <IconCircle class="ripple size-1.5 rounded-full" />
+      ) : (
+        <IconLaptop class="size-3 text-title" />
+      )
+    }
+    {statusText}
+  </div>
+</div>
+
+<style>
+  .gradient-border {
+    background: linear-gradient(
+      60deg,
+      oklch(72% 0.19 255),
+      oklch(72% 0.19 300),
+      oklch(72% 0.19 345),
+      oklch(72% 0.19 30),
+      oklch(72% 0.19 85),
+      oklch(72% 0.19 130),
+      oklch(72% 0.19 175),
+      oklch(72% 0.19 220)
+    );
+    background-size: 300% 300%;
+    animation: gradient-shift 4s ease infinite alternate;
+  }
+
+  @keyframes gradient-shift {
+    from {
+      background-position: 0% 50%;
+    }
+    to {
+      background-position: 100% 50%;
+    }
+  }
+
+  .ripple {
+    animation: ripple 1.7s linear infinite;
+  }
+
+  @keyframes ripple {
+    0% {
+      box-shadow: 0 0 0 0
+        oklch(from var(--color-available-foreground) l c h / 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 6px transparent;
+    }
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
+  }
+</style>
