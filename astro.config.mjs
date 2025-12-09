@@ -15,5 +15,19 @@ export default defineConfig({
 		svgo: true,
 	},
 
-	integrations: [playformCompress()],
+	integrations: [
+		(await import("@playform/compress")).default({
+			CSS: true,
+			HTML: {
+				"html-minifier-terser": {
+					removeAttributeQuotes: false,
+					conservativeCollapse: true,
+				},
+			},
+			Image: true,
+			JavaScript: true,
+			JSON: true,
+			SVG: true,
+		}),
+	],
 });
