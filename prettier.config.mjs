@@ -5,7 +5,15 @@ import * as prettierPluginOxc from "@prettier/plugin-oxc";
  * @type {import("prettier").Config}
  */
 const config = {
-  plugins: [prettierPluginOxc],
+  plugins: [prettierPluginOxc, "prettier-plugin-astro"],
+  overrides: [
+    {
+      files: "*.astro",
+      options: {
+        parser: "astro",
+      },
+    },
+  ],
 };
 
 export default config;
