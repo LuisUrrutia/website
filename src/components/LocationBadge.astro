@@ -1,0 +1,14 @@
+---
+import IconLocation from "@/components/icons/IconLocation.astro";
+
+interface Props {
+  location: string;
+}
+
+const { location } = Astro.props;
+---
+
+<div class="flex items-center gap-2.5 text-sm font-extralight">
+  <IconLocation class="size-4" />
+  <span>{location}</span>
+</div>
