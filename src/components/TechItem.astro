@@ -36,46 +36,48 @@ const formatExperience = (years: number) => {
 ---
 
 <div class:list={["flex items-center gap-3 p-2", className]}>
-	{
-		isThemedIcon ? (
-			<>
+	<div class="w-12 shrink-0">
+		{
+			isThemedIcon ? (
+				<>
+					<img
+						src={lightIcon}
+						alt=""
+						aria-hidden="true"
+						class="tech-icon tech-icon-light size-12 object-contain"
+						width="48"
+						height="48"
+						loading="lazy"
+						decoding="async"
+					/>
+					<img
+						src={darkIcon}
+						alt=""
+						aria-hidden="true"
+						class="tech-icon tech-icon-dark size-12 object-contain"
+						width="48"
+						height="48"
+						loading="lazy"
+						decoding="async"
+					/>
+				</>
+			) : (
 				<img
-					src={lightIcon}
+					src={iconSrc}
 					alt=""
 					aria-hidden="true"
-					class="tech-icon tech-icon-light size-12 object-contain"
+					class:list={[
+						"size-12 object-contain",
+						{ "tech-icon-auto": isAutoColor },
+					]}
 					width="48"
 					height="48"
 					loading="lazy"
 					decoding="async"
 				/>
-				<img
-					src={darkIcon}
-					alt=""
-					aria-hidden="true"
-					class="tech-icon tech-icon-dark size-12 object-contain"
-					width="48"
-					height="48"
-					loading="lazy"
-					decoding="async"
-				/>
-			</>
-		) : (
-			<img
-				src={iconSrc}
-				alt=""
-				aria-hidden="true"
-				class:list={[
-					"size-12 object-contain",
-					{ "tech-icon-auto": isAutoColor },
-				]}
-				width="48"
-				height="48"
-				loading="lazy"
-				decoding="async"
-			/>
-		)
-	}
+			)
+		}
+	</div>
 	<div class="flex flex-col gap-0.5">
 		<span class="text-title text-lg font-medium">{name}</span>
 		<span class="text-subtitle text-sm">

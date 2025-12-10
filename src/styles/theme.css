@@ -27,35 +27,44 @@
 	--color-available-foreground: oklch(var(--oklch-available-foreground));
 	--color-highlight-sky: oklch(var(--oklch-highlight-sky));
 	--color-highlight-orange: oklch(var(--oklch-highlight-orange));
+	--color-primary: oklch(var(--oklch-primary));
+	--color-secondary: oklch(var(--oklch-secondary));
+	--color-accent: oklch(var(--oklch-accent));
 
 	/* Shadows */
 	--shadow-soft:
-		0 -1px 2px 0 oklch(0.3 0.02 270 / 0.02),
-		0 1px 1px -1px oklch(0.3 0.02 270 / 0.07),
-		0 2px 2px -2px oklch(0.3 0.02 270 / 0.06),
-		0 10px 10px -4px oklch(0.3 0.02 270 / 0.02);
+		0 2px 6px -4px #2c2d3014, 0 3.02px 1.51px -0.625px #2c2d3003,
+		0 7.17px 3.58px -1.25px #2c2d3003, 0 13.07px 6.54px -1.875px #2c2d3003,
+		0 21.73px 10.87px -2.5px #2c2d3003, 0 35.09px 17.55px -3.125px #2c2d3003,
+		0 57.44px 28.72px -3.75px #2c2d3003, 0 98.91px 49.46px -4.375px #2c2d3000,
+		0 180px 90px -5px #2c2d3000;
 }
 
 /* Primitive color tokens - light theme */
 :root {
-	/* hsl(240 20% 98%) */
-	--oklch-background: 98.3% 0.005 270;
-	--oklch-foreground: 38.78% 0.0354 284.63;
-	/* hsl(240 14% 30%) */
-	--oklch-title: 38.78% 0.0354 284.63;
-	/* hsl(240 14% 60%) */
-	--oklch-subtitle: 64.57% 0.042 283.55;
-	/* hsl(0 0% 100%) */
+	/* #F9F8FA - Background */
+	--oklch-background: 97.8% 0.004 290;
+	/* #6B7280 - Body text */
+	--oklch-foreground: 53.5% 0.014 264;
+	/* #0F172A - Title */
+	--oklch-title: 20.8% 0.04 265;
+	/* #4B5563 - Subtitle */
+	--oklch-subtitle: 44.6% 0.016 264;
+	/* white */
 	--oklch-card: 100% 0 0;
-	/* hsl(240 14% 60%) */
-	--oklch-card-foreground: 66% 0.025 270;
-	/* hsl(141 88% 90%) */
-	--oklch-available: 94% 0.08 150;
-	/* hsl(140 82% 26%) */
-	--oklch-available-foreground: 44% 0.14 150;
-	/* #D3EDFF - light sky blue */
+	/* #6B7280 */
+	--oklch-card-foreground: 53.5% 0.014 264;
+	/* available status */
+	--oklch-available: 72.3% 0.194 149;
+	--oklch-available-foreground: 100% 0 0;
+	/* #6366F1 - Primary (indigo) */
+	--oklch-primary: 54.6% 0.215 264;
+	/* #4F46E5 - Secondary (deeper indigo) */
+	--oklch-secondary: 49.6% 0.222 264;
+	/* #A5B4FC - Accent (light indigo) */
+	--oklch-accent: 76.5% 0.108 264;
+	/* highlight colors */
 	--oklch-highlight-sky: 93.27% 0.037 238.08;
-	/* #FFECD8 - warm peach/cream */
 	--oklch-highlight-orange: 0.95 0.04 68.83;
 }
 
@@ -69,6 +78,9 @@
 	--oklch-card-foreground: 85% 0.01 270;
 	--oklch-available: 45% 0.12 150;
 	--oklch-available-foreground: 90% 0.05 150;
+	--oklch-primary: 60% 0.2 264;
+	--oklch-secondary: 55% 0.2 264;
+	--oklch-accent: 70% 0.12 264;
 	--oklch-highlight-sky: 0.47 0.12 240.81;
 	--oklch-highlight-orange: 0.59 0.15 60.32;
 }
