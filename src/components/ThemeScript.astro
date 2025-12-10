@@ -1,0 +1,27 @@
+---
+// Inline blocking script to prevent theme flash
+// This runs before any rendering occurs
+---
+
+<script is:inline>
+	(function () {
+		const key = "theme";
+		const stored = localStorage.getItem(key);
+		const prefersDark = window.matchMedia(
+			"(prefers-color-scheme: dark)",
+		).matches;
+
+		let theme;
+		let mode;
+		if (stored === "light" || stored === "dark") {
+			theme = stored;
+			mode = stored;
+		} else {
+			theme = prefersDark ? "dark" : "light";
+			mode = "auto";
+		}
+
+		document.documentElement.dataset.theme = theme;
+		document.documentElement.dataset.themeMode = mode;
+	})();
+</script>

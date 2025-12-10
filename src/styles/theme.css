@@ -59,15 +59,15 @@
 }
 
 /* Primitive color tokens - dark theme */
-.dark {
+[data-theme="dark"] {
 	--oklch-background: 15% 0.02 270;
-	--oklch-foreground: 95% 0 0;
-	--oklch-title: 95% 0 0;
-	--oklch-subtitle: 70% 0.01 270;
-	--oklch-card: 20% 0.02 270;
-	--oklch-card-foreground: 95% 0 0;
-	--oklch-available: 65% 0.18 145;
-	--oklch-available-foreground: 95% 0.02 145;
-	--oklch-highlight-sky: 50% 0.12 220;
-	--oklch-highlight-orange: 55% 0.14 70;
+	--oklch-foreground: 85% 0.01 270;
+	--oklch-title: 96% 0 0;
+	--oklch-subtitle: 65% 0.015 270;
+	--oklch-card: 20% 0.015 270;
+	--oklch-card-foreground: 85% 0.01 270;
+	--oklch-available: 45% 0.12 150;
+	--oklch-available-foreground: 90% 0.05 150;
+	--oklch-highlight-sky: 35% 0.08 240;
+	--oklch-highlight-orange: 40% 0.1 60;
 }

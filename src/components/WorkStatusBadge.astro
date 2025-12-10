@@ -25,17 +25,13 @@ const statusText = isOpen
 	: (texts?.busy ?? DEFAULT_TEXTS.busy);
 ---
 
-<div class="relative w-fit">
-	{
-		!isOpen && (
-			<div class="gradient-border absolute -left-px -top-px box-content size-full rounded-3xl p-px" />
-		)
-	}
+<div class="relative w-fit h-fit">
+	{!isOpen && <div class="gradient-border absolute -inset-px rounded-3xl" />}
 
 	<div
 		class:list={[
 			"relative inline-flex w-fit cursor-pointer items-center justify-center gap-2.5 rounded-3xl px-3 py-1.5 text-center text-xs",
-			isOpen ? "bg-available text-available-foreground" : "bg-white text-title",
+			isOpen ? "bg-available text-available-foreground" : "bg-card text-title",
 		]}
 	>
 		{
@@ -51,19 +47,8 @@ const statusText = isOpen
 
 <style>
 	.gradient-border {
-		overflow: hidden;
-	}
-
-	.gradient-border::before {
-		content: "";
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		width: 200%;
-		aspect-ratio: 1;
-		translate: -50% -50%;
-		background: conic-gradient(
-			from 0deg,
+		background: linear-gradient(
+			60deg,
 			oklch(72% 0.19 255),
 			oklch(72% 0.19 300),
 			oklch(72% 0.19 345),
@@ -71,19 +56,18 @@ const statusText = isOpen
 			oklch(72% 0.19 85),
 			oklch(72% 0.19 130),
 			oklch(72% 0.19 175),
-			oklch(72% 0.19 220),
-			oklch(72% 0.19 255)
+			oklch(72% 0.19 220)
 		);
-		animation: gradient-shift 4s linear infinite;
-		will-change: transform;
+		background-size: 300% 300%;
+		animation: gradient-shift 4s ease infinite alternate;
 	}
 
 	@keyframes gradient-shift {
 		from {
-			transform: rotate(0deg);
+			background-position: 0% 50%;
 		}
 		to {
-			transform: rotate(360deg);
+			background-position: 100% 50%;
 		}
 	}
 

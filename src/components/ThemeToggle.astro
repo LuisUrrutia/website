@@ -1,0 +1,118 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import IconSun from "@/assets/icons/sun.svg";
+import IconMoon from "@/assets/icons/moon.svg";
+import IconSunMoon from "@/assets/icons/sun-moon.svg";
+
+interface Props extends HTMLAttributes<"button"> {}
+
+const { class: className, ...attrs } = Astro.props;
+---
+
+<button
+	type="button"
+	class:list={[
+		"theme-toggle flex items-center justify-center cursor-pointer transition-colors hover:border-title hover:text-title",
+		className,
+	]}
+	aria-label="Toggle theme"
+	data-theme-toggle
+	{...attrs}
+>
+	<IconSun
+		class="theme-icon theme-icon-light size-6 sm:size-4"
+		aria-hidden="true"
+	/>
+	<IconMoon
+		class="theme-icon theme-icon-dark size-6 sm:size-4"
+		aria-hidden="true"
+	/>
+	<IconSunMoon
+		class="theme-icon theme-icon-auto size-6 sm:size-4"
+		aria-hidden="true"
+	/>
+</button>
+
+<style>
+	.theme-icon {
+		display: none;
+	}
+
+	/* Show icon based on button's data-mode (set by JS after interaction) */
+	:where(.theme-toggle[data-mode="light"]) .theme-icon-light,
+	:where(.theme-toggle[data-mode="dark"]) .theme-icon-dark,
+	:where(.theme-toggle[data-mode="auto"]) .theme-icon-auto {
+		display: block;
+	}
+
+	/* Initial state: show icon based on root's data-theme-mode (set by blocking script) */
+	:global(:where([data-theme-mode="light"]))
+		.theme-toggle:not([data-mode])
+		.theme-icon-light,
+	:global(:where([data-theme-mode="dark"]))
+		.theme-toggle:not([data-mode])
+		.theme-icon-dark,
+	:global(:where([data-theme-mode="auto"]))
+		.theme-toggle:not([data-mode])
+		.theme-icon-auto {
+		display: block;
+	}
+</style>
+
+<script>
+	import {
+		getStoredMode,
+		cycleMode,
+		initThemeListener,
+		type ThemeMode,
+	} from "@/lib/theme";
+
+	// Constant labels - created once
+	const LABELS: Record<ThemeMode, string> = {
+		auto: "Theme: Auto (click to switch to Light)",
+		light: "Theme: Light (click to switch to Dark)",
+		dark: "Theme: Dark (click to switch to Auto)",
+	};
+
+	// Cache buttons - refreshed on navigation
+	let cachedButtons: HTMLButtonElement[] = [];
+
+	function refreshButtonCache(): void {
+		cachedButtons = Array.from(
+			document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]"),
+		);
+	}
+
+	function updateAllButtons(mode: ThemeMode): void {
+		const label = LABELS[mode];
+		for (const btn of cachedButtons) {
+			btn.dataset.mode = mode;
+			btn.ariaLabel = label;
+		}
+	}
+
+	function initThemeToggle(): void {
+		refreshButtonCache();
+		updateAllButtons(getStoredMode());
+
+		// Event delegation on document - handles all current and future buttons
+		document.addEventListener("click", (e) => {
+			const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(
+				"[data-theme-toggle]",
+			);
+			if (!btn) return;
+
+			const currentMode = (btn.dataset.mode as ThemeMode) || "auto";
+			const newMode = cycleMode(currentMode);
+			updateAllButtons(newMode);
+		});
+
+		initThemeListener();
+	}
+
+	initThemeToggle();
+	document.addEventListener("astro:after-swap", () => {
+		refreshButtonCache();
+		updateAllButtons(getStoredMode());
+	});
+</script>

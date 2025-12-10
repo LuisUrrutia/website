@@ -1,12 +1,21 @@
 ---
+interface ThemedIcon {
+	light: string;
+	dark: string;
+}
+
 interface Props {
 	name: string;
-	icon: string;
+	icon: string | ThemedIcon;
 	experience: number;
 	class?: string;
 }
 
 const { name, icon, experience, class: className } = Astro.props;
+
+const isThemedIcon = typeof icon === "object";
+const lightIcon = isThemedIcon ? icon.light : icon;
+const darkIcon = isThemedIcon ? icon.dark : icon;
 
 const formatExperience = (years: number) => {
 	if (years < 1) return "Less than 1 year of experience";
@@ -16,16 +25,43 @@ const formatExperience = (years: number) => {
 ---
 
 <div class:list={["flex items-center gap-3 p-2", className]}>
-	<img
-		src={icon}
-		alt=""
-		aria-hidden="true"
-		class="size-12 object-contain"
-		width="48"
-		height="48"
-		loading="lazy"
-		decoding="async"
-	/>
+	{
+		isThemedIcon ? (
+			<>
+				<img
+					src={lightIcon}
+					alt=""
+					aria-hidden="true"
+					class="tech-icon tech-icon-light size-12 object-contain"
+					width="48"
+					height="48"
+					loading="lazy"
+					decoding="async"
+				/>
+				<img
+					src={darkIcon}
+					alt=""
+					aria-hidden="true"
+					class="tech-icon tech-icon-dark size-12 object-contain"
+					width="48"
+					height="48"
+					loading="lazy"
+					decoding="async"
+				/>
+			</>
+		) : (
+			<img
+				src={icon}
+				alt=""
+				aria-hidden="true"
+				class="size-12 object-contain"
+				width="48"
+				height="48"
+				loading="lazy"
+				decoding="async"
+			/>
+		)
+	}
 	<div class="flex flex-col gap-0.5">
 		<span class="text-lg font-medium text-title">{name}</span>
 		<span class="text-sm text-subtitle">
@@ -33,3 +69,19 @@ const formatExperience = (years: number) => {
 		</span>
 	</div>
 </div>
+
+<style>
+	/* Default: show light icon, hide dark */
+	.tech-icon-dark {
+		display: none;
+	}
+
+	/* Dark theme: show dark icon, hide light */
+	:global([data-theme="dark"]) .tech-icon-light {
+		display: none;
+	}
+
+	:global([data-theme="dark"]) .tech-icon-dark {
+		display: block;
+	}
+</style>

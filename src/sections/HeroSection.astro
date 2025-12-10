@@ -6,6 +6,7 @@ import IconRocket from "@/assets/icons/rocket.svg";
 import LocationBadge from "@/components/LocationBadge.astro";
 import ProfilePicture from "@/components/ProfilePicture.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
 import WorkStatusBadge from "@/components/WorkStatusBadge.astro";
 ---
 
@@ -16,24 +17,27 @@ import WorkStatusBadge from "@/components/WorkStatusBadge.astro";
 		<div class="flex flex-1 flex-col gap-4">
 			<div class="flex flex-row justify-between gap-5 py-2 md:py-0">
 				<WorkStatusBadge status="busy" />
-				<SocialLinks
-					instagram={{
-						url: "https://www.instagram.com/luisurrutiaf/",
-						label: "Luis Urrutia Instagram",
-					}}
-					github={{
-						url: "https://github.com/LuisUrrutia",
-						label: "Luis Urrutia GitHub",
-					}}
-					linkedin={{
-						url: "https://www.linkedin.com/in/luisurrutiaf/",
-						label: "Luis Urrutia LinkedIn",
-					}}
-					x={{
-						url: "https://x.com/luisurrutia_dev",
-						label: "Luis Urrutia X",
-					}}
-				/>
+				<div class="flex items-center gap-3">
+					<ThemeToggle />
+					<SocialLinks
+						instagram={{
+							url: "https://www.instagram.com/luisurrutiaf/",
+							label: "Luis Urrutia Instagram",
+						}}
+						github={{
+							url: "https://github.com/LuisUrrutia",
+							label: "Luis Urrutia GitHub",
+						}}
+						linkedin={{
+							url: "https://www.linkedin.com/in/luisurrutiaf/",
+							label: "Luis Urrutia LinkedIn",
+						}}
+						x={{
+							url: "https://x.com/luisurrutia_dev",
+							label: "Luis Urrutia X",
+						}}
+					/>
+				</div>
 			</div>
 
 			<div class="flex flex-col gap-2.5 py-2.5">
