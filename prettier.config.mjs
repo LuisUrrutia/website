@@ -9,6 +9,7 @@ const config = {
 		prettierPluginOxc,
 		"prettier-plugin-astro",
 		"prettier-plugin-packagejson",
+		"prettier-plugin-tailwindcss",
 	],
 	overrides: [
 		{

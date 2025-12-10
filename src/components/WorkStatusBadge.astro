@@ -25,7 +25,7 @@ const statusText = isOpen
 	: (texts?.busy ?? DEFAULT_TEXTS.busy);
 ---
 
-<div class="relative w-fit h-fit">
+<div class="relative h-fit w-fit">
 	{!isOpen && <div class="gradient-border absolute -inset-px rounded-3xl" />}
 
 	<div
@@ -38,7 +38,7 @@ const statusText = isOpen
 			isOpen ? (
 				<IconCircle class="ripple size-1.5 rounded-full" />
 			) : (
-				<IconLaptop class="size-3 text-title" />
+				<IconLaptop class="text-title size-3" />
 			)
 		}
 		{statusText}

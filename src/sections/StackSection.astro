@@ -55,8 +55,8 @@ const indicesByCategory = technologies.reduce(
 		<header
 			class="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
 		>
-			<h2 class="text-2xl font-semibold text-title">Stack</h2>
-			<div data-stack-filters class="flex gap-2 items-center">
+			<h2 class="text-title text-2xl font-semibold">Stack</h2>
+			<div data-stack-filters class="flex items-center gap-2">
 				<ClearFilterButton data-stack-clear class="order-1 sm:order-first" />
 				{
 					categories.map(({ id, label }) => (
@@ -67,7 +67,7 @@ const indicesByCategory = technologies.reduce(
 		</header>
 
 		<ul
-			class="stack-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 list-none p-0 m-0"
+			class="stack-grid m-0 grid list-none grid-cols-1 p-0 sm:grid-cols-2 md:grid-cols-3"
 			role="list"
 		>
 			{

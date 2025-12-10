@@ -25,9 +25,9 @@ const { posts, initialVisible = 3 } = Astro.props;
 		data-posts-section
 		data-initial-visible={initialVisible}
 	>
-		<h2 class="text-2xl font-semibold text-title">Latest posts</h2>
+		<h2 class="text-title text-2xl font-semibold">Latest posts</h2>
 
-		<ul class="flex flex-col gap-6 list-none p-0 m-0">
+		<ul class="m-0 flex list-none flex-col gap-6 p-0">
 			{
 				posts.map((post, index) => (
 					<li class:list={["posts-item", { hidden: index >= initialVisible }]}>

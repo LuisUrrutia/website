@@ -9,7 +9,7 @@ const { as: Element = "section", class: className, ...props } = Astro.props;
 ---
 
 <Element
-	class:list={["rounded-3xl bg-card p-5 shadow-soft", className]}
+	class:list={["bg-card shadow-soft rounded-3xl p-5", className]}
 	{...props}
 >
 	<slot />
