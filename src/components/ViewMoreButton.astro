@@ -1,16 +1,17 @@
 ---
+import type { HTMLAttributes } from "astro/types";
 import IconChevronDown from "@/assets/icons/chevron-down.svg";
 
-interface Props {
+interface Props extends HTMLAttributes<"button"> {
 	expandedText?: string;
 	collapsedText?: string;
-	class?: string;
 }
 
 const {
 	expandedText = "View Less",
 	collapsedText = "View More",
 	class: className,
+	...attrs
 } = Astro.props;
 ---
 
@@ -22,8 +23,9 @@ const {
 	]}
 	data-expanded-text={expandedText}
 	data-collapsed-text={collapsedText}
+	{...attrs}
 >
-	<span class="view-more-btn-text">{collapsedText}</span>
+	<span data-view-more-text>{collapsedText}</span>
 	<IconChevronDown class="view-more-btn-icon size-4 transition-transform" />
 </button>
 

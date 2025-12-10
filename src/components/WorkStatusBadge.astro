@@ -51,8 +51,19 @@ const statusText = isOpen
 
 <style>
 	.gradient-border {
-		background: linear-gradient(
-			60deg,
+		overflow: hidden;
+	}
+
+	.gradient-border::before {
+		content: "";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 200%;
+		aspect-ratio: 1;
+		translate: -50% -50%;
+		background: conic-gradient(
+			from 0deg,
 			oklch(72% 0.19 255),
 			oklch(72% 0.19 300),
 			oklch(72% 0.19 345),
@@ -60,35 +71,48 @@ const statusText = isOpen
 			oklch(72% 0.19 85),
 			oklch(72% 0.19 130),
 			oklch(72% 0.19 175),
-			oklch(72% 0.19 220)
+			oklch(72% 0.19 220),
+			oklch(72% 0.19 255)
 		);
-		background-size: 300% 300%;
-		animation: gradient-shift 4s ease infinite alternate;
+		animation: gradient-shift 4s linear infinite;
+		will-change: transform;
 	}
 
 	@keyframes gradient-shift {
 		from {
-			background-position: 0% 50%;
+			transform: rotate(0deg);
 		}
 		to {
-			background-position: 100% 50%;
+			transform: rotate(360deg);
 		}
 	}
 
 	.ripple {
+		position: relative;
+	}
+
+	.ripple::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		background-color: currentColor;
 		animation: ripple 1.7s linear infinite;
+		will-change: transform, opacity;
 	}
 
 	@keyframes ripple {
 		0% {
-			box-shadow: 0 0 0 0
-				oklch(from var(--color-available-foreground) l c h / 0.4);
+			transform: scale(1);
+			opacity: 0.4;
 		}
 		70% {
-			box-shadow: 0 0 0 6px transparent;
+			transform: scale(9);
+			opacity: 0;
 		}
 		100% {
-			box-shadow: 0 0 0 0 transparent;
+			transform: scale(9);
+			opacity: 0;
 		}
 	}
 </style>

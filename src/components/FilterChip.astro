@@ -1,12 +1,19 @@
 ---
-interface Props {
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"button"> {
 	label: string;
 	category?: string;
 	pressed?: boolean;
-	class?: string;
 }
 
-const { label, category, pressed = false, class: className } = Astro.props;
+const {
+	label,
+	category,
+	pressed = false,
+	class: className,
+	...attrs
+} = Astro.props;
 ---
 
 <button
@@ -16,7 +23,8 @@ const { label, category, pressed = false, class: className } = Astro.props;
 		className,
 	]}
 	data-category={category}
-	aria-pressed={String(pressed)}
+	aria-pressed={pressed ? "true" : "false"}
+	{...attrs}
 >
 	{label}
 </button>

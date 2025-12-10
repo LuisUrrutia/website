@@ -1,8 +1,8 @@
 ---
+import type { HTMLAttributes } from "astro/types";
 import IconClose from "@/assets/icons/close.svg";
 
-interface Props {
-	class?: string;
+interface Props extends HTMLAttributes<"button"> {
 	label?: string;
 	hidden?: boolean;
 }
@@ -11,6 +11,7 @@ const {
 	class: className,
 	label = "Clear filters",
 	hidden = true,
+	...attrs
 } = Astro.props;
 ---
 
@@ -22,6 +23,7 @@ const {
 		className,
 	]}
 	aria-label={label}
+	{...attrs}
 >
 	<IconClose class="size-4" />
 </button>

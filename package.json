@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:preview": "rm -rf dist; astro build && astro preview",
     "preview": "astro preview",
     "astro": "astro",
     "lint": "oxlint --type-aware",
