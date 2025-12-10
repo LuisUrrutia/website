@@ -7,9 +7,14 @@ import ViewMoreButton from "@/components/ViewMoreButton.astro";
 
 type Category = "frameworks" | "languages" | "tools";
 
+interface ThemedIcon {
+	light: string;
+	dark: string;
+}
+
 interface Technology {
 	name: string;
-	icon: string;
+	icon: string | ThemedIcon;
 	experience: number;
 	category: Category;
 }
