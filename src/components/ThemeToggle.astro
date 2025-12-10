@@ -4,19 +4,36 @@ import IconSun from "@/assets/icons/sun.svg";
 import IconMoon from "@/assets/icons/moon.svg";
 import IconSunMoon from "@/assets/icons/sun-moon.svg";
 
-interface Props extends HTMLAttributes<"button"> {}
+interface Props extends HTMLAttributes<"button"> {
+	labels?: {
+		auto?: string;
+		light?: string;
+		dark?: string;
+	};
+}
 
-const { class: className, ...attrs } = Astro.props;
+const {
+	class: className,
+	labels = {
+		auto: "Theme: Auto (click to switch to Light)",
+		light: "Theme: Light (click to switch to Dark)",
+		dark: "Theme: Dark (click to switch to Auto)",
+	},
+	...attrs
+} = Astro.props;
 ---
 
 <button
 	type="button"
 	class:list={[
-		"theme-toggle flex items-center justify-center cursor-pointer transition-colors hover:border-title hover:text-title",
+		"theme-toggle flex items-center justify-center cursor-pointer transition-colors hover:text-subtitle",
 		className,
 	]}
-	aria-label="Toggle theme"
+	aria-label={labels.auto}
 	data-theme-toggle
+	data-label-auto={labels.auto}
+	data-label-light={labels.light}
+	data-label-dark={labels.dark}
 	{...attrs}
 >
 	<IconSun
@@ -67,13 +84,6 @@ const { class: className, ...attrs } = Astro.props;
 		type ThemeMode,
 	} from "@/lib/theme";
 
-	// Constant labels - created once
-	const LABELS: Record<ThemeMode, string> = {
-		auto: "Theme: Auto (click to switch to Light)",
-		light: "Theme: Light (click to switch to Dark)",
-		dark: "Theme: Dark (click to switch to Auto)",
-	};
-
 	// Cache buttons - refreshed on navigation
 	let cachedButtons: HTMLButtonElement[] = [];
 
@@ -83,11 +93,17 @@ const { class: className, ...attrs } = Astro.props;
 		);
 	}
 
+	function updateButton(btn: HTMLButtonElement, mode: ThemeMode): void {
+		btn.dataset.mode = mode;
+		// Read label from data attribute (supports i18n)
+		const label =
+			btn.dataset[`label${mode.charAt(0).toUpperCase()}${mode.slice(1)}`];
+		if (label) btn.ariaLabel = label;
+	}
+
 	function updateAllButtons(mode: ThemeMode): void {
-		const label = LABELS[mode];
 		for (const btn of cachedButtons) {
-			btn.dataset.mode = mode;
-			btn.ariaLabel = label;
+			updateButton(btn, mode);
 		}
 	}
 
