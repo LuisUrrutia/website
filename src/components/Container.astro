@@ -9,25 +9,11 @@ const { as: Element = "div", class: className, ...props } = Astro.props;
 ---
 
 <Element
-	class:list={["page-container", "mx-4", "sm:mx-auto", className]}
+	class:list={[
+		"mx-4 max-w-full sm:mx-auto sm:max-w-160 lg:max-w-200",
+		className,
+	]}
 	{...props}
 >
 	<slot />
 </Element>
-
-<style>
-	.page-container {
-		max-width: 100%;
-	}
-
-	@media (width >= 40rem) {
-		.page-container {
-			max-width: 640px;
-		}
-	}
-	@media (width >= 64rem) {
-		.page-container {
-			max-width: 800px;
-		}
-	}
-</style>
