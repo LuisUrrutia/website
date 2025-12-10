@@ -48,26 +48,23 @@ const statusText = isOpen
 <style>
 	.gradient-border {
 		background: linear-gradient(
-			60deg,
+			90deg,
 			oklch(72% 0.19 255),
 			oklch(72% 0.19 300),
 			oklch(72% 0.19 345),
 			oklch(72% 0.19 30),
-			oklch(72% 0.19 85),
-			oklch(72% 0.19 130),
-			oklch(72% 0.19 175),
-			oklch(72% 0.19 220)
+			oklch(72% 0.19 85)
 		);
-		background-size: 300% 300%;
-		animation: gradient-shift 4s ease infinite alternate;
+		animation: gradient-hue 4s linear infinite;
+		will-change: filter;
 	}
 
-	@keyframes gradient-shift {
+	@keyframes gradient-hue {
 		from {
-			background-position: 0% 50%;
+			filter: hue-rotate(0deg);
 		}
 		to {
-			background-position: 100% 50%;
+			filter: hue-rotate(360deg);
 		}
 	}
 

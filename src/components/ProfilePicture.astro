@@ -12,30 +12,41 @@ const { alt, class: className } = Astro.props;
 
 const HEIGHT = 224;
 
+// Horizontal photo widths (mobile < 768px):
+// - Container: 100vw - 32px (mx-4) - 40px (card padding) = ~calc(100vw - 72px)
+// - At 320px: ~248px, at 640px: ~568px, at 767px: ~600px (capped by container)
+// - 300px: 1x small, 600px: 2x small / 1x large, 1200px: 2x large
+const HORIZONTAL_WIDTHS = [300, 600, 1200];
+
+// Vertical photo widths (desktop >= 768px):
+// - Fixed width: 168px
+// - With 2x/3x DPR: 336px, 504px
+const VERTICAL_WIDTHS = [168, 336, 504];
+
 const [horizontalAvif, horizontalWebp, verticalAvif, verticalWebp] =
 	await Promise.all([
 		getImage({
 			src: horizontalPhoto,
 			height: HEIGHT,
-			widths: [600, 1200, 1800],
+			widths: HORIZONTAL_WIDTHS,
 			format: "avif",
 		}),
 		getImage({
 			src: horizontalPhoto,
 			height: HEIGHT,
-			widths: [600, 1200, 1800],
+			widths: HORIZONTAL_WIDTHS,
 			format: "webp",
 		}),
 		getImage({
 			src: verticalPhoto,
 			height: HEIGHT,
-			widths: [168, 336, 504],
+			widths: VERTICAL_WIDTHS,
 			format: "avif",
 		}),
 		getImage({
 			src: verticalPhoto,
 			height: HEIGHT,
-			widths: [168, 336, 504],
+			widths: VERTICAL_WIDTHS,
 			format: "webp",
 		}),
 	]);
@@ -47,13 +58,13 @@ const [horizontalAvif, horizontalWebp, verticalAvif, verticalWebp] =
 		type="image/avif"
 		srcset={horizontalAvif.srcSet.attribute}
 		media="(max-width: 767px)"
-		sizes="600px"
+		sizes="(max-width: 640px) calc(100vw - 72px), 600px"
 	/>
 	<source
 		type="image/webp"
 		srcset={horizontalWebp.srcSet.attribute}
 		media="(max-width: 767px)"
-		sizes="600px"
+		sizes="(max-width: 640px) calc(100vw - 72px), 600px"
 	/>
 	{/* Desktop: vertical photo */}
 	<source
