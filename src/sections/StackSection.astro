@@ -1,6 +1,8 @@
 ---
 import Card from "@/components/Card.astro";
-import IconClose from "@/components/icons/IconClose.astro";
+import ClearFilterButton from "@/components/ClearFilterButton.astro";
+import FilterChip from "@/components/FilterChip.astro";
+import TechItem from "@/components/TechItem.astro";
 import ViewMoreButton from "@/components/ViewMoreButton.astro";
 
 type Category = "frameworks" | "languages" | "tools";
@@ -24,12 +26,6 @@ const categories: { id: Category; label: string }[] = [
 	{ id: "languages", label: "Languages" },
 	{ id: "tools", label: "Tools" },
 ];
-
-const formatExperience = (years: number) => {
-	return years === 1
-		? "+1 year of experience"
-		: `+${years} years of experience`;
-};
 ---
 
 <Card>
@@ -43,23 +39,10 @@ const formatExperience = (years: number) => {
 		>
 			<h2 class="text-2xl font-semibold text-title">Stack</h2>
 			<div class="flex gap-2 items-center">
-				<button
-					type="button"
-					class="stack-clear hidden order-1 sm:order-first size-8 items-center justify-center border border-subtitle rounded-full bg-transparent text-subtitle cursor-pointer transition-all hover:border-title hover:text-title"
-					aria-label="Clear filters"
-				>
-					<IconClose class="size-4" />
-				</button>
+				<ClearFilterButton class="stack-clear order-1 sm:order-first" />
 				{
 					categories.map(({ id, label }) => (
-						<button
-							type="button"
-							class="stack-filter py-1.5 px-4 border border-subtitle rounded-full bg-transparent text-subtitle text-sm cursor-pointer transition-all hover:border-title hover:text-title"
-							data-category={id}
-							aria-pressed="false"
-						>
-							{label}
-						</button>
+						<FilterChip category={id} label={label} class="stack-filter" />
 					))
 				}
 			</div>
@@ -72,25 +55,14 @@ const formatExperience = (years: number) => {
 			{
 				technologies.map((tech, index) => (
 					<li
-						class:list={[
-							"stack-item flex items-center gap-3 p-2",
-							{ hidden: index >= initialVisible },
-						]}
+						class:list={["stack-item", { hidden: index >= initialVisible }]}
 						data-category={tech.category}
 					>
-						<img
-							src={tech.icon}
-							alt={`${tech.name} logo`}
-							class="size-12 object-contain"
-							width="48"
-							height="48"
+						<TechItem
+							name={tech.name}
+							icon={tech.icon}
+							experience={tech.experience}
 						/>
-						<div class="flex flex-col gap-0.5">
-							<span class="text-lg font-medium text-title">{tech.name}</span>
-							<span class="text-sm text-subtitle">
-								{formatExperience(tech.experience)}
-							</span>
-						</div>
 					</li>
 				))
 			}
@@ -101,58 +73,6 @@ const formatExperience = (years: number) => {
 </Card>
 
 <style>
-	.stack-filter[aria-pressed="true"] {
-		border-color: var(--color-title);
-		background: var(--color-title);
-		color: var(--color-card);
-	}
-
-	.stack-clear {
-		display: flex;
-		opacity: 1;
-		transform: rotate(0deg) scale(1);
-	}
-
-	.stack-clear:hover {
-		transform: rotate(90deg) scale(1.1);
-	}
-
-	.stack-clear.hidden {
-		opacity: 0;
-		transform: scale(0.5);
-		pointer-events: none;
-	}
-
-	.stack-clear.appearing {
-		animation: clear-appear 0.25s ease forwards;
-	}
-
-	.stack-clear.disappearing {
-		animation: clear-disappear 0.25s ease forwards;
-	}
-
-	@keyframes clear-appear {
-		from {
-			opacity: 0;
-			transform: rotate(-90deg) scale(0.5);
-		}
-		to {
-			opacity: 1;
-			transform: rotate(0deg) scale(1);
-		}
-	}
-
-	@keyframes clear-disappear {
-		from {
-			opacity: 1;
-			transform: rotate(0deg) scale(1);
-		}
-		to {
-			opacity: 0;
-			transform: rotate(90deg) scale(0.5);
-		}
-	}
-
 	.stack-item.hidden,
 	.stack-item.filtered {
 		display: none;

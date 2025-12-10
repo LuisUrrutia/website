@@ -1,0 +1,35 @@
+---
+interface Props {
+	name: string;
+	icon: string;
+	experience: number;
+	class?: string;
+}
+
+const { name, icon, experience, class: className } = Astro.props;
+
+const formatExperience = (years: number) => {
+	if (years < 1) return "Less than 1 year of experience";
+	if (years === 1) return "+1 year of experience";
+	return `+${years} years of experience`;
+};
+---
+
+<div class:list={["flex items-center gap-3 p-2", className]}>
+	<img
+		src={icon}
+		alt=""
+		aria-hidden="true"
+		class="size-12 object-contain"
+		width="48"
+		height="48"
+		loading="lazy"
+		decoding="async"
+	/>
+	<div class="flex flex-col gap-0.5">
+		<span class="text-lg font-medium text-title">{name}</span>
+		<span class="text-sm text-subtitle">
+			{formatExperience(experience)}
+		</span>
+	</div>
+</div>

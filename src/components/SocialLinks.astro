@@ -1,132 +1,132 @@
 ---
-import IconGitHub from "@/components/icons/IconGitHub.astro";
-import IconInstagram from "@/components/icons/IconInstagram.astro";
-import IconLinkedIn from "@/components/icons/IconLinkedIn.astro";
-import IconX from "@/components/icons/IconX.astro";
+import IconGitHub from "@/assets/icons/github.svg";
+import IconInstagram from "@/assets/icons/instagram.svg";
+import IconLinkedIn from "@/assets/icons/linkedin.svg";
+import IconX from "@/assets/icons/x.svg";
 
 interface SocialLink {
-  url: string;
-  label?: string;
+	url: string;
+	label?: string;
 }
 
 interface Props {
-  github?: SocialLink | string;
-  linkedin?: SocialLink | string;
-  instagram?: SocialLink | string;
-  x?: SocialLink | string;
+	github?: SocialLink | string;
+	linkedin?: SocialLink | string;
+	instagram?: SocialLink | string;
+	x?: SocialLink | string;
 }
 
 const { github, linkedin, instagram, x } = Astro.props;
 
 const socialConfig = [
-  { key: "github", link: github, icon: IconGitHub, defaultLabel: "GitHub" },
-  {
-    key: "linkedin",
-    link: linkedin,
-    icon: IconLinkedIn,
-    defaultLabel: "LinkedIn",
-  },
-  {
-    key: "instagram",
-    link: instagram,
-    icon: IconInstagram,
-    defaultLabel: "Instagram",
-  },
-  { key: "x", link: x, icon: IconX, defaultLabel: "X" },
+	{ key: "github", link: github, icon: IconGitHub, defaultLabel: "GitHub" },
+	{
+		key: "linkedin",
+		link: linkedin,
+		icon: IconLinkedIn,
+		defaultLabel: "LinkedIn",
+	},
+	{
+		key: "instagram",
+		link: instagram,
+		icon: IconInstagram,
+		defaultLabel: "Instagram",
+	},
+	{ key: "x", link: x, icon: IconX, defaultLabel: "X" },
 ] as const;
 
 const links = socialConfig
-  .map(({ key, link, icon, defaultLabel }) => {
-    if (!link) return null;
+	.map(({ key, link, icon, defaultLabel }) => {
+		if (!link) return null;
 
-    const normalized = typeof link === "string" ? { url: link } : link;
+		const normalized = typeof link === "string" ? { url: link } : link;
 
-    return {
-      key,
-      icon,
-      url: normalized.url,
-      label: normalized.label || defaultLabel,
-    };
-  })
-  .filter((link) => link !== null);
+		return {
+			key,
+			icon,
+			url: normalized.url,
+			label: normalized.label || defaultLabel,
+		};
+	})
+	.filter((link) => link !== null);
 ---
 
 {
-  links.length > 0 && (
-    <nav aria-label="Social links" class="flex items-center gap-3.5">
-      {links.map(({ key, icon: Icon, url, label }) => (
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          class:list={["social-link", `social-link--${key}`]}
-          aria-label={label}
-        >
-          <Icon class="size-6 sm:size-4" />
-        </a>
-      ))}
-    </nav>
-  )
+	links.length > 0 && (
+		<nav aria-label="Social links" class="flex items-center gap-3.5">
+			{links.map(({ key, icon: Icon, url, label }) => (
+				<a
+					href={url}
+					target="_blank"
+					rel="noopener noreferrer"
+					class:list={["social-link", `social-link--${key}`]}
+					aria-label={label}
+				>
+					<Icon class="size-6 sm:size-4" />
+				</a>
+			))}
+		</nav>
+	)
 }
 
 <style>
-  .social-link {
-    position: relative;
-    isolation: isolate;
-    color: var(--color-title);
-  }
+	.social-link {
+		position: relative;
+		isolation: isolate;
+		color: var(--color-title);
+	}
 
-  /*
+	/*
 	 * Glow effect using radial gradient on pseudo-element.
 	 * Only opacity animates for GPU-friendly performance.
 	 * will-change: opacity hints browser to promote to compositor layer.
 	 * Used sparingly here (max 4 small elements) to avoid memory overhead.
 	 */
-  .social-link::before {
-    content: "";
-    position: absolute;
-    inset: -8px;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle,
-      var(--glow-color-40) 0%,
-      var(--glow-color-40) 15%,
-      var(--glow-color-15) 40%,
-      transparent 70%
-    );
-    opacity: 0;
-    z-index: -1;
-    transform: translateZ(0);
-    transition: opacity 0.2s ease;
-    will-change: opacity;
-  }
+	.social-link::before {
+		content: "";
+		position: absolute;
+		inset: -8px;
+		border-radius: 50%;
+		background: radial-gradient(
+			circle,
+			var(--glow-color-40) 0%,
+			var(--glow-color-40) 15%,
+			var(--glow-color-15) 40%,
+			transparent 70%
+		);
+		opacity: 0;
+		z-index: -1;
+		transform: translateZ(0);
+		transition: opacity 0.2s ease;
+		will-change: opacity;
+	}
 
-  .social-link:hover::before {
-    opacity: 1;
-  }
+	.social-link:hover::before {
+		opacity: 1;
+	}
 
-  /* Brand colors */
-  .social-link--github {
-    --glow-color: oklch(40% 0.2 285 / 0.6);
-    --glow-color-40: oklch(40% 0.2 285 / 0.24);
-    --glow-color-15: oklch(40% 0.2 285 / 0.09);
-  }
+	/* Brand colors */
+	.social-link--github {
+		--glow-color: oklch(40% 0.2 285 / 0.6);
+		--glow-color-40: oklch(40% 0.2 285 / 0.24);
+		--glow-color-15: oklch(40% 0.2 285 / 0.09);
+	}
 
-  .social-link--linkedin {
-    --glow-color: oklch(50% 0.18 250 / 0.6);
-    --glow-color-40: oklch(50% 0.18 250 / 0.24);
-    --glow-color-15: oklch(50% 0.18 250 / 0.09);
-  }
+	.social-link--linkedin {
+		--glow-color: oklch(50% 0.18 250 / 0.6);
+		--glow-color-40: oklch(50% 0.18 250 / 0.24);
+		--glow-color-15: oklch(50% 0.18 250 / 0.09);
+	}
 
-  .social-link--instagram {
-    --glow-color: oklch(65% 0.25 350 / 0.6);
-    --glow-color-40: oklch(65% 0.25 350 / 0.24);
-    --glow-color-15: oklch(65% 0.25 350 / 0.09);
-  }
+	.social-link--instagram {
+		--glow-color: oklch(65% 0.25 350 / 0.6);
+		--glow-color-40: oklch(65% 0.25 350 / 0.24);
+		--glow-color-15: oklch(65% 0.25 350 / 0.09);
+	}
 
-  .social-link--x {
-    --glow-color: oklch(30% 0 0 / 0.6);
-    --glow-color-40: oklch(30% 0 0 / 0.24);
-    --glow-color-15: oklch(30% 0 0 / 0.09);
-  }
+	.social-link--x {
+		--glow-color: oklch(30% 0 0 / 0.6);
+		--glow-color-40: oklch(30% 0 0 / 0.24);
+		--glow-color-15: oklch(30% 0 0 / 0.09);
+	}
 </style>

@@ -1,0 +1,34 @@
+---
+interface Props {
+	label: string;
+	category?: string;
+	pressed?: boolean;
+	class?: string;
+}
+
+const { label, category, pressed = false, class: className } = Astro.props;
+---
+
+<button
+	type="button"
+	class:list={[
+		"filter-chip py-1.5 px-4 border border-subtitle rounded-full bg-transparent text-subtitle text-sm cursor-pointer transition-colors hover:border-title hover:text-title focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-title",
+		className,
+	]}
+	data-category={category}
+	aria-pressed={String(pressed)}
+>
+	{label}
+</button>
+
+<style>
+	.filter-chip[aria-pressed="true"] {
+		border-color: var(--color-title);
+		background: var(--color-title);
+		color: var(--color-card);
+	}
+
+	.filter-chip[aria-pressed="true"]:hover {
+		opacity: 0.9;
+	}
+</style>
