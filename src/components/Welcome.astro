@@ -111,12 +111,14 @@ const technologies = [
 	{
 		name: "Rust",
 		icon: "/tech/rust.svg",
+		colorMode: "auto" as const,
 		experience: 1,
 		category: "languages" as const,
 	},
 	{
 		name: "Solidity",
 		icon: "/tech/solidity.svg",
+		colorMode: "auto" as const,
 		experience: 2,
 		category: "languages" as const,
 	},
@@ -124,6 +126,7 @@ const technologies = [
 	{
 		name: "GitHub",
 		icon: "/tech/github.svg",
+		colorMode: "auto" as const,
 		experience: 6,
 		category: "tools" as const,
 	},
@@ -141,7 +144,10 @@ const technologies = [
 	},
 	{
 		name: "AWS",
-		icon: "/tech/aws.svg",
+		icon: {
+			light: "/tech/aws-dark.svg",
+			dark: "/tech/aws-light.svg",
+		},
 		experience: 5,
 		category: "tools" as const,
 	},
@@ -184,6 +190,7 @@ const technologies = [
 	{
 		name: "ChatGPT",
 		icon: "/tech/chatgpt.svg",
+		colorMode: "auto" as const,
 		experience: 2,
 		category: "tools" as const,
 	},

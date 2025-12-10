@@ -12,9 +12,12 @@ interface ThemedIcon {
 	dark: string;
 }
 
+type ColorMode = "keep" | "auto";
+
 interface Technology {
 	name: string;
 	icon: string | ThemedIcon;
+	colorMode?: ColorMode;
 	experience: number;
 	category: Category;
 }
@@ -76,6 +79,7 @@ const indicesByCategory = technologies.reduce(
 						<TechItem
 							name={tech.name}
 							icon={tech.icon}
+							colorMode={tech.colorMode}
 							experience={tech.experience}
 						/>
 					</li>

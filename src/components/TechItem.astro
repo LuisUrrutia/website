@@ -4,18 +4,29 @@ interface ThemedIcon {
 	dark: string;
 }
 
+type ColorMode = "keep" | "auto";
+
 interface Props {
 	name: string;
 	icon: string | ThemedIcon;
+	colorMode?: ColorMode;
 	experience: number;
 	class?: string;
 }
 
-const { name, icon, experience, class: className } = Astro.props;
+const {
+	name,
+	icon,
+	colorMode = "keep",
+	experience,
+	class: className,
+} = Astro.props;
 
 const isThemedIcon = typeof icon === "object";
-const lightIcon = isThemedIcon ? icon.light : icon;
-const darkIcon = isThemedIcon ? icon.dark : icon;
+const iconSrc = isThemedIcon ? null : icon;
+const lightIcon = isThemedIcon ? icon.light : null;
+const darkIcon = isThemedIcon ? icon.dark : null;
+const isAutoColor = !isThemedIcon && colorMode === "auto";
 
 const formatExperience = (years: number) => {
 	if (years < 1) return "Less than 1 year of experience";
@@ -51,10 +62,13 @@ const formatExperience = (years: number) => {
 			</>
 		) : (
 			<img
-				src={icon}
+				src={iconSrc}
 				alt=""
 				aria-hidden="true"
-				class="size-12 object-contain"
+				class:list={[
+					"size-12 object-contain",
+					{ "tech-icon-auto": isAutoColor },
+				]}
 				width="48"
 				height="48"
 				loading="lazy"
@@ -83,5 +97,10 @@ const formatExperience = (years: number) => {
 
 	:global([data-theme="dark"]) .tech-icon-dark {
 		display: block;
+	}
+
+	/* Auto color mode: invert colors in dark theme */
+	:global([data-theme="dark"]) .tech-icon-auto {
+		filter: invert(1);
 	}
 </style>
