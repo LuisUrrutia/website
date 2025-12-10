@@ -42,7 +42,6 @@ const indicesByCategory = technologies.reduce(
 	<div
 		class="stack-section flex flex-col gap-6"
 		data-initial-visible={initialVisible}
-		data-total-items={technologies.length}
 		data-indices={JSON.stringify(indicesByCategory)}
 	>
 		<header
@@ -79,7 +78,18 @@ const indicesByCategory = technologies.reduce(
 			}
 		</ul>
 
-		<ViewMoreButton data-stack-view-more />
+		<ViewMoreButton
+			data-stack-view-more
+			class:list={[{ hidden: technologies.length <= initialVisible }]}
+		/>
+
+		<div
+			data-stack-status
+			class="sr-only"
+			aria-live="polite"
+			aria-atomic="true"
+		>
+		</div>
 	</div>
 </Card>
 
@@ -90,39 +100,21 @@ const indicesByCategory = technologies.reduce(
 </style>
 
 <script>
-	function animateClearButton(btn: HTMLButtonElement, show: boolean): void {
-		const isHidden = btn.classList.contains("hidden");
+	import { animateVisibility } from "@/lib/dom/animations";
 
-		if (show && isHidden) {
-			btn.classList.remove("hidden", "disappearing");
-			btn.classList.add("appearing");
-		} else if (!show && !isHidden) {
-			btn.classList.remove("appearing");
-			btn.classList.add("disappearing");
-			btn.addEventListener(
-				"animationend",
-				() =>
-					btn.classList.contains("disappearing") && btn.classList.add("hidden"),
-				{ once: true },
-			);
-		}
-	}
-
-	function updateViewMoreButton(
-		btn: HTMLButtonElement,
-		hasMore: boolean,
-		isExpanded: boolean,
-	): void {
+	function createViewMoreUpdater(btn: HTMLButtonElement) {
 		const textEl = btn.querySelector<HTMLSpanElement>("[data-view-more-text]");
+		const expandedText = btn.dataset.expandedText || "View Less";
+		const collapsedText = btn.dataset.collapsedText || "View More";
 
-		btn.classList.toggle("hidden", !hasMore);
-		btn.classList.toggle("expanded", isExpanded);
+		return (hasMore: boolean, isExpanded: boolean) => {
+			btn.classList.toggle("hidden", !hasMore);
+			btn.classList.toggle("expanded", isExpanded);
 
-		if (textEl) {
-			textEl.textContent = isExpanded
-				? btn.dataset.expandedText || "View Less"
-				: btn.dataset.collapsedText || "View More";
-		}
+			if (textEl) {
+				textEl.textContent = isExpanded ? expandedText : collapsedText;
+			}
+		};
 	}
 
 	function initStackSection(): void {
@@ -140,6 +132,7 @@ const indicesByCategory = technologies.reduce(
 		const viewMoreBtn = section.querySelector<HTMLButtonElement>(
 			"[data-stack-view-more]",
 		);
+		const statusEl = section.querySelector<HTMLElement>("[data-stack-status]");
 
 		// Elements array for O(1) index access
 		const elements = Array.from(
@@ -148,7 +141,7 @@ const indicesByCategory = technologies.reduce(
 
 		// Read pre-computed data from Astro (built at compile time)
 		const initialVisible = Number(section.dataset.initialVisible) || 9;
-		const totalItems = Number(section.dataset.totalItems) || 0;
+		const totalItems = elements.length;
 		const indicesByCategory: Record<string, number[]> = JSON.parse(
 			section.dataset.indices || "{}",
 		);
@@ -158,6 +151,11 @@ const indicesByCategory = technologies.reduce(
 		const visibleIndices = new Set(
 			Array.from({ length: Math.min(initialVisible, totalItems) }, (_, i) => i),
 		);
+
+		// Create cached updater for view more button
+		const updateViewMore = viewMoreBtn
+			? createViewMoreUpdater(viewMoreBtn)
+			: null;
 
 		// State
 		const activeCategories = new Set<string>();
@@ -208,15 +206,17 @@ const indicesByCategory = technologies.reduce(
 			for (const i of nextVisible) visibleIndices.add(i);
 
 			if (clearBtn) {
-				animateClearButton(clearBtn, hasFilter);
+				animateVisibility(clearBtn, hasFilter);
 			}
 
-			if (viewMoreBtn) {
-				updateViewMoreButton(
-					viewMoreBtn,
-					totalMatching > initialVisible,
-					isExpanded,
-				);
+			if (updateViewMore) {
+				updateViewMore(totalMatching > initialVisible, isExpanded);
+			}
+
+			// Announce to screen readers
+			if (statusEl) {
+				const showing = nextVisible.size;
+				statusEl.textContent = `Showing ${showing} of ${totalMatching} items`;
 			}
 		}
 
