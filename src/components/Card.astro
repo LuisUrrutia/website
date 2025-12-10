@@ -2,15 +2,15 @@
 import type { HTMLTag, Polymorphic } from "astro/types";
 
 type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
-  class?: string;
+	class?: string;
 };
 
 const { as: Element = "section", class: className, ...props } = Astro.props;
 ---
 
 <Element
-  class:list={["rounded-3xl bg-card p-5 shadow-soft", className]}
-  {...props}
+	class:list={["rounded-3xl bg-card p-5 shadow-soft", className]}
+	{...props}
 >
-  <slot />
+	<slot />
 </Element>

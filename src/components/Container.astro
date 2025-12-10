@@ -2,32 +2,32 @@
 import type { HTMLTag, Polymorphic } from "astro/types";
 
 type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
-  class?: string;
+	class?: string;
 };
 
 const { as: Element = "div", class: className, ...props } = Astro.props;
 ---
 
 <Element
-  class:list={["page-container", "mx-4", "sm:mx-auto", className]}
-  {...props}
+	class:list={["page-container", "mx-4", "sm:mx-auto", className]}
+	{...props}
 >
-  <slot />
+	<slot />
 </Element>
 
 <style>
-  .page-container {
-    max-width: 100%;
-  }
+	.page-container {
+		max-width: 100%;
+	}
 
-  @media (width >= 40rem) {
-    .page-container {
-      max-width: 640px;
-    }
-  }
-  @media (width >= 64rem) {
-    .page-container {
-      max-width: 800px;
-    }
-  }
+	@media (width >= 40rem) {
+		.page-container {
+			max-width: 640px;
+		}
+	}
+	@media (width >= 64rem) {
+		.page-container {
+			max-width: 800px;
+		}
+	}
 </style>

@@ -1,17 +1,20 @@
 {
   "name": "web",
-  "type": "module",
   "version": "0.0.1",
+  "type": "module",
   "scripts": {
-    "dev": "astro dev",
+    "astro": "astro",
     "build": "astro build",
     "build:preview": "rm -rf dist; astro build && astro preview",
-    "preview": "astro preview",
-    "astro": "astro",
-    "lint": "oxlint --type-aware",
+    "dev": "astro dev",
     "fmt": "prettier . --check",
     "fmt:fix": "prettier . --write",
-    "prepare": "husky"
+    "lint": "oxlint --type-aware",
+    "prepare": "husky",
+    "preview": "astro preview"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
@@ -29,9 +32,7 @@
     "oxlint": "^1.32.0",
     "oxlint-tsgolint": "^0.8.4",
     "prettier": "^3.7.4",
-    "prettier-plugin-astro": "^0.14.1"
-  },
-  "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-packagejson": "^2.5.20"
   }
 }

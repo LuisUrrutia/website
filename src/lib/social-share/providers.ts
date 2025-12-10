@@ -1,7 +1,7 @@
 import {
-  SocialProvider,
-  type ProviderConfig,
-  type SocialProviderType,
+	SocialProvider,
+	type ProviderConfig,
+	type SocialProviderType,
 } from "./types";
 
 /**
@@ -13,44 +13,44 @@ import {
  * until its configuration is added.
  */
 export const providers: Record<SocialProviderType, ProviderConfig> = {
-  [SocialProvider.Facebook]: {
-    buildShareUrl: ({ url }) => {
-      const params = new URLSearchParams({ u: url });
-      return `https://www.facebook.com/sharer.php?${params}`;
-    },
-  },
+	[SocialProvider.Facebook]: {
+		buildShareUrl: ({ url }) => {
+			const params = new URLSearchParams({ u: url });
+			return `https://www.facebook.com/sharer.php?${params}`;
+		},
+	},
 
-  [SocialProvider.Twitter]: {
-    buildShareUrl: ({ url, text }) => {
-      const params = new URLSearchParams({ url });
-      if (text) params.set("text", text);
-      return `https://twitter.com/intent/tweet?${params}`;
-    },
-  },
+	[SocialProvider.Twitter]: {
+		buildShareUrl: ({ url, text }) => {
+			const params = new URLSearchParams({ url });
+			if (text) params.set("text", text);
+			return `https://twitter.com/intent/tweet?${params}`;
+		},
+	},
 
-  [SocialProvider.LinkedIn]: {
-    buildShareUrl: ({ url, text }) => {
-      const params = new URLSearchParams({ mini: "true", url });
-      if (text) params.set("title", text);
-      return `https://www.linkedin.com/shareArticle?${params}`;
-    },
-  },
+	[SocialProvider.LinkedIn]: {
+		buildShareUrl: ({ url, text }) => {
+			const params = new URLSearchParams({ mini: "true", url });
+			if (text) params.set("title", text);
+			return `https://www.linkedin.com/shareArticle?${params}`;
+		},
+	},
 
-  [SocialProvider.WhatsApp]: {
-    buildShareUrl: ({ url, text }) => {
-      const message = text ? `${text} ${url}` : url;
-      const params = new URLSearchParams({ text: message });
-      return `https://wa.me/?${params}`;
-    },
-  },
+	[SocialProvider.WhatsApp]: {
+		buildShareUrl: ({ url, text }) => {
+			const message = text ? `${text} ${url}` : url;
+			const params = new URLSearchParams({ text: message });
+			return `https://wa.me/?${params}`;
+		},
+	},
 
-  [SocialProvider.Email]: {
-    buildShareUrl: ({ url, text }) => {
-      const params = new URLSearchParams({
-        subject: text ?? "",
-        body: text ? `${text} ${url}` : url,
-      });
-      return `mailto:?${params}`;
-    },
-  },
+	[SocialProvider.Email]: {
+		buildShareUrl: ({ url, text }) => {
+			const params = new URLSearchParams({
+				subject: text ?? "",
+				body: text ? `${text} ${url}` : url,
+			});
+			return `mailto:?${params}`;
+		},
+	},
 };
