@@ -14,7 +14,8 @@
     "preview": "astro preview"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "**/*": "prettier --write --ignore-unknown",
+    "*.{js,ts,jsx,tsx,astro}": "oxlint --type-aware"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
