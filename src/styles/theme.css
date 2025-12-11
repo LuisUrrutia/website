@@ -30,6 +30,9 @@
 	--color-primary: oklch(var(--oklch-primary));
 	--color-secondary: oklch(var(--oklch-secondary));
 	--color-accent: oklch(var(--oklch-accent));
+	--color-border: oklch(var(--oklch-border));
+	--color-pill: oklch(var(--oklch-pill) / 20%);
+	--color-pill-foreground: oklch(var(--oklch-pill-foreground));
 
 	/* Shadows */
 	--shadow-soft:
@@ -66,6 +69,11 @@
 	/* highlight colors */
 	--oklch-highlight-sky: 93.27% 0.037 238.08;
 	--oklch-highlight-orange: 0.95 0.04 68.83;
+	/* border - subtle gray matching background */
+	--oklch-border: 92% 0.004 290;
+	/* pill - muted color matching company marquee filter */
+	--oklch-pill: 78% 0.06 270;
+	--oklch-pill-foreground: 50% 0.06 270;
 }
 
 /* Primitive color tokens - dark theme */
@@ -83,4 +91,7 @@
 	--oklch-accent: 70% 0.12 264;
 	--oklch-highlight-sky: 0.47 0.12 240.81;
 	--oklch-highlight-orange: 0.59 0.15 60.32;
+	--oklch-border: 28% 0.015 270;
+	--oklch-pill: 50% 0.06 270;
+	--oklch-pill-foreground: 78% 0.06 270;
 }

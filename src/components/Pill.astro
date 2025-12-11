@@ -1,0 +1,53 @@
+---
+type Variant = "solid" | "outline" | "ghost";
+
+interface Props {
+	color?: string;
+	textColor?: string;
+	variant?: Variant;
+	truncate?: boolean;
+	maxWidth?: string;
+	class?: string;
+}
+
+const {
+	color,
+	textColor,
+	variant = "solid",
+	truncate = false,
+	maxWidth = "12rem",
+	class: className,
+} = Astro.props;
+
+const hasIcon = Astro.slots.has("icon-before") || Astro.slots.has("icon-after");
+
+const variantClasses: Record<Variant, string> = {
+	solid: "bg-pill text-pill-foreground",
+	outline: "border border-pill-foreground bg-transparent text-pill-foreground",
+	ghost: "bg-transparent text-pill-foreground",
+};
+
+const customStyles =
+	[
+		color && `background-color: ${color}`,
+		textColor ? `color: ${textColor}` : "color: var(--color-title)",
+		truncate && `max-width: ${maxWidth}`,
+	]
+		.filter(Boolean)
+		.join("; ") || undefined;
+---
+
+<span
+	class:list={[
+		"w-fit rounded-full px-3 py-1 text-xs font-medium",
+		variantClasses[variant],
+		hasIcon && "flex items-center gap-1.5",
+		truncate && "truncate",
+		className,
+	]}
+	style={customStyles}
+>
+	<slot name="icon-before" />
+	<slot />
+	<slot name="icon-after" />
+</span>

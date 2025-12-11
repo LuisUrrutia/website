@@ -1,47 +1,59 @@
 ---
-import IconClock from "@/assets/icons/clock.svg";
-import IconEye from "@/assets/icons/eye.svg";
+import IconArrowRight from "@/assets/icons/arrow-right.svg";
+import Pill from "@/components/Pill.astro";
 
 interface Props {
 	title: string;
-	description: string;
+	category: string;
+	categoryColor?: string;
 	date: Date;
-	views: number;
 	href?: string;
+	external?: boolean;
+	readingTime?: string;
 }
 
-const { title, description, date, views, href } = Astro.props;
+const { title, category, categoryColor, date, href, external, readingTime } =
+	Astro.props;
 
 const formattedDate = date.toLocaleDateString("en-US", {
 	day: "numeric",
-	month: "long",
+	month: "short",
 	year: "numeric",
 });
+
+const isoDate = date.toISOString().split("T")[0];
+
+const Tag = href ? "a" : "div";
+
+const linkProps = href
+	? {
+			href,
+			...(external && { target: "_blank", rel: "noopener noreferrer" }),
+			"aria-label": `Read article: ${title}`,
+		}
+	: {};
 ---
 
-<article class="flex flex-col gap-2">
-	<h3 class="text-title text-xl font-semibold">
-		{
-			href ? (
-				<a href={href} class="hover:underline">
-					{title}
-				</a>
-			) : (
-				title
-			)
-		}
-	</h3>
-	<p class="text-subtitle line-clamp-2 text-sm leading-relaxed">
-		{description}
-	</p>
-	<div class="text-subtitle flex gap-4 text-sm">
-		<span class="flex items-center gap-1.5">
-			<IconClock class="size-4" />
-			{formattedDate}
-		</span>
-		<span class="flex items-center gap-1.5">
-			<IconEye class="size-4" />
-			{views}
-		</span>
+<Tag
+	{...linkProps}
+	class="group relative flex flex-col gap-4 overflow-hidden md:flex-row md:pt-8"
+>
+	<div class="text-subtitle flex w-24 flex-col pt-8 text-sm md:pt-0">
+		<time datetime={isoDate}>{formattedDate}</time>
+		{readingTime && <span class="text-xs">{readingTime}</span>}
 	</div>
-</article>
+	<div class="border-border flex-1 border-b pb-8">
+		<div class="flex flex-col gap-3">
+			<Pill color={categoryColor}>{category}</Pill>
+			<h3 class="text-title text-lg font-medium md:text-xl">{title}</h3>
+		</div>
+	</div>
+	{
+		href && (
+			<IconArrowRight
+				class="text-subtitle absolute top-1/2 right-0 size-5 shrink-0 translate-x-2 -translate-y-1/2 opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100"
+				aria-hidden="true"
+			/>
+		)
+	}
+</Tag>
