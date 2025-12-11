@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-	<a href="https://github.com/LuisUrrutia/web/releases"><img alt="GitHub Release" src="https://img.shields.io/github/v/release/LuisUrrutia/web"></a>
+	<a href="https://github.com/LuisUrrutia/website/releases"><img alt="GitHub Release" src="https://img.shields.io/github/v/release/LuisUrrutia/website"></a>
 	<a href="https://twitter.com/luisurrutia_dev"><img alt="Twitter" src="https://badgen.net/badge/twitter/@luisurrutia_dev/1DA1F2?icon&label" /></a>
 	<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="License CC BY-NC-ND 4.0" src="https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey" /></a>
 </p>
@@ -61,7 +61,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/LuisUrrutia/web.git
+git clone https://github.com/LuisUrrutia/website.git
 cd web
 
 # Install dependencies
