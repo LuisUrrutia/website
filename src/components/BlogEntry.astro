@@ -10,16 +10,25 @@ interface Props {
 	href?: string;
 	external?: boolean;
 	readingTime?: string;
+	ariaLabel?: string;
+	locale?: string;
+	dateFormat?: Intl.DateTimeFormatOptions;
 }
 
-const { title, category, categoryColor, date, href, external, readingTime } =
-	Astro.props;
+const {
+	title,
+	category,
+	categoryColor,
+	date,
+	href,
+	external,
+	readingTime,
+	ariaLabel,
+	locale = "en-US",
+	dateFormat = { day: "numeric", month: "short", year: "numeric" },
+} = Astro.props;
 
-const formattedDate = date.toLocaleDateString("en-US", {
-	day: "numeric",
-	month: "short",
-	year: "numeric",
-});
+const formattedDate = date.toLocaleDateString(locale, dateFormat);
 
 const isoDate = date.toISOString().split("T")[0];
 
@@ -29,7 +38,7 @@ const linkProps = href
 	? {
 			href,
 			...(external && { target: "_blank", rel: "noopener noreferrer" }),
-			"aria-label": `Read article: ${title}`,
+			...(ariaLabel && { "aria-label": ariaLabel }),
 		}
 	: {};
 ---

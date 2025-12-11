@@ -30,7 +30,7 @@ const variantClasses: Record<Variant, string> = {
 const customStyles =
 	[
 		color && `background-color: ${color}`,
-		textColor ? `color: ${textColor}` : "color: var(--color-title)",
+		textColor && `color: ${textColor}`,
 		truncate && `max-width: ${maxWidth}`,
 	]
 		.filter(Boolean)
