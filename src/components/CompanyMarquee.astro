@@ -5,6 +5,7 @@ interface Company {
 	name: string;
 	logo: `${string}.svg`;
 	url: string;
+	width: number;
 }
 
 type Direction = "left" | "right";
@@ -68,7 +69,7 @@ const {
 									src={company.logo}
 									alt={`${company.name} logo`}
 									class="marquee-logo"
-									width="100"
+									width={company.width}
 									height="28"
 								/>
 							</a>

@@ -1,0 +1,15 @@
+services:
+  web:
+    image: joseluisq/static-web-server:2
+    ports:
+      - "8080:80"
+    volumes:
+      - ./dist:/public:ro
+      - ./server.toml:/config.toml:ro
+    environment:
+      - SERVER_PORT=80
+      - SERVER_ROOT=/public
+      - SERVER_COMPRESSION_STATIC=true
+      - SERVER_LOG_LEVEL=info
+      - SERVER_CONFIG_FILE=/config.toml
+    restart: unless-stopped
