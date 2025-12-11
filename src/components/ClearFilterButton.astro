@@ -18,41 +18,32 @@ const {
 <button
 	type="button"
 	class:list={[
-		"clear-filter-btn border-subtitle text-subtitle hover:border-title hover:text-title focus-visible:outline-title flex size-8 cursor-pointer items-center justify-center rounded-full border bg-transparent focus-visible:outline-2 focus-visible:outline-offset-2",
-		{ hidden },
+		"clear-filter-btn border-subtitle text-subtitle hover:border-title hover:text-title focus-visible:outline-title flex size-8 cursor-pointer items-center justify-center rounded-full border bg-transparent transition-transform duration-(--spin-duration) ease-out hover:scale-110 hover:rotate-90 focus-visible:outline-2 focus-visible:outline-offset-2",
+		{ "is-hidden": hidden },
 		className,
 	]}
 	aria-label={label}
 	{...attrs}
 >
-	<IconClose class="size-4" />
+	<IconClose class="size-4" aria-hidden="true" />
 </button>
 
 <style>
-	.clear-filter-btn {
-		--animation-duration: 0.25s;
-		transition: transform var(--animation-duration) ease;
-	}
-
-	.clear-filter-btn:hover {
-		transform: rotate(90deg) scale(1.1);
-	}
-
-	.clear-filter-btn.hidden {
+	.clear-filter-btn.is-hidden {
 		opacity: 0;
 		transform: scale(0.5);
 		pointer-events: none;
 	}
 
 	.clear-filter-btn.appearing {
-		animation: clear-appear var(--animation-duration) ease forwards;
+		animation: spin-in var(--spin-duration) ease forwards;
 	}
 
 	.clear-filter-btn.disappearing {
-		animation: clear-disappear var(--animation-duration) ease forwards;
+		animation: spin-out var(--spin-duration) ease forwards;
 	}
 
-	@keyframes clear-appear {
+	@keyframes spin-in {
 		from {
 			opacity: 0;
 			transform: rotate(-90deg) scale(0.5);
@@ -63,7 +54,7 @@ const {
 		}
 	}
 
-	@keyframes clear-disappear {
+	@keyframes spin-out {
 		from {
 			opacity: 1;
 			transform: rotate(0) scale(1);
