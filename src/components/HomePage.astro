@@ -3,47 +3,36 @@ import Container from "./Container.astro";
 import HeroSection from "../sections/HeroSection.astro";
 import StackSection from "../sections/StackSection.astro";
 import LatestPostsSection from "../sections/LatestPostsSection.astro";
-import ThemeToggle from "./ThemeToggle.astro";
 
 const posts = [
 	{
 		title: "The efficiency of the Javascript Kitchen",
-		description:
-			'Imagine that you\'re running a top-rated TripAdvisor Restaurant called "Javascript", where many people want to eat, and therefore, your kitchen is always busy with non-stop orders. Each dish represents a piece of code waiting to be executed.',
+		category: "JavaScript",
 		date: new Date("2024-07-29"),
-		views: 1230,
 		href: "/blog/javascript-kitchen",
 	},
 	{
 		title: "Understanding React Server Components",
-		description:
-			"React Server Components represent a paradigm shift in how we think about React applications. They allow us to render components on the server, reducing the JavaScript bundle size and improving initial page load performance.",
+		category: "React",
 		date: new Date("2024-06-15"),
-		views: 2456,
 		href: "/blog/react-server-components",
 	},
 	{
 		title: "Building Type-Safe APIs with TypeScript and Zod",
-		description:
-			"Learn how to create robust, type-safe APIs using TypeScript and Zod for runtime validation. This approach ensures your data is validated both at compile time and runtime, catching errors before they reach production.",
+		category: "TypeScript",
 		date: new Date("2024-05-20"),
-		views: 1890,
 		href: "/blog/typescript-zod-apis",
 	},
 	{
 		title: "Kubernetes for Frontend Developers",
-		description:
-			"A practical guide to understanding Kubernetes from a frontend developer's perspective. We'll cover the basics of containers, pods, and deployments, and how they relate to deploying your web applications.",
+		category: "DevOps",
 		date: new Date("2024-04-10"),
-		views: 945,
 		href: "/blog/kubernetes-frontend",
 	},
 	{
 		title: "The Art of Code Reviews",
-		description:
-			"Code reviews are more than just finding bugs. They're an opportunity for knowledge sharing, mentoring, and maintaining code quality. Learn the best practices for giving and receiving constructive feedback.",
+		category: "Best Practices",
 		date: new Date("2024-03-05"),
-		views: 3210,
 		href: "/blog/code-reviews",
 	},
 ];
@@ -208,27 +197,3 @@ const technologies = [
 	<StackSection technologies={technologies} />
 	<LatestPostsSection posts={posts} />
 </Container>
-
-<style>
-	#container {
-		font-family:
-			Inter, Roboto, "Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial,
-			sans-serif;
-		height: 100%;
-	}
-
-	main {
-		height: 100%;
-		display: flex;
-		justify-content: center;
-	}
-
-	#hero {
-		display: flex;
-		align-items: start;
-		flex-direction: column;
-		justify-content: center;
-		gap: 1rem;
-		padding: 16px;
-	}
-</style>

@@ -5,9 +5,8 @@ import ViewMoreButton from "@/components/ViewMoreButton.astro";
 
 interface Post {
 	title: string;
-	description: string;
+	category: string;
 	date: Date;
-	views: number;
 	href?: string;
 }
 
@@ -27,15 +26,14 @@ const { posts, initialVisible = 3 } = Astro.props;
 	>
 		<h2 class="text-title text-2xl font-semibold">Latest posts</h2>
 
-		<ul class="m-0 flex list-none flex-col gap-6 p-0">
+		<ul class="m-0 flex list-none flex-col p-0">
 			{
 				posts.map((post, index) => (
 					<li class:list={["posts-item", { hidden: index >= initialVisible }]}>
 						<BlogEntry
 							title={post.title}
-							description={post.description}
+							category={post.category}
 							date={post.date}
-							views={post.views}
 							href={post.href}
 						/>
 					</li>
