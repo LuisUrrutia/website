@@ -1,16 +1,38 @@
 ---
+/**
+ * ClearFilterButton - An animated button for clearing active filters.
+ *
+ * Uses `aria-hidden` to control visibility with a spin animation transition.
+ * When `aria-hidden="true"`, the button fades out and rotates; when `false`,
+ * it spins back into view.
+ *
+ * @example
+ * ```astro
+ * <!-- Hidden by default -->
+ * <ClearFilterButton data-clear-filters />
+ *
+ * <!-- Initially visible -->
+ * <ClearFilterButton aria-hidden={false} />
+ *
+ * <!-- Toggle visibility via JavaScript -->
+ * <script>
+ *   const btn = document.querySelector('[data-clear-filters]');
+ *   btn.setAttribute('aria-hidden', String(!hasActiveFilters));
+ * </script>
+ * ```
+ */
 import type { HTMLAttributes } from "astro/types";
 import IconClose from "@/assets/icons/close.svg";
 
 interface Props extends HTMLAttributes<"button"> {
+	/** Accessible label for screen readers. Defaults to "Clear filters". */
 	label?: string;
-	hidden?: boolean;
 }
 
 const {
 	class: className,
 	label = "Clear filters",
-	hidden = true,
+	"aria-hidden": ariaHidden = true,
 	...attrs
 } = Astro.props;
 ---
@@ -18,50 +40,31 @@ const {
 <button
 	type="button"
 	class:list={[
-		"clear-filter-btn border-subtitle text-subtitle hover:border-title hover:text-title focus-visible:outline-title flex size-8 cursor-pointer items-center justify-center rounded-full border bg-transparent transition-transform duration-(--spin-duration) ease-out hover:scale-110 hover:rotate-90 focus-visible:outline-2 focus-visible:outline-offset-2",
-		{ "is-hidden": hidden },
+		"clear-filter-btn border-subtitle text-subtitle hover:border-title hover:text-title focus-visible:outline-title flex size-8 cursor-pointer items-center justify-center rounded-full border bg-transparent duration-(--spin-duration) ease-out hover:scale-110 hover:rotate-90 focus-visible:outline-2 focus-visible:outline-offset-2",
 		className,
 	]}
 	aria-label={label}
+	aria-hidden={ariaHidden}
 	{...attrs}
 >
-	<IconClose class="size-4" aria-hidden="true" />
+	<IconClose class="size-4" />
 </button>
 
 <style>
-	.clear-filter-btn.is-hidden {
+	.clear-filter-btn {
+		transition:
+			opacity var(--spin-duration) ease,
+			transform var(--spin-duration) ease;
+	}
+
+	.clear-filter-btn[aria-hidden="true"] {
 		opacity: 0;
-		transform: scale(0.5);
+		transform: rotate(90deg) scale(0.5);
 		pointer-events: none;
 	}
 
-	.clear-filter-btn.appearing {
-		animation: spin-in var(--spin-duration) ease forwards;
-	}
-
-	.clear-filter-btn.disappearing {
-		animation: spin-out var(--spin-duration) ease forwards;
-	}
-
-	@keyframes spin-in {
-		from {
-			opacity: 0;
-			transform: rotate(-90deg) scale(0.5);
-		}
-		to {
-			opacity: 1;
-			transform: rotate(0) scale(1);
-		}
-	}
-
-	@keyframes spin-out {
-		from {
-			opacity: 1;
-			transform: rotate(0) scale(1);
-		}
-		to {
-			opacity: 0;
-			transform: rotate(90deg) scale(0.5);
-		}
+	.clear-filter-btn[aria-hidden="false"] {
+		opacity: 1;
+		transform: rotate(0) scale(1);
 	}
 </style>

@@ -109,8 +109,6 @@ const indicesByCategory = technologies.reduce(
 </style>
 
 <script>
-	import { animateVisibility } from "@/lib/dom/animations";
-
 	function createViewMoreUpdater(btn: HTMLButtonElement) {
 		const textEl = btn.querySelector<HTMLSpanElement>("[data-view-more-text]");
 		const expandedText = btn.dataset.expandedText || "View Less";
@@ -215,7 +213,7 @@ const indicesByCategory = technologies.reduce(
 			for (const i of nextVisible) visibleIndices.add(i);
 
 			if (clearBtn) {
-				animateVisibility(clearBtn, hasFilter);
+				clearBtn.setAttribute("aria-hidden", String(!hasFilter));
 			}
 
 			if (updateViewMore) {
