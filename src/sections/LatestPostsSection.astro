@@ -7,28 +7,45 @@ interface Post {
 	title: string;
 	category: string;
 	date: Date;
-	href?: string;
+	href: string;
 }
 
 interface Props {
 	posts: Post[];
 	initialVisible?: number;
+	title?: string;
+	id?: string;
 }
 
-const { posts, initialVisible = 3 } = Astro.props;
+const {
+	posts,
+	initialVisible = 3,
+	title = "Latest posts",
+	id = "latest-posts",
+} = Astro.props;
+
+const hasMorePosts = posts.length > initialVisible;
+const listId = `${id}-list`;
 ---
 
-<Card>
-	<div
-		class="flex flex-col gap-6"
-		data-posts-section
-		data-initial-visible={initialVisible}
-	>
-		<h2 class="text-title text-2xl font-semibold">Latest posts</h2>
+<Card
+	id={id}
+	class="flex flex-col gap-6"
+	data-posts-section
+	data-initial-visible={initialVisible}
+>
+	<h2 class="text-title text-2xl font-semibold">{title}</h2>
 
-		<ul class="m-0 flex list-none flex-col p-0">
-			{
-				posts.map((post, index) => (
+	{
+		posts.length === 0 ? (
+			<p class="text-secondary">No posts available.</p>
+		) : (
+			<ul
+				id={listId}
+				class="m-0 flex list-none flex-col p-0"
+				aria-live="polite"
+			>
+				{posts.map((post, index) => (
 					<li class:list={["posts-item", { hidden: index >= initialVisible }]}>
 						<BlogEntry
 							title={post.title}
@@ -37,60 +54,64 @@ const { posts, initialVisible = 3 } = Astro.props;
 							href={post.href}
 						/>
 					</li>
-				))
-			}
-		</ul>
+				))}
+			</ul>
+		)
+	}
 
-		{
-			posts.length > initialVisible && (
-				<ViewMoreButton
-					class="posts-view-more"
-					collapsedText="Read More"
-					expandedText="Read Less"
-				/>
-			)
-		}
-	</div>
+	{
+		hasMorePosts && (
+			<ViewMoreButton class="posts-view-more" controlsId={listId} />
+		)
+	}
 </Card>
 
 <script>
-	function initPostsSection() {
-		const section = document.querySelector(
+	function initPostsSection(): void {
+		const sections = document.querySelectorAll<HTMLElement>(
 			"[data-posts-section]",
-		) as HTMLElement;
-		if (!section) return;
-
-		const initialVisible = parseInt(section.dataset.initialVisible || "3", 10);
-		const items = section.querySelectorAll<HTMLLIElement>(".posts-item");
-		const viewMoreBtn =
-			section.querySelector<HTMLButtonElement>(".posts-view-more");
-		const viewMoreText = viewMoreBtn?.querySelector<HTMLSpanElement>(
-			".view-more-btn-text",
 		);
 
-		let isExpanded = false;
+		sections.forEach((section) => {
+			if (section.dataset.initialized === "true") return;
+			section.dataset.initialized = "true";
 
-		function updateVisibility() {
-			items.forEach((item, index) => {
-				if (index >= initialVisible) {
-					item.classList.toggle("hidden", !isExpanded);
+			const initialVisible = parseInt(
+				section.dataset.initialVisible ?? "3",
+				10,
+			);
+			const items = section.querySelectorAll<HTMLLIElement>(".posts-item");
+			const viewMoreBtn =
+				section.querySelector<HTMLButtonElement>(".posts-view-more");
+			const viewMoreText = viewMoreBtn?.querySelector<HTMLSpanElement>(
+				"[data-view-more-text]",
+			);
+
+			if (!viewMoreBtn || items.length <= initialVisible) return;
+
+			let isExpanded = false;
+
+			const updateVisibility = (): void => {
+				items.forEach((item, index) => {
+					if (index >= initialVisible) {
+						item.classList.toggle("hidden", !isExpanded);
+					}
+				});
+
+				viewMoreBtn.setAttribute("aria-expanded", String(isExpanded));
+
+				if (viewMoreText) {
+					viewMoreText.textContent = isExpanded
+						? (viewMoreBtn.dataset.expandedText ?? "Read Less")
+						: (viewMoreBtn.dataset.collapsedText ?? "Read More");
 				}
+			};
+
+			viewMoreBtn.addEventListener("click", () => {
+				isExpanded = !isExpanded;
+				updateVisibility();
 			});
-
-			if (viewMoreBtn && viewMoreText) {
-				viewMoreText.textContent = isExpanded
-					? viewMoreBtn.dataset.expandedText || "Read Less"
-					: viewMoreBtn.dataset.collapsedText || "Read More";
-				viewMoreBtn.classList.toggle("expanded", isExpanded);
-			}
-		}
-
-		viewMoreBtn?.addEventListener("click", () => {
-			isExpanded = !isExpanded;
-			updateVisibility();
 		});
-
-		updateVisibility();
 	}
 
 	initPostsSection();
