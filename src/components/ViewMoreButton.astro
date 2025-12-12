@@ -2,14 +2,16 @@
 import type { HTMLAttributes } from "astro/types";
 import IconChevronDown from "@/assets/icons/chevron-down.svg";
 
-interface Props extends HTMLAttributes<"button"> {
+interface Props extends Omit<HTMLAttributes<"button">, "aria-expanded"> {
 	expandedText?: string;
 	collapsedText?: string;
+	controlsId?: string;
 }
 
 const {
 	expandedText = "View Less",
 	collapsedText = "View More",
+	controlsId,
 	class: className,
 	...attrs
 } = Astro.props;
@@ -18,19 +20,17 @@ const {
 <button
 	type="button"
 	class:list={[
-		"view-more-btn text-subtitle hover:text-title mx-auto flex cursor-pointer flex-col items-center gap-1 border-none bg-transparent px-4 py-2 text-sm transition-colors",
+		"group text-subtitle hover:text-title mx-auto flex cursor-pointer flex-col items-center gap-1 border-none bg-transparent px-4 py-2 text-sm transition-colors",
 		className,
 	]}
 	data-expanded-text={expandedText}
 	data-collapsed-text={collapsedText}
+	aria-expanded="false"
+	aria-controls={controlsId}
 	{...attrs}
 >
 	<span data-view-more-text>{collapsedText}</span>
-	<IconChevronDown class="view-more-btn-icon size-4 transition-transform" />
+	<span class="size-4 transition-transform group-aria-expanded:rotate-180">
+		<IconChevronDown class="size-full" />
+	</span>
 </button>
-
-<style>
-	.view-more-btn.expanded .view-more-btn-icon {
-		transform: rotate(180deg);
-	}
-</style>
