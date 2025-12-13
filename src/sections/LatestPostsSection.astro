@@ -30,8 +30,7 @@ const listId = `${id}-list`;
 
 <Card
 	id={id}
-	class="flex flex-col gap-6"
-	data-posts-section
+	class="posts-section flex flex-col gap-6"
 	data-initial-visible={initialVisible}
 >
 	<h2 class="text-title text-2xl font-semibold">{title}</h2>
@@ -67,14 +66,12 @@ const listId = `${id}-list`;
 </Card>
 
 <script>
-	function initPostsSection(): void {
-		const sections = document.querySelectorAll<HTMLElement>(
-			"[data-posts-section]",
-		);
+	function initPostsSections(): void {
+		const sections = document.querySelectorAll<HTMLElement>(".posts-section");
 
 		sections.forEach((section) => {
-			if (section.dataset.initialized === "true") return;
-			section.dataset.initialized = "true";
+			if (section.dataset.init) return;
+			section.dataset.init = "true";
 
 			const initialVisible = parseInt(
 				section.dataset.initialVisible ?? "3",
@@ -83,37 +80,21 @@ const listId = `${id}-list`;
 			const items = section.querySelectorAll<HTMLLIElement>(".posts-item");
 			const viewMoreBtn =
 				section.querySelector<HTMLButtonElement>(".posts-view-more");
-			const viewMoreText = viewMoreBtn?.querySelector<HTMLSpanElement>(
-				"[data-view-more-text]",
-			);
 
 			if (!viewMoreBtn || items.length <= initialVisible) return;
 
-			let isExpanded = false;
-
-			const updateVisibility = (): void => {
+			viewMoreBtn.addEventListener("view-more-toggle", ((
+				e: CustomEvent<{ expanded: boolean }>,
+			) => {
 				items.forEach((item, index) => {
 					if (index >= initialVisible) {
-						item.classList.toggle("hidden", !isExpanded);
+						item.classList.toggle("hidden", !e.detail.expanded);
 					}
 				});
-
-				viewMoreBtn.setAttribute("aria-expanded", String(isExpanded));
-
-				if (viewMoreText) {
-					viewMoreText.textContent = isExpanded
-						? (viewMoreBtn.dataset.expandedText ?? "Read Less")
-						: (viewMoreBtn.dataset.collapsedText ?? "Read More");
-				}
-			};
-
-			viewMoreBtn.addEventListener("click", () => {
-				isExpanded = !isExpanded;
-				updateVisibility();
-			});
+			}) as EventListener);
 		});
 	}
 
-	initPostsSection();
-	document.addEventListener("astro:after-swap", initPostsSection);
+	initPostsSections();
+	document.addEventListener("astro:after-swap", initPostsSections);
 </script>
