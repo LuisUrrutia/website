@@ -56,11 +56,16 @@ const indicesByCategory = technologies.reduce(
 			class="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
 		>
 			<h2 class="text-title text-2xl font-semibold">Stack</h2>
-			<div data-stack-filters class="flex items-center gap-2">
-				<ClearFilterButton data-stack-clear class="order-1 sm:order-first" />
+			<div class="stack-filters flex items-center gap-2">
+				<ClearFilterButton class="stack-clear order-1 sm:order-first" />
 				{
 					categories.map(({ id, label }) => (
-						<FilterChip data-stack-filter={id} category={id} label={label} />
+						<FilterChip
+							class="stack-filter"
+							data-category={id}
+							category={id}
+							label={label}
+						/>
 					))
 				}
 			</div>
@@ -72,10 +77,7 @@ const indicesByCategory = technologies.reduce(
 		>
 			{
 				technologies.map((tech, index) => (
-					<li
-						data-stack-item
-						data-hidden={index >= initialVisible ? "" : undefined}
-					>
+					<li class:list={["stack-item", { hidden: index >= initialVisible }]}>
 						<TechItem
 							name={tech.name}
 							icon={tech.icon}
@@ -88,181 +90,161 @@ const indicesByCategory = technologies.reduce(
 		</ul>
 
 		<ViewMoreButton
-			data-stack-view-more
-			class:list={[{ hidden: technologies.length <= initialVisible }]}
+			class:list={[
+				"stack-view-more",
+				{ hidden: technologies.length <= initialVisible },
+			]}
 		/>
 
-		<div
-			data-stack-status
-			class="sr-only"
-			aria-live="polite"
-			aria-atomic="true"
-		>
+		<div class="stack-status sr-only" aria-live="polite" aria-atomic="true">
 		</div>
 	</div>
 </Card>
 
-<style>
-	[data-stack-item][data-hidden] {
-		display: none;
-	}
-</style>
-
 <script>
-	function createViewMoreUpdater(btn: HTMLButtonElement) {
-		const textEl = btn.querySelector<HTMLSpanElement>("[data-view-more-text]");
-		const expandedText = btn.dataset.expandedText || "View Less";
-		const collapsedText = btn.dataset.collapsedText || "View More";
+	function initStackSections(): void {
+		document
+			.querySelectorAll<HTMLElement>(".stack-section")
+			.forEach((section) => {
+				if (section.dataset.init) return;
+				section.dataset.init = "true";
 
-		return (hasMore: boolean, isExpanded: boolean) => {
-			btn.classList.toggle("hidden", !hasMore);
-			btn.setAttribute("aria-expanded", String(isExpanded));
+				const filtersContainer =
+					section.querySelector<HTMLElement>(".stack-filters");
+				const filters =
+					section.querySelectorAll<HTMLButtonElement>(".stack-filter");
+				const clearBtn =
+					section.querySelector<HTMLButtonElement>(".stack-clear");
+				const viewMoreBtn =
+					section.querySelector<HTMLButtonElement>(".stack-view-more");
+				const statusEl = section.querySelector<HTMLElement>(".stack-status");
 
-			if (textEl) {
-				textEl.textContent = isExpanded ? expandedText : collapsedText;
-			}
-		};
-	}
+				// Elements array for O(1) index access
+				const elements = Array.from(
+					section.querySelectorAll<HTMLElement>(".stack-item"),
+				);
 
-	function initStackSection(): void {
-		const section = document.querySelector<HTMLElement>(".stack-section");
-		if (!section) return;
+				// Read pre-computed data from Astro (built at compile time)
+				const initialVisible = Number(section.dataset.initialVisible) || 9;
+				const totalItems = elements.length;
+				const indicesByCategory: Record<string, number[]> = JSON.parse(
+					section.dataset.indices || "{}",
+				);
 
-		const filtersContainer = section.querySelector<HTMLElement>(
-			"[data-stack-filters]",
-		);
-		const filters = section.querySelectorAll<HTMLButtonElement>(
-			"[data-stack-filter]",
-		);
-		const clearBtn =
-			section.querySelector<HTMLButtonElement>("[data-stack-clear]");
-		const viewMoreBtn = section.querySelector<HTMLButtonElement>(
-			"[data-stack-view-more]",
-		);
-		const statusEl = section.querySelector<HTMLElement>("[data-stack-status]");
+				// Build arrays from pre-computed counts
+				const allIndices = Array.from({ length: totalItems }, (_, i) => i);
+				const visibleIndices = new Set(
+					Array.from(
+						{ length: Math.min(initialVisible, totalItems) },
+						(_, i) => i,
+					),
+				);
 
-		// Elements array for O(1) index access
-		const elements = Array.from(
-			section.querySelectorAll<HTMLElement>("[data-stack-item]"),
-		);
+				// State
+				const activeCategories = new Set<string>();
+				let isExpanded = false;
 
-		// Read pre-computed data from Astro (built at compile time)
-		const initialVisible = Number(section.dataset.initialVisible) || 9;
-		const totalItems = elements.length;
-		const indicesByCategory: Record<string, number[]> = JSON.parse(
-			section.dataset.indices || "{}",
-		);
+				function update(): void {
+					const hasFilter = activeCategories.size > 0;
 
-		// Build arrays from pre-computed counts (faster than parsing comma-separated strings)
-		const allIndices = Array.from({ length: totalItems }, (_, i) => i);
-		const visibleIndices = new Set(
-			Array.from({ length: Math.min(initialVisible, totalItems) }, (_, i) => i),
-		);
+					// Get matching indices - no iteration when no filter
+					let matchingIndices: number[];
+					if (hasFilter) {
+						matchingIndices = [];
+						for (const cat of activeCategories) {
+							const indices = indicesByCategory[cat];
+							if (indices) {
+								for (const i of indices) matchingIndices.push(i);
+							}
+						}
+						matchingIndices.sort((a, b) => a - b);
+					} else {
+						matchingIndices = allIndices;
+					}
 
-		// Create cached updater for view more button
-		const updateViewMore = viewMoreBtn
-			? createViewMoreUpdater(viewMoreBtn)
-			: null;
+					const totalMatching = matchingIndices.length;
+					const limit = isExpanded
+						? totalMatching
+						: Math.min(initialVisible, totalMatching);
 
-		// State
-		const activeCategories = new Set<string>();
-		let isExpanded = false;
+					// Build next visible set from slice
+					const nextVisible = new Set(matchingIndices.slice(0, limit));
 
-		function update(): void {
-			const hasFilter = activeCategories.size > 0;
+					// Diff: hide items no longer visible
+					for (const i of visibleIndices) {
+						if (!nextVisible.has(i)) {
+							elements[i].classList.add("hidden");
+						}
+					}
 
-			// Get matching indices - no iteration when no filter
-			let matchingIndices: number[];
-			if (hasFilter) {
-				matchingIndices = [];
-				for (const cat of activeCategories) {
-					const indices = indicesByCategory[cat];
-					if (indices) {
-						for (const i of indices) matchingIndices.push(i);
+					// Diff: show newly visible items
+					for (const i of nextVisible) {
+						if (!visibleIndices.has(i)) {
+							elements[i].classList.remove("hidden");
+						}
+					}
+
+					// Update state in place
+					visibleIndices.clear();
+					for (const i of nextVisible) visibleIndices.add(i);
+
+					if (clearBtn) {
+						clearBtn.setAttribute("aria-hidden", String(!hasFilter));
+					}
+
+					if (viewMoreBtn) {
+						viewMoreBtn.classList.toggle(
+							"hidden",
+							totalMatching <= initialVisible,
+						);
+					}
+
+					// Announce to screen readers
+					if (statusEl) {
+						const showing = nextVisible.size;
+						statusEl.textContent = `Showing ${showing} of ${totalMatching} items`;
 					}
 				}
-				matchingIndices.sort((a, b) => a - b);
-			} else {
-				matchingIndices = allIndices;
-			}
 
-			const totalMatching = matchingIndices.length;
-			const limit = isExpanded
-				? totalMatching
-				: Math.min(initialVisible, totalMatching);
+				// Event delegation for filter chips
+				filtersContainer?.addEventListener("click", (e) => {
+					const filterBtn = (
+						e.target as HTMLElement
+					).closest<HTMLButtonElement>(".stack-filter");
+					if (!filterBtn) return;
 
-			// Build next visible set from slice (avoids iteration for limit check)
-			const nextVisible = new Set(matchingIndices.slice(0, limit));
+					const category = filterBtn.dataset.category;
+					if (!category) return;
 
-			// Diff: hide items no longer visible
-			for (const i of visibleIndices) {
-				if (!nextVisible.has(i)) {
-					elements[i].dataset.hidden = "";
-				}
-			}
+					const isPressed = filterBtn.getAttribute("aria-pressed") === "true";
+					filterBtn.setAttribute("aria-pressed", String(!isPressed));
 
-			// Diff: show newly visible items
-			for (const i of nextVisible) {
-				if (!visibleIndices.has(i)) {
-					delete elements[i].dataset.hidden;
-				}
-			}
+					if (isPressed) {
+						activeCategories.delete(category);
+					} else {
+						activeCategories.add(category);
+					}
 
-			// Update state in place
-			visibleIndices.clear();
-			for (const i of nextVisible) visibleIndices.add(i);
+					update();
+				});
 
-			if (clearBtn) {
-				clearBtn.setAttribute("aria-hidden", String(!hasFilter));
-			}
+				// Clear button
+				clearBtn?.addEventListener("click", () => {
+					activeCategories.clear();
+					filters.forEach((f) => f.setAttribute("aria-pressed", "false"));
+					update();
+				});
 
-			if (updateViewMore) {
-				updateViewMore(totalMatching > initialVisible, isExpanded);
-			}
-
-			// Announce to screen readers
-			if (statusEl) {
-				const showing = nextVisible.size;
-				statusEl.textContent = `Showing ${showing} of ${totalMatching} items`;
-			}
-		}
-
-		// Event delegation for filter chips
-		filtersContainer?.addEventListener("click", (e) => {
-			const filterBtn = (e.target as HTMLElement).closest<HTMLButtonElement>(
-				"[data-stack-filter]",
-			);
-			if (!filterBtn) return;
-
-			const category = filterBtn.dataset.stackFilter;
-			if (!category) return;
-
-			const isPressed = filterBtn.getAttribute("aria-pressed") === "true";
-			filterBtn.setAttribute("aria-pressed", String(!isPressed));
-
-			if (isPressed) {
-				activeCategories.delete(category);
-			} else {
-				activeCategories.add(category);
-			}
-
-			update();
-		});
-
-		// Clear button
-		clearBtn?.addEventListener("click", () => {
-			activeCategories.clear();
-			filters.forEach((f) => f.setAttribute("aria-pressed", "false"));
-			update();
-		});
-
-		// View more button
-		viewMoreBtn?.addEventListener("click", () => {
-			isExpanded = !isExpanded;
-			update();
-		});
+				// View more button
+				viewMoreBtn?.addEventListener("view-more-toggle", ((
+					e: CustomEvent<{ expanded: boolean }>,
+				) => {
+					isExpanded = e.detail.expanded;
+					update();
+				}) as EventListener);
+			});
 	}
 
-	initStackSection();
-	document.addEventListener("astro:after-swap", initStackSection);
+	initStackSections();
+	document.addEventListener("astro:after-swap", initStackSections);
 </script>

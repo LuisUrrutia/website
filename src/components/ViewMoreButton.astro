@@ -1,10 +1,44 @@
 ---
+/**
+ * ViewMoreButton - A toggle button for expanding/collapsing content sections.
+ *
+ * Uses `aria-expanded` to control state, with a rotating chevron indicator.
+ * The component handles its own click, text update, and state toggle internally.
+ * Parents can listen for the `view-more-toggle` custom event to react to state changes.
+ *
+ * @example
+ * ```astro
+ * <!-- Basic usage (collapsed by default) -->
+ * <ViewMoreButton controlsId="my-list" />
+ *
+ * <!-- Initially expanded -->
+ * <ViewMoreButton aria-expanded={true} controlsId="my-list" />
+ *
+ * <!-- Custom text -->
+ * <ViewMoreButton
+ *   collapsedText="Show More"
+ *   expandedText="Show Less"
+ *   controlsId="my-list"
+ * />
+ *
+ * <!-- Listen for toggle events -->
+ * <script>
+ *   document.querySelector('[data-view-more]').addEventListener('view-more-toggle', (e) => {
+ *     const { expanded } = e.detail;
+ *     // React to state change
+ *   });
+ * </script>
+ * ```
+ */
 import type { HTMLAttributes } from "astro/types";
 import IconChevronDown from "@/assets/icons/chevron-down.svg";
 
-interface Props extends Omit<HTMLAttributes<"button">, "aria-expanded"> {
+interface Props extends HTMLAttributes<"button"> {
+	/** Text shown when expanded. Defaults to "View Less". */
 	expandedText?: string;
+	/** Text shown when collapsed. Defaults to "View More". */
 	collapsedText?: string;
+	/** ID of the element this button controls (for aria-controls). */
 	controlsId?: string;
 }
 
@@ -12,6 +46,7 @@ const {
 	expandedText = "View Less",
 	collapsedText = "View More",
 	controlsId,
+	"aria-expanded": ariaExpanded = false,
 	class: className,
 	...attrs
 } = Astro.props;
@@ -20,17 +55,56 @@ const {
 <button
 	type="button"
 	class:list={[
-		"group text-subtitle hover:text-title mx-auto flex cursor-pointer flex-col items-center gap-1 border-none bg-transparent px-4 py-2 text-sm transition-colors",
+		"view-more-btn group text-subtitle hover:text-title mx-auto flex cursor-pointer flex-col items-center gap-1 border-none bg-transparent px-4 py-2 text-sm transition-colors",
 		className,
 	]}
 	data-expanded-text={expandedText}
 	data-collapsed-text={collapsedText}
-	aria-expanded="false"
+	aria-expanded={ariaExpanded}
 	aria-controls={controlsId}
 	{...attrs}
 >
-	<span data-view-more-text>{collapsedText}</span>
+	<span class="view-more-btn-text"
+		>{ariaExpanded ? expandedText : collapsedText}</span
+	>
 	<span class="size-4 transition-transform group-aria-expanded:rotate-180">
 		<IconChevronDown class="size-full" />
 	</span>
 </button>
+
+<script>
+	function initViewMoreButtons(): void {
+		document
+			.querySelectorAll<HTMLButtonElement>(".view-more-btn")
+			.forEach((btn) => {
+				if (btn.dataset.init) return;
+				btn.dataset.init = "true";
+
+				const textEl = btn.querySelector<HTMLSpanElement>(
+					".view-more-btn-text",
+				);
+
+				btn.addEventListener("click", () => {
+					const isExpanded = btn.getAttribute("aria-expanded") === "true";
+					const newExpanded = !isExpanded;
+
+					btn.setAttribute("aria-expanded", String(newExpanded));
+
+					if (textEl) {
+						textEl.textContent = newExpanded
+							? (btn.dataset.expandedText ?? "View Less")
+							: (btn.dataset.collapsedText ?? "View More");
+					}
+
+					btn.dispatchEvent(
+						new CustomEvent("view-more-toggle", {
+							detail: { expanded: newExpanded },
+						}),
+					);
+				});
+			});
+	}
+
+	initViewMoreButtons();
+	document.addEventListener("astro:after-swap", initViewMoreButtons);
+</script>
