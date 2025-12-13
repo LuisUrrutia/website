@@ -1,7 +1,7 @@
 ---
 import Card from "@/components/Card.astro";
 import BlogEntry from "@/components/BlogEntry.astro";
-import ViewMoreButton from "@/components/ViewMoreButton.astro";
+import ViewMoreLink from "@/components/ViewMoreLink.astro";
 
 interface Post {
 	title: string;
@@ -12,40 +12,31 @@ interface Post {
 
 interface Props {
 	posts: Post[];
-	initialVisible?: number;
 	title?: string;
 	id?: string;
+	viewMoreHref?: string;
+	viewMoreText?: string;
 }
 
 const {
 	posts,
-	initialVisible = 3,
 	title = "Latest posts",
 	id = "latest-posts",
+	viewMoreHref,
+	viewMoreText,
 } = Astro.props;
-
-const hasMorePosts = posts.length > initialVisible;
-const listId = `${id}-list`;
 ---
 
-<Card
-	id={id}
-	class="posts-section flex flex-col gap-6"
-	data-initial-visible={initialVisible}
->
+<Card id={id} class="flex flex-col gap-6">
 	<h2 class="text-title text-2xl font-semibold">{title}</h2>
 
 	{
 		posts.length === 0 ? (
 			<p class="text-secondary">No posts available.</p>
 		) : (
-			<ul
-				id={listId}
-				class="m-0 flex list-none flex-col p-0"
-				aria-live="polite"
-			>
-				{posts.map((post, index) => (
-					<li class:list={["posts-item", { hidden: index >= initialVisible }]}>
+			<ul class="m-0 flex list-none flex-col p-0">
+				{posts.map((post) => (
+					<li>
 						<BlogEntry
 							title={post.title}
 							category={post.category}
@@ -59,42 +50,8 @@ const listId = `${id}-list`;
 	}
 
 	{
-		hasMorePosts && (
-			<ViewMoreButton class="posts-view-more" controlsId={listId} />
+		viewMoreHref && (
+			<ViewMoreLink class="py-6" href={viewMoreHref} text={viewMoreText} />
 		)
 	}
 </Card>
-
-<script>
-	function initPostsSections(): void {
-		const sections = document.querySelectorAll<HTMLElement>(".posts-section");
-
-		sections.forEach((section) => {
-			if (section.dataset.init) return;
-			section.dataset.init = "true";
-
-			const initialVisible = parseInt(
-				section.dataset.initialVisible ?? "3",
-				10,
-			);
-			const items = section.querySelectorAll<HTMLLIElement>(".posts-item");
-			const viewMoreBtn =
-				section.querySelector<HTMLButtonElement>(".posts-view-more");
-
-			if (!viewMoreBtn || items.length <= initialVisible) return;
-
-			viewMoreBtn.addEventListener("view-more-toggle", ((
-				e: CustomEvent<{ expanded: boolean }>,
-			) => {
-				items.forEach((item, index) => {
-					if (index >= initialVisible) {
-						item.classList.toggle("hidden", !e.detail.expanded);
-					}
-				});
-			}) as EventListener);
-		});
-	}
-
-	initPostsSections();
-	document.addEventListener("astro:after-swap", initPostsSections);
-</script>
