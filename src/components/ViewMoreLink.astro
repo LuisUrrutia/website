@@ -1,0 +1,45 @@
+---
+/**
+ * ViewMoreLink - A navigation link for viewing more content.
+ *
+ * Renders as an anchor (`<a>`) element with a right arrow icon.
+ * Typically used for "View More" links that navigate to a full listing page.
+ *
+ * @example
+ * ```astro
+ * <!-- Basic usage -->
+ * <ViewMoreLink href="/blog" />
+ *
+ * <!-- Custom text -->
+ * <ViewMoreLink href="/blog" text="See all posts" />
+ *
+ * <!-- With additional classes -->
+ * <ViewMoreLink href="/blog" class="mt-4" />
+ * ```
+ */
+import type { HTMLAttributes } from "astro/types";
+import IconArrowRight from "@/assets/icons/arrow-right.svg";
+
+interface Props extends HTMLAttributes<"a"> {
+	/** The URL to navigate to. */
+	href: string;
+	/** Link text. Defaults to "View More". */
+	text?: string;
+}
+
+const { href, text = "View More", class: className, ...attrs } = Astro.props;
+---
+
+<a
+	href={href}
+	class:list={[
+		"group text-subtitle hover:text-title mx-auto flex cursor-pointer items-center gap-2 px-4 py-2 text-sm transition-colors",
+		className,
+	]}
+	{...attrs}
+>
+	<span>{text}</span>
+	<span class="size-4 transition-transform group-hover:translate-x-1">
+		<IconArrowRight class="size-full" />
+	</span>
+</a>

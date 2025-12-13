@@ -3,7 +3,7 @@ import Card from "@/components/Card.astro";
 import ClearFilterButton from "@/components/ClearFilterButton.astro";
 import FilterChip from "@/components/FilterChip.astro";
 import TechItem from "@/components/TechItem.astro";
-import ViewMoreButton from "@/components/ViewMoreButton.astro";
+import ExpandButton from "@/components/ExpandButton.astro";
 
 type Category = "frameworks" | "languages" | "tools";
 
@@ -89,9 +89,9 @@ const indicesByCategory = technologies.reduce(
 			}
 		</ul>
 
-		<ViewMoreButton
+		<ExpandButton
 			class:list={[
-				"stack-view-more",
+				"stack-expand-btn",
 				{ hidden: technologies.length <= initialVisible },
 			]}
 		/>
@@ -115,8 +115,8 @@ const indicesByCategory = technologies.reduce(
 					section.querySelectorAll<HTMLButtonElement>(".stack-filter");
 				const clearBtn =
 					section.querySelector<HTMLButtonElement>(".stack-clear");
-				const viewMoreBtn =
-					section.querySelector<HTMLButtonElement>(".stack-view-more");
+				const expandBtn =
+					section.querySelector<HTMLButtonElement>(".stack-expand-btn");
 				const statusEl = section.querySelector<HTMLElement>(".stack-status");
 
 				// Elements array for O(1) index access
@@ -192,8 +192,8 @@ const indicesByCategory = technologies.reduce(
 						clearBtn.setAttribute("aria-hidden", String(!hasFilter));
 					}
 
-					if (viewMoreBtn) {
-						viewMoreBtn.classList.toggle(
+					if (expandBtn) {
+						expandBtn.classList.toggle(
 							"hidden",
 							totalMatching <= initialVisible,
 						);
@@ -235,8 +235,8 @@ const indicesByCategory = technologies.reduce(
 					update();
 				});
 
-				// View more button
-				viewMoreBtn?.addEventListener("view-more-toggle", ((
+				// Expand button
+				expandBtn?.addEventListener("expand-toggle", ((
 					e: CustomEvent<{ expanded: boolean }>,
 				) => {
 					isExpanded = e.detail.expanded;

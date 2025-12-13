@@ -1,21 +1,21 @@
 ---
 /**
- * ViewMoreButton - A toggle button for expanding/collapsing content sections.
+ * ExpandButton - A toggle button for expanding/collapsing content sections.
  *
  * Uses `aria-expanded` to control state, with a rotating chevron indicator.
  * The component handles its own click, text update, and state toggle internally.
- * Parents can listen for the `view-more-toggle` custom event to react to state changes.
+ * Parents can listen for the `expand-toggle` custom event to react to state changes.
  *
  * @example
  * ```astro
  * <!-- Basic usage (collapsed by default) -->
- * <ViewMoreButton controlsId="my-list" />
+ * <ExpandButton controlsId="my-list" />
  *
  * <!-- Initially expanded -->
- * <ViewMoreButton aria-expanded={true} controlsId="my-list" />
+ * <ExpandButton aria-expanded={true} controlsId="my-list" />
  *
  * <!-- Custom text -->
- * <ViewMoreButton
+ * <ExpandButton
  *   collapsedText="Show More"
  *   expandedText="Show Less"
  *   controlsId="my-list"
@@ -23,7 +23,7 @@
  *
  * <!-- Listen for toggle events -->
  * <script>
- *   document.querySelector('[data-view-more]').addEventListener('view-more-toggle', (e) => {
+ *   document.querySelector('.expand-btn').addEventListener('expand-toggle', (e) => {
  *     const { expanded } = e.detail;
  *     // React to state change
  *   });
@@ -55,7 +55,7 @@ const {
 <button
 	type="button"
 	class:list={[
-		"view-more-btn group text-subtitle hover:text-title mx-auto flex cursor-pointer flex-col items-center gap-1 border-none bg-transparent px-4 py-2 text-sm transition-colors",
+		"expand-btn group text-subtitle hover:text-title mx-auto flex cursor-pointer flex-col items-center gap-1 border-none bg-transparent px-4 py-2 text-sm transition-colors",
 		className,
 	]}
 	data-expanded-text={expandedText}
@@ -64,7 +64,7 @@ const {
 	aria-controls={controlsId}
 	{...attrs}
 >
-	<span class="view-more-btn-text"
+	<span class="expand-btn-text"
 		>{ariaExpanded ? expandedText : collapsedText}</span
 	>
 	<span class="size-4 transition-transform group-aria-expanded:rotate-180">
@@ -73,16 +73,14 @@ const {
 </button>
 
 <script>
-	function initViewMoreButtons(): void {
+	function initExpandButtons(): void {
 		document
-			.querySelectorAll<HTMLButtonElement>(".view-more-btn")
+			.querySelectorAll<HTMLButtonElement>(".expand-btn")
 			.forEach((btn) => {
 				if (btn.dataset.init) return;
 				btn.dataset.init = "true";
 
-				const textEl = btn.querySelector<HTMLSpanElement>(
-					".view-more-btn-text",
-				);
+				const textEl = btn.querySelector<HTMLSpanElement>(".expand-btn-text");
 
 				btn.addEventListener("click", () => {
 					const isExpanded = btn.getAttribute("aria-expanded") === "true";
@@ -97,7 +95,7 @@ const {
 					}
 
 					btn.dispatchEvent(
-						new CustomEvent("view-more-toggle", {
+						new CustomEvent("expand-toggle", {
 							detail: { expanded: newExpanded },
 						}),
 					);
@@ -105,6 +103,6 @@ const {
 			});
 	}
 
-	initViewMoreButtons();
-	document.addEventListener("astro:after-swap", initViewMoreButtons);
+	initExpandButtons();
+	document.addEventListener("astro:after-swap", initExpandButtons);
 </script>
