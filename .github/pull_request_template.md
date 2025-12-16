@@ -18,4 +18,4 @@
 
 ## Related Issues
 
-<!-- Link any related issues: Fixes #123 -->
+<!-- Link any related issues -->
