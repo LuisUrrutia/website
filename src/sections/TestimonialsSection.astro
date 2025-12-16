@@ -1,0 +1,56 @@
+---
+/**
+ * TestimonialsSection - A section displaying testimonials in a grid layout.
+ *
+ * @example
+ * ```astro
+ * <TestimonialsSection
+ *   testimonials={[
+ *     { name: "John Doe", role: "Engineer at Company", photo: "/testimonials/john.jpg", quote: "Great work!" }
+ *   ]}
+ * />
+ * ```
+ */
+import TestimonialCard from "@/components/TestimonialCard.astro";
+
+interface Testimonial {
+	name: string;
+	role: string;
+	photo: ImageMetadata;
+	quote: string;
+}
+
+interface Props {
+	testimonials: Testimonial[];
+	title?: string;
+	id?: string;
+}
+
+const {
+	testimonials,
+	title = "Testimonials",
+	id = "testimonials",
+} = Astro.props;
+---
+
+<section id={id} class="flex flex-col gap-6" aria-labelledby={`${id}-heading`}>
+	<h2 id={`${id}-heading`} class="text-title text-2xl font-semibold">
+		{title}
+	</h2>
+
+	<div
+		class="grid grid-cols-1 gap-4 md:grid-cols-2 *:first:md:col-span-2 lg:grid-cols-3 *:first:lg:col-span-1"
+		role="list"
+	>
+		{
+			testimonials.map((testimonial) => (
+				<TestimonialCard
+					name={testimonial.name}
+					role={testimonial.role}
+					photo={testimonial.photo}
+					quote={testimonial.quote}
+				/>
+			))
+		}
+	</div>
+</section>
