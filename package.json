@@ -20,8 +20,8 @@
   "dependencies": {
     "@astrojs/check": "^0.9.6",
     "@playform/compress": "^0.2.0",
-    "@tailwindcss/vite": "^4.1.17",
-    "astro": "^5.16.4",
+    "@tailwindcss/vite": "^4.1.18",
+    "astro": "^5.16.5",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3"
   },
@@ -33,7 +33,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "oxlint": "^1.32.0",
-    "oxlint-tsgolint": "^0.8.4",
+    "oxlint-tsgolint": "^0.8.6",
     "prettier": "^3.7.4",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-packagejson": "^2.5.20",
