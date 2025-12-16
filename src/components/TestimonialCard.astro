@@ -32,23 +32,21 @@ const { name, role, photo, quote } = Astro.props;
 ---
 
 <Card as="figure" class="flex flex-col items-center gap-4 text-center">
-	<Image
-		src={photo}
-		alt=""
-		aria-hidden="true"
-		class="size-24 rounded-full object-cover"
-		loading="lazy"
-		decoding="async"
-		width={96}
-		height={96}
-	/>
-
-	<figcaption class="flex flex-col gap-1">
-		<span class="text-title text-lg font-semibold">{name}</span>
-		<span class="text-sm">{role}</span>
+	<figcaption class="flex flex-col items-center gap-3">
+		<Image
+			src={photo}
+			alt={name}
+			class="size-24 rounded-full object-cover"
+			loading="lazy"
+			decoding="async"
+			width={96}
+			height={96}
+		/>
+		<div class="flex flex-col gap-1">
+			<span class="text-title text-lg font-semibold">{name}</span>
+			<span class="text-sm">{role}</span>
+		</div>
 	</figcaption>
 
-	<blockquote class="text-base italic" cite={name}>
-		"{quote}"
-	</blockquote>
+	<blockquote class="text-base italic">"{quote}"</blockquote>
 </Card>
