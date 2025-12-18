@@ -1,4 +1,5 @@
 ---
+import type { SocialLinksProps } from "@/types/social";
 import Card from "@/components/Card.astro";
 import CompanyMarquee from "@/components/CompanyMarquee.astro";
 import Highlight from "@/components/Highlight.astro";
@@ -8,6 +9,13 @@ import ProfilePicture from "@/components/ProfilePicture.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
 import WorkStatusBadge from "@/components/WorkStatusBadge.astro";
+
+interface Props {
+	/** Social media links configuration. */
+	socials?: SocialLinksProps;
+}
+
+const { socials } = Astro.props;
 ---
 
 <Card class="flex flex-col gap-5">
@@ -19,24 +27,7 @@ import WorkStatusBadge from "@/components/WorkStatusBadge.astro";
 				<WorkStatusBadge status="busy" />
 				<div class="flex items-center gap-3">
 					<ThemeToggle />
-					<SocialLinks
-						instagram={{
-							url: "https://www.instagram.com/luisurrutiaf/",
-							label: "Luis Urrutia Instagram",
-						}}
-						github={{
-							url: "https://github.com/LuisUrrutia",
-							label: "Luis Urrutia GitHub",
-						}}
-						linkedin={{
-							url: "https://www.linkedin.com/in/luisurrutiaf/",
-							label: "Luis Urrutia LinkedIn",
-						}}
-						x={{
-							url: "https://x.com/luisurrutia_dev",
-							label: "Luis Urrutia X",
-						}}
-					/>
+					{socials && <SocialLinks {...socials} />}
 				</div>
 			</div>
 
