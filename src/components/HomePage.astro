@@ -1,4 +1,6 @@
 ---
+import type { Post } from "@/types/post";
+import type { Testimonial } from "@/types/testimonial";
 import Container from "./Container.astro";
 import HeroSection from "../sections/HeroSection.astro";
 import StackSection from "../sections/StackSection.astro";
@@ -10,7 +12,7 @@ import pabloSabaPhoto from "@/assets/testimonials/pablo-saba.jpg";
 import douglasMakeyPhoto from "@/assets/testimonials/douglas-makey.jpg";
 import sebastianMedinaPhoto from "@/assets/testimonials/sebastian-medina.jpg";
 
-const posts = [
+const posts: Post[] = [
 	{
 		title: "The efficiency of the Javascript Kitchen",
 		category: "JavaScript",
@@ -43,7 +45,7 @@ const posts = [
 	},
 ];
 
-const testimonials = [
+const testimonials: Testimonial[] = [
 	{
 		name: "Pablo Saba",
 		role: "Associate Head Of Catalog at Uber",
