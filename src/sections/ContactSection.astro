@@ -1,0 +1,70 @@
+---
+/**
+ * ContactSection - A CTA section encouraging visitors to connect.
+ *
+ * Displays a heading, a prominent call-to-action button, and social media links.
+ *
+ * @example
+ * ```astro
+ * <ContactSection
+ *   contactHref="mailto:hello@example.com"
+ *   socials={{ github: "https://github.com/user", linkedin: "https://linkedin.com/in/user" }}
+ * />
+ * ```
+ */
+import type { SocialLinksProps } from "@/types/social";
+import Card from "@/components/Card.astro";
+import SocialLinks from "@/components/SocialLinks.astro";
+import IconArrowRight from "@/assets/icons/arrow-right.svg";
+import Logo from "@/assets/logo.svg";
+
+interface Props {
+	/** URL for the main CTA button (e.g., mailto: or contact page). */
+	contactHref: string;
+	/** Text for the CTA button. Defaults to "Let's Connect". */
+	contactText?: string;
+	/** Heading text. Defaults to "We should work together". */
+	heading?: string;
+	/** Subheading text. Defaults to "I'm one click away". */
+	subheading?: string;
+	/** Social media links configuration. */
+	socials?: SocialLinksProps;
+	/** Section ID for navigation. Defaults to "contact". */
+	id?: string;
+}
+
+const {
+	contactHref,
+	contactText = "Let's Connect",
+	heading = "We should work together",
+	subheading = "I'm one click away",
+	socials,
+	id = "contact",
+} = Astro.props;
+---
+
+<Card
+	as="section"
+	id={id}
+	class="flex flex-col items-center gap-6 py-12 text-center"
+	aria-labelledby={`${id}-heading`}
+>
+	<Logo class="size-12" aria-hidden="true" />
+	<h2 id={`${id}-heading`} class="text-title mb-4 text-2xl font-semibold">
+		{heading}
+		<span class="block">{subheading}</span>
+	</h2>
+
+	<a
+		href={contactHref}
+		aria-label={`${contactText} - opens email client`}
+		class="bg-button text-button-foreground group focus-visible:outline-button mb-6 inline-flex items-center gap-2 rounded-full px-6 py-3 font-medium transition-colors hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2"
+	>
+		<span>{contactText}</span>
+		<span class="size-5 transition-transform group-hover:translate-x-1">
+			<IconArrowRight class="size-full" />
+		</span>
+	</a>
+
+	{socials && <SocialLinks {...socials} iconClass="size-6" />}
+</Card>

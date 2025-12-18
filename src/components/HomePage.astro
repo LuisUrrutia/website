@@ -4,6 +4,7 @@ import HeroSection from "../sections/HeroSection.astro";
 import StackSection from "../sections/StackSection.astro";
 import LatestPostsSection from "../sections/LatestPostsSection.astro";
 import TestimonialsSection from "../sections/TestimonialsSection.astro";
+import ContactSection from "../sections/ContactSection.astro";
 
 import pabloSabaPhoto from "@/assets/testimonials/pablo-saba.jpg";
 import douglasMakeyPhoto from "@/assets/testimonials/douglas-makey.jpg";
@@ -219,11 +220,31 @@ const technologies = [
 		category: "tools" as const,
 	},
 ];
+
+const socials = {
+	instagram: {
+		url: "https://www.instagram.com/luisurrutiaf/",
+		label: "Luis Urrutia Instagram",
+	},
+	github: {
+		url: "https://github.com/LuisUrrutia",
+		label: "Luis Urrutia GitHub",
+	},
+	linkedin: {
+		url: "https://www.linkedin.com/in/luisurrutiaf/",
+		label: "Luis Urrutia LinkedIn",
+	},
+	x: {
+		url: "https://x.com/luisurrutia_dev",
+		label: "Luis Urrutia X",
+	},
+};
 ---
 
 <Container as="main" class="flex flex-col gap-8">
-	<HeroSection />
+	<HeroSection socials={socials} />
 	<StackSection technologies={technologies} />
 	<LatestPostsSection posts={posts} viewMoreHref="https://localhost:8080" />
 	<TestimonialsSection testimonials={testimonials} />
+	<ContactSection contactHref="mailto:hello@urrutia.me" socials={socials} />
 </Container>
