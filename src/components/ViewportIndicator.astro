@@ -1,0 +1,31 @@
+---
+/**
+ * ViewportIndicator - Development-only component showing current Tailwind breakpoint and DPR.
+ *
+ * Displays a fixed badge in the bottom-left corner showing the active
+ * responsive breakpoint (xs, sm, md, lg, xl, 2xl) and device pixel ratio.
+ *
+ * @example
+ * ```astro
+ * {import.meta.env.DEV && <ViewportIndicator />}
+ * ```
+ */
+---
+
+<div
+	class="fixed bottom-1 left-1 z-9999 flex place-content-center rounded-full bg-violet-600 p-3 font-mono text-xs text-violet-50"
+	aria-hidden="true"
+>
+	<span class="sm:hidden">xs</span>
+	<span class="hidden sm:block md:hidden">sm</span>
+	<span class="hidden md:block lg:hidden">md</span>
+	<span class="hidden lg:block xl:hidden">lg</span>
+	<span class="hidden xl:block 2xl:hidden">xl</span>
+	<span class="hidden 2xl:block">2xl</span>
+	<span id="dpr-indicator" class="before:mx-1 before:content-['•']"></span>
+</div>
+
+<script is:inline>
+	const dpr = window.devicePixelRatio;
+	document.getElementById("dpr-indicator")?.append(`${dpr}x`);
+</script>
