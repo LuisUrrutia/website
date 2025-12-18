@@ -1,14 +1,8 @@
 ---
+import type { Post } from "@/types/post";
 import Card from "@/components/Card.astro";
 import BlogEntry from "@/components/BlogEntry.astro";
 import ViewMoreLink from "@/components/ViewMoreLink.astro";
-
-interface Post {
-	title: string;
-	category: string;
-	date: Date;
-	href: string;
-}
 
 interface Props {
 	posts: Post[];

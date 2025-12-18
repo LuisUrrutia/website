@@ -11,14 +11,8 @@
  * />
  * ```
  */
+import type { Testimonial } from "@/types/testimonial";
 import TestimonialCard from "@/components/TestimonialCard.astro";
-
-interface Testimonial {
-	name: string;
-	role: string;
-	photo: ImageMetadata;
-	quote: string;
-}
 
 interface Props {
 	testimonials: Testimonial[];

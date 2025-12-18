@@ -1,4 +1,7 @@
 ---
+import type { Post } from "@/types/post";
+import { technologies } from "@/data/technologies";
+import { testimonials } from "@/data/testimonials";
 import Container from "./Container.astro";
 import HeroSection from "../sections/HeroSection.astro";
 import StackSection from "../sections/StackSection.astro";
@@ -6,220 +9,7 @@ import LatestPostsSection from "../sections/LatestPostsSection.astro";
 import TestimonialsSection from "../sections/TestimonialsSection.astro";
 import ContactSection from "../sections/ContactSection.astro";
 
-import pabloSabaPhoto from "@/assets/testimonials/pablo-saba.jpg";
-import douglasMakeyPhoto from "@/assets/testimonials/douglas-makey.jpg";
-import sebastianMedinaPhoto from "@/assets/testimonials/sebastian-medina.jpg";
-
-const posts = [
-	{
-		title: "The efficiency of the Javascript Kitchen",
-		category: "JavaScript",
-		date: new Date("2024-07-29"),
-		href: "/blog/javascript-kitchen",
-	},
-	{
-		title: "Understanding React Server Components",
-		category: "React",
-		date: new Date("2024-06-15"),
-		href: "/blog/react-server-components",
-	},
-	{
-		title: "Building Type-Safe APIs with TypeScript and Zod",
-		category: "TypeScript",
-		date: new Date("2024-05-20"),
-		href: "/blog/typescript-zod-apis",
-	},
-	{
-		title: "Kubernetes for Frontend Developers",
-		category: "DevOps",
-		date: new Date("2024-04-10"),
-		href: "/blog/kubernetes-frontend",
-	},
-	{
-		title: "The Art of Code Reviews",
-		category: "Best Practices",
-		date: new Date("2024-03-05"),
-		href: "/blog/code-reviews",
-	},
-];
-
-const testimonials = [
-	{
-		name: "Pablo Saba",
-		role: "Associate Head Of Catalog at Uber",
-		photo: pabloSabaPhoto,
-		quote:
-			"Luis is responsible and dedicated to his work, he knows how to listen, and is not afraid to propose better solutions. He has extensive technical expertise and an excellent attitude.",
-	},
-	{
-		name: "Douglas Makey",
-		role: "Cloud Consultant at Sourced Group",
-		photo: douglasMakeyPhoto,
-		quote:
-			"Luis Sebastian is a highly skilled professional committed to quality standards. He has an excellent ability to learn and implement new technologies quickly, consistently meeting expectations.",
-	},
-	{
-		name: "Sebastian Medina",
-		role: "Senior Frontend Developer at Terminal",
-		photo: sebastianMedinaPhoto,
-		quote:
-			"A machine that helped our entire team, he is an excellent developer. One of the best I know, his impressive learning ability combined with his vast experience ensures the success of any project he is involved in.",
-	},
-];
-
-const technologies = [
-	// Frameworks
-	{
-		name: "React",
-		icon: "/tech/react.svg",
-		experience: 8,
-		category: "frameworks" as const,
-	},
-	{
-		name: "Next.js",
-		icon: "/tech/next.svg",
-		experience: 3,
-		category: "frameworks" as const,
-	},
-	{
-		name: "Astro",
-		icon: {
-			light: "/tech/astro-dark.svg",
-			dark: "/tech/astro-light.svg",
-		},
-		experience: 1,
-		category: "frameworks" as const,
-	},
-	{
-		name: "Svelte",
-		icon: "/tech/svelte.svg",
-		experience: 1,
-		category: "frameworks" as const,
-	},
-	{
-		name: "Tailwind",
-		icon: "/tech/tailwind.svg",
-		experience: 4,
-		category: "frameworks" as const,
-	},
-	// Languages
-	{
-		name: "JavaScript",
-		icon: "/tech/javascript.svg",
-		experience: 10,
-		category: "languages" as const,
-	},
-	{
-		name: "TypeScript",
-		icon: "/tech/typescript.svg",
-		experience: 4,
-		category: "languages" as const,
-	},
-	{
-		name: "Go",
-		icon: "/tech/go.svg",
-		experience: 4,
-		category: "languages" as const,
-	},
-	{
-		name: "Python",
-		icon: "/tech/python.svg",
-		experience: 4,
-		category: "languages" as const,
-	},
-	{
-		name: "Rust",
-		icon: "/tech/rust.svg",
-		colorMode: "auto" as const,
-		experience: 1,
-		category: "languages" as const,
-	},
-	{
-		name: "Solidity",
-		icon: "/tech/solidity.svg",
-		colorMode: "auto" as const,
-		experience: 2,
-		category: "languages" as const,
-	},
-	// Tools
-	{
-		name: "GitHub",
-		icon: "/tech/github.svg",
-		colorMode: "auto" as const,
-		experience: 6,
-		category: "tools" as const,
-	},
-	{
-		name: "Docker",
-		icon: "/tech/docker.svg",
-		experience: 5,
-		category: "tools" as const,
-	},
-	{
-		name: "Kubernetes",
-		icon: "/tech/kubernetes.svg",
-		experience: 3,
-		category: "tools" as const,
-	},
-	{
-		name: "AWS",
-		icon: {
-			light: "/tech/aws-dark.svg",
-			dark: "/tech/aws-light.svg",
-		},
-		experience: 5,
-		category: "tools" as const,
-	},
-	{
-		name: "Terraform",
-		icon: "/tech/terraform.svg",
-		experience: 2,
-		category: "tools" as const,
-	},
-	{
-		name: "PostgreSQL",
-		icon: "/tech/postgresql.svg",
-		experience: 6,
-		category: "tools" as const,
-	},
-	{
-		name: "MongoDB",
-		icon: "/tech/mongodb.svg",
-		experience: 4,
-		category: "tools" as const,
-	},
-	{
-		name: "Redis",
-		icon: "/tech/redis.svg",
-		experience: 4,
-		category: "tools" as const,
-	},
-	{
-		name: "DynamoDB",
-		icon: "/tech/dynamodb.svg",
-		experience: 3,
-		category: "tools" as const,
-	},
-	{
-		name: "Figma",
-		icon: "/tech/figma.svg",
-		experience: 1,
-		category: "tools" as const,
-	},
-	{
-		name: "ChatGPT",
-		icon: "/tech/chatgpt.svg",
-		colorMode: "auto" as const,
-		experience: 2,
-		category: "tools" as const,
-	},
-	{
-		name: "Claude",
-		icon: "/tech/claude.svg",
-		experience: 1,
-		category: "tools" as const,
-	},
-];
+const posts: Post[] = [];
 
 const socials = {
 	instagram: {
@@ -244,7 +34,11 @@ const socials = {
 <Container as="main" class="flex flex-col gap-8">
 	<HeroSection socials={socials} />
 	<StackSection technologies={technologies} />
-	<LatestPostsSection posts={posts} viewMoreHref="https://localhost:8080" />
+	{
+		posts && posts.length > 0 && (
+			<LatestPostsSection posts={posts} viewMoreHref="https://localhost:8080" />
+		)
+	}
 	<TestimonialsSection testimonials={testimonials} />
 	<ContactSection contactHref="mailto:hello@urrutia.me" socials={socials} />
 </Container>
