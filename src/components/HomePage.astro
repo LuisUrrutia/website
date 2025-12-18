@@ -1,5 +1,6 @@
 ---
 import type { Post } from "@/types/post";
+import { socials } from "@/data/socials";
 import { technologies } from "@/data/technologies";
 import { testimonials } from "@/data/testimonials";
 import Container from "./Container.astro";
@@ -10,25 +11,6 @@ import TestimonialsSection from "../sections/TestimonialsSection.astro";
 import ContactSection from "../sections/ContactSection.astro";
 
 const posts: Post[] = [];
-
-const socials = {
-	instagram: {
-		url: "https://www.instagram.com/luisurrutiaf/",
-		label: "Luis Urrutia Instagram",
-	},
-	github: {
-		url: "https://github.com/LuisUrrutia",
-		label: "Luis Urrutia GitHub",
-	},
-	linkedin: {
-		url: "https://www.linkedin.com/in/luisurrutiaf/",
-		label: "Luis Urrutia LinkedIn",
-	},
-	x: {
-		url: "https://x.com/luisurrutia_dev",
-		label: "Luis Urrutia X",
-	},
-};
 ---
 
 <Container as="main" class="flex flex-col gap-8">
