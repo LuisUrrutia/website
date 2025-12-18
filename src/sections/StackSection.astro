@@ -1,26 +1,10 @@
 ---
+import type { Technology, TechnologyCategory } from "@/types/technology";
 import Card from "@/components/Card.astro";
 import ClearFilterButton from "@/components/ClearFilterButton.astro";
 import FilterChip from "@/components/FilterChip.astro";
 import TechItem from "@/components/TechItem.astro";
 import ExpandButton from "@/components/ExpandButton.astro";
-
-type Category = "frameworks" | "languages" | "tools";
-
-interface ThemedIcon {
-	light: string;
-	dark: string;
-}
-
-type ColorMode = "keep" | "auto";
-
-interface Technology {
-	name: string;
-	icon: string | ThemedIcon;
-	colorMode?: ColorMode;
-	experience: number;
-	category: Category;
-}
 
 interface Props {
 	technologies: Technology[];
@@ -29,7 +13,7 @@ interface Props {
 
 const { technologies, initialVisible = 9 } = Astro.props;
 
-const categories: { id: Category; label: string }[] = [
+const categories: { id: TechnologyCategory; label: string }[] = [
 	{ id: "frameworks", label: "Frameworks" },
 	{ id: "languages", label: "Languages" },
 	{ id: "tools", label: "Tools" },

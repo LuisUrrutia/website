@@ -1,5 +1,6 @@
 ---
 import type { Post } from "@/types/post";
+import type { Technology } from "@/types/technology";
 import type { Testimonial } from "@/types/testimonial";
 import Container from "./Container.astro";
 import HeroSection from "../sections/HeroSection.astro";
@@ -12,38 +13,7 @@ import pabloSabaPhoto from "@/assets/testimonials/pablo-saba.jpg";
 import douglasMakeyPhoto from "@/assets/testimonials/douglas-makey.jpg";
 import sebastianMedinaPhoto from "@/assets/testimonials/sebastian-medina.jpg";
 
-const posts: Post[] = [
-	{
-		title: "The efficiency of the Javascript Kitchen",
-		category: "JavaScript",
-		date: new Date("2024-07-29"),
-		href: "/blog/javascript-kitchen",
-	},
-	{
-		title: "Understanding React Server Components",
-		category: "React",
-		date: new Date("2024-06-15"),
-		href: "/blog/react-server-components",
-	},
-	{
-		title: "Building Type-Safe APIs with TypeScript and Zod",
-		category: "TypeScript",
-		date: new Date("2024-05-20"),
-		href: "/blog/typescript-zod-apis",
-	},
-	{
-		title: "Kubernetes for Frontend Developers",
-		category: "DevOps",
-		date: new Date("2024-04-10"),
-		href: "/blog/kubernetes-frontend",
-	},
-	{
-		title: "The Art of Code Reviews",
-		category: "Best Practices",
-		date: new Date("2024-03-05"),
-		href: "/blog/code-reviews",
-	},
-];
+const posts: Post[] = [];
 
 const testimonials: Testimonial[] = [
 	{
@@ -69,7 +39,7 @@ const testimonials: Testimonial[] = [
 	},
 ];
 
-const technologies = [
+const technologies: Technology[] = [
 	// Frameworks
 	{
 		name: "React",
@@ -246,7 +216,11 @@ const socials = {
 <Container as="main" class="flex flex-col gap-8">
 	<HeroSection socials={socials} />
 	<StackSection technologies={technologies} />
-	<LatestPostsSection posts={posts} viewMoreHref="https://localhost:8080" />
+	{
+		posts && posts.length > 0 && (
+			<LatestPostsSection posts={posts} viewMoreHref="https://localhost:8080" />
+		)
+	}
 	<TestimonialsSection testimonials={testimonials} />
 	<ContactSection contactHref="mailto:hello@urrutia.me" socials={socials} />
 </Container>
