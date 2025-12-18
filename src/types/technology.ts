@@ -1,4 +1,4 @@
-import type { ColorMode, ThemedIcon } from "./icon";
+import type { ColorMode, ThemedIcon } from "@/types/icon";
 
 export type TechnologyCategory = "frameworks" | "languages" | "tools";
 
