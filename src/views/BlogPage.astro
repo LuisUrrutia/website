@@ -1,20 +1,21 @@
 ---
-import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Navbar from "@/components/Navbar.astro";
 import Container from "@/components/Container.astro";
 import Card from "@/components/Card.astro";
 import BlogEntry from "@/components/BlogEntry.astro";
+import Pagination from "@/components/Pagination.astro";
 import type { Locale } from "@/i18n";
 
+interface Props {
+	posts: CollectionEntry<"blog">[];
+	currentPage: number;
+	totalPages: number;
+}
+
+const { posts, currentPage, totalPages } = Astro.props;
 const { t, lang } = Astro.locals;
-
-// Get all non-draft posts for the current locale, sorted by date
-const posts = await getCollection("blog", ({ data }) => {
-	return data.lang === lang && !data.draft;
-});
-
-posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 // Helper to get the post URL
 function getPostUrl(slug: string, locale: Locale): string {
@@ -23,6 +24,9 @@ function getPostUrl(slug: string, locale: Locale): string {
 	const cleanSlug = slug.replace(/^(en|es)\//, "");
 	return `${basePath}/${cleanSlug}`;
 }
+
+// Base URL for pagination
+const baseUrl = lang === "en" ? "/blog" : `/${lang}/blog`;
 ---
 
 <Layout title={t("blog.pageTitle")} description={t("blog.pageDescription")}>
@@ -52,6 +56,13 @@ function getPostUrl(slug: string, locale: Locale): string {
 					</ul>
 				)
 			}
+
+			<Pagination
+				currentPage={currentPage}
+				totalPages={totalPages}
+				baseUrl={baseUrl}
+				class="mt-8"
+			/>
 		</Card>
 	</Container>
 </Layout>

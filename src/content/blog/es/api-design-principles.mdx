@@ -1,0 +1,63 @@
+---
+title: "Principios de Diseño de APIs REST que Escalan"
+description: "Lecciones aprendidas diseñando APIs que sirven millones de peticiones."
+date: 2026-01-03
+category: "Arquitectura"
+tags: ["api", "rest", "diseño"]
+lang: "es"
+translationSlug: "api-design-principles"
+---
+
+Un buen diseño de API es crucial para la experiencia del desarrollador y la mantenibilidad del sistema.
+
+## La Consistencia es Clave
+
+Usa convenciones de nombres consistentes en toda tu API. Si usas `snake_case` para un endpoint, úsalo en todos.
+
+```json
+{
+	"user_id": "123",
+	"created_at": "2026-01-03T10:00:00Z",
+	"first_name": "John",
+	"last_name": "Doe"
+}
+```
+
+## Códigos de Estado HTTP Apropiados
+
+Usa códigos de estado semánticamente:
+
+- **200** - Éxito
+- **201** - Creado
+- **400** - Petición Incorrecta (error del cliente)
+- **401** - No Autorizado
+- **403** - Prohibido
+- **404** - No Encontrado
+- **500** - Error del Servidor
+
+## Paginación Bien Hecha
+
+Siempre pagina los endpoints de lista. La paginación basada en cursor escala mejor que la basada en offset.
+
+```json
+{
+  "data": [...],
+  "pagination": {
+    "next_cursor": "eyJpZCI6MTAwfQ==",
+    "has_more": true
+  }
+}
+```
+
+## Estrategia de Versionado
+
+Versiona tu API desde el primer día. El versionado en URL es el enfoque más explícito.
+
+```
+GET /api/v1/users
+GET /api/v2/users
+```
+
+## Conclusión
+
+Una API bien diseñada es un placer para trabajar y reduce significativamente la carga de soporte.

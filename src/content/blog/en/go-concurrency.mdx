@@ -1,0 +1,72 @@
+---
+title: "Mastering Go Concurrency Patterns"
+description: "Understanding goroutines, channels, and common concurrency patterns in Go."
+date: 2026-01-02
+category: "Go"
+tags: ["go", "concurrency", "goroutines"]
+lang: "en"
+translationSlug: "go-concurrency"
+---
+
+Go's concurrency model is one of its strongest features. Let's explore the patterns that make it powerful.
+
+## Goroutines: Lightweight Threads
+
+Goroutines are incredibly cheap to create, allowing you to spawn thousands without worry.
+
+```go
+func main() {
+    go processTask("task-1")
+    go processTask("task-2")
+    go processTask("task-3")
+
+    time.Sleep(time.Second)
+}
+```
+
+## Channels for Communication
+
+Channels are the idiomatic way to communicate between goroutines.
+
+```go
+func worker(jobs <-chan int, results chan<- int) {
+    for job := range jobs {
+        results <- job * 2
+    }
+}
+
+func main() {
+    jobs := make(chan int, 100)
+    results := make(chan int, 100)
+
+    // Start workers
+    for w := 1; w <= 3; w++ {
+        go worker(jobs, results)
+    }
+
+    // Send jobs
+    for j := 1; j <= 5; j++ {
+        jobs <- j
+    }
+    close(jobs)
+}
+```
+
+## The Select Statement
+
+Select allows you to wait on multiple channel operations.
+
+```go
+select {
+case msg := <-ch1:
+    fmt.Println("Received from ch1:", msg)
+case msg := <-ch2:
+    fmt.Println("Received from ch2:", msg)
+case <-time.After(time.Second):
+    fmt.Println("Timeout!")
+}
+```
+
+## Conclusion
+
+Go's concurrency primitives are simple yet powerful. Master them to build highly concurrent systems.

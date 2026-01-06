@@ -1,0 +1,56 @@
+---
+title: "Mejores Prácticas de Flujo de Trabajo con Git para Equipos"
+description: "Estrategias efectivas de Git que mantienen a tu equipo productivo y tu historial limpio."
+date: 2025-12-27
+category: "Git"
+tags: ["git", "flujo de trabajo", "colaboración"]
+lang: "es"
+translationSlug: "git-workflow"
+---
+
+Un buen flujo de trabajo con Git puede hacer o deshacer la productividad del equipo. Esto es lo que funciona.
+
+## Conventional Commits
+
+Usa mensajes de commit estructurados para mejor historial y changelogs automatizados.
+
+```
+feat: agregar autenticación de usuario
+fix: resolver problema de redirección en login
+docs: actualizar documentación de API
+refactor: simplificar lógica de validación de usuario
+```
+
+## Nombres de Ramas
+
+Nombres de rama consistentes facilitan la navegación.
+
+```
+feature/user-authentication
+fix/login-redirect
+chore/update-dependencies
+```
+
+## Guías para Pull Requests
+
+1. Mantén los PRs pequeños y enfocados
+2. Escribe títulos y descripciones descriptivos
+3. Solicita revisiones de miembros relevantes del equipo
+4. Responde al feedback prontamente
+
+## Rebase vs Merge
+
+Prefiero hacer rebase de ramas de feature para mantener el historial lineal, pero merge commits para la rama principal.
+
+```bash
+# Actualizar rama de feature
+git fetch origin
+git rebase origin/main
+
+# Merge a main con merge commit
+git merge --no-ff feature/my-feature
+```
+
+## Conclusión
+
+Invierte tiempo en establecer buenas prácticas de Git temprano. Tu yo del futuro te lo agradecerá.

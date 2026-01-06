@@ -1,0 +1,55 @@
+---
+title: "Estrategias Efectivas de Caché con Redis"
+description: "Patrones prácticos para implementar caché en tus aplicaciones usando Redis."
+date: 2025-12-24
+category: "Base de Datos"
+tags: ["redis", "caché", "rendimiento"]
+lang: "es"
+translationSlug: "redis-caching"
+---
+
+Redis es mi solución preferida para caché. Estos son patrones que funcionan bien en producción.
+
+## Patrón Cache-Aside
+
+El patrón de caché más común: revisar caché primero, luego base de datos.
+
+```typescript
+async function getUser(userId: string): Promise<User> {
+	const cached = await redis.get(`user:${userId}`);
+	if (cached) {
+		return JSON.parse(cached);
+	}
+
+	const user = await db.users.findById(userId);
+	await redis.setex(`user:${userId}`, 3600, JSON.stringify(user));
+	return user;
+}
+```
+
+## Invalidación de Caché
+
+El problema más difícil en ciencias de la computación. Mantenlo simple.
+
+```typescript
+async function updateUser(userId: string, data: UserUpdate) {
+	await db.users.update(userId, data);
+	await redis.del(`user:${userId}`);
+}
+```
+
+## Estrategia de TTL
+
+Establece TTLs apropiados basados en la volatilidad de los datos.
+
+```typescript
+// Datos que cambian frecuentemente
+await redis.setex("active-sessions", 60, data);
+
+// Datos que rara vez cambian
+await redis.setex("static-config", 86400, data);
+```
+
+## Conclusión
+
+Empieza simple, mide, y optimiza basándote en patrones de uso reales.

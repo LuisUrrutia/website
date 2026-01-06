@@ -1,0 +1,56 @@
+---
+title: "Estrategias de Testing para Apps Web Modernas"
+description: "Un enfoque práctico de testing que balancea cobertura con velocidad de desarrollo."
+date: 2025-12-29
+category: "Testing"
+tags: ["testing", "vitest", "playwright"]
+lang: "es"
+translationSlug: "testing-strategies"
+---
+
+El testing es esencial, pero no todos los tests son iguales. Este es mi enfoque para testing efectivo.
+
+## El Trofeo del Testing
+
+En lugar de la pirámide de testing tradicional, prefiero el enfoque del trofeo:
+
+1. **Análisis Estático** - TypeScript, ESLint
+2. **Tests Unitarios** - Funciones puras, utilidades
+3. **Tests de Integración** - Interacciones de componentes
+4. **Tests E2E** - Flujos críticos de usuario
+
+## Testing Unitario con Vitest
+
+Testing moderno y rápido para JavaScript.
+
+```typescript
+import { describe, it, expect } from "vitest";
+import { formatPrice } from "./utils";
+
+describe("formatPrice", () => {
+	it("formatea números enteros", () => {
+		expect(formatPrice(100)).toBe("$100.00");
+	});
+
+	it("maneja decimales", () => {
+		expect(formatPrice(99.99)).toBe("$99.99");
+	});
+});
+```
+
+## Testing E2E con Playwright
+
+Prueba escenarios reales de usuario en múltiples navegadores.
+
+```typescript
+test("usuario puede completar checkout", async ({ page }) => {
+	await page.goto("/products");
+	await page.click('[data-testid="add-to-cart"]');
+	await page.click('[data-testid="checkout"]');
+	await expect(page.locator(".confirmation")).toBeVisible();
+});
+```
+
+## Conclusión
+
+Enfoca tus esfuerzos de testing donde proporcionan más valor: tests de integración y E2E.

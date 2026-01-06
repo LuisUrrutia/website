@@ -1,0 +1,71 @@
+---
+title: "TypeScript Best Practices for Large Codebases"
+description: "Essential patterns and practices for maintaining type safety at scale in enterprise applications."
+date: 2026-01-05
+category: "TypeScript"
+tags: ["typescript", "best practices", "architecture"]
+lang: "en"
+translationSlug: "typescript-best-practices"
+---
+
+Managing types in large codebases requires discipline and well-established patterns. Here are the practices that have served me well over the years.
+
+## Prefer Interfaces Over Types for Object Shapes
+
+While `type` and `interface` are often interchangeable, interfaces provide better error messages and are more extensible.
+
+```typescript
+// Prefer this
+interface UserProfile {
+	id: string;
+	name: string;
+	avatar?: string;
+}
+
+// Over this for object shapes
+type UserProfile = {
+	id: string;
+	name: string;
+	avatar?: string;
+};
+```
+
+## Use Branded Types for Domain Safety
+
+Branded types prevent mixing up values that share the same primitive type but have different semantic meanings.
+
+```typescript
+type UserId = string & { readonly brand: unique symbol };
+type OrderId = string & { readonly brand: unique symbol };
+
+function getUser(id: UserId): User {
+	/* ... */
+}
+function getOrder(id: OrderId): Order {
+	/* ... */
+}
+
+// Now you can't accidentally pass an OrderId where UserId is expected
+```
+
+## Embrace Discriminated Unions
+
+Discriminated unions make impossible states impossible and provide excellent type narrowing.
+
+```typescript
+type Result<T> = { success: true; data: T } | { success: false; error: Error };
+
+function handleResult<T>(result: Result<T>) {
+	if (result.success) {
+		// TypeScript knows result.data exists here
+		console.log(result.data);
+	} else {
+		// TypeScript knows result.error exists here
+		console.error(result.error);
+	}
+}
+```
+
+## Conclusion
+
+Type safety is an investment that pays dividends in reduced bugs and improved developer experience.
