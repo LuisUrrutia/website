@@ -1,7 +1,8 @@
 ---
+import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
+import Navbar from "@/components/Navbar.astro";
 import { PersonJsonLd } from "@/components/seo";
-import type { Post } from "@/types/post";
 import { socials } from "@/data/socials";
 import { technologies } from "@/data/technologies";
 import { testimonials } from "@/data/testimonials";
@@ -11,14 +12,28 @@ import StackSection from "@/sections/StackSection.astro";
 import LatestPostsSection from "@/sections/LatestPostsSection.astro";
 import TestimonialsSection from "@/sections/TestimonialsSection.astro";
 import ContactSection from "@/sections/ContactSection.astro";
+import { getLocalizedPath } from "@/i18n";
 
-const { t } = Astro.locals;
+const { t, lang } = Astro.locals;
 
 // Use Astro.site from config, fallback to request origin in dev
 const siteUrl = (Astro.site ?? Astro.url.origin).toString().replace(/\/$/, "");
 const description = t("meta.description");
 
-const posts: Post[] = [];
+// Get latest posts for current locale
+const allPosts = await getCollection("blog", ({ data, id }) => {
+	return id.startsWith(`${lang}/`) && data.draft !== true;
+});
+
+const posts = allPosts
+	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+	.slice(0, 3)
+	.map((post) => ({
+		title: post.data.title,
+		category: post.data.category,
+		date: post.data.date,
+		href: getLocalizedPath(`/blog/${post.id.replace(/^(en|es)\//, "")}`, lang),
+	}));
 ---
 
 <Layout ogImageAlt={t("meta.ogImageAlt")}>
@@ -28,14 +43,15 @@ const posts: Post[] = [];
 		jobTitle={t("meta.jobTitle")}
 		description={description}
 	/>
+	<Navbar />
 	<Container as="main" class="flex flex-col gap-8">
 		<HeroSection socials={socials} />
 		<StackSection technologies={technologies} />
 		{
-			posts && posts.length > 0 && (
+			posts.length > 0 && (
 				<LatestPostsSection
 					posts={posts}
-					viewMoreHref="https://localhost:8080"
+					viewMoreHref={getLocalizedPath("/blog", lang)}
 				/>
 			)
 		}

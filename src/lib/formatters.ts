@@ -14,3 +14,37 @@ export function formatExperience(
 	if (years === 1) return t("experience.oneYear");
 	return t("experience.years").replace("{count}", String(years));
 }
+
+const WORDS_PER_MINUTE = 200;
+
+/**
+ * Calculate reading time in minutes from text content.
+ * Strips MDX/HTML and counts words.
+ */
+export function calculateReadingTime(content: string): number {
+	// Remove MDX/JSX components, HTML tags, and code blocks
+	const cleanText = content
+		.replace(/```[\s\S]*?```/g, "") // Remove code blocks
+		.replace(/<[^>]+>/g, "") // Remove HTML/JSX tags
+		.replace(/import\s+.*?;?\n/g, "") // Remove imports
+		.replace(/export\s+.*?;?\n/g, "") // Remove exports
+		.replace(/\{[^}]*\}/g, "") // Remove JSX expressions
+		.replace(/[#*`~[\]]/g, "") // Remove markdown formatting
+		.trim();
+
+	const wordCount = cleanText
+		.split(/\s+/)
+		.filter((word) => word.length > 0).length;
+
+	return Math.max(1, Math.ceil(wordCount / WORDS_PER_MINUTE));
+}
+
+/**
+ * Format reading time using localized string.
+ */
+export function formatReadingTime(
+	minutes: number,
+	t: (key: TranslationKey) => string,
+): string {
+	return t("blog.readingTime").replace("{minutes}", String(minutes));
+}

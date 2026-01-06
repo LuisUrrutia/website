@@ -7,6 +7,7 @@ import Container from "@/components/Container.astro";
 import Card from "@/components/Card.astro";
 import Pill from "@/components/Pill.astro";
 import { getLocalizedPath, localeNames, type Locale } from "@/i18n";
+import { calculateReadingTime, formatReadingTime } from "@/lib/formatters";
 
 interface Props {
 	post: CollectionEntry<"blog">;
@@ -15,6 +16,10 @@ interface Props {
 
 const { post, translatedPost } = Astro.props;
 const { t, lang } = Astro.locals;
+
+// Calculate reading time from raw content
+const readingTime = calculateReadingTime(post.body ?? "");
+const formattedReadingTime = formatReadingTime(readingTime, t);
 const { Content } = await render(post);
 
 const localeMap = { en: "en-US", es: "es-ES" } as const;
@@ -65,6 +70,9 @@ const alternateUrl = translatedPost
 							>{t("blog.publishedOn")} {formattedDate}</time
 						>
 					</span>
+					<span class="text-subtitle text-sm"
+						>&middot; {formattedReadingTime}</span
+					>
 					{
 						formattedUpdatedDate && (
 							<span class="text-subtitle text-sm">
