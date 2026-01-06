@@ -1,0 +1,57 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Container from "@/components/Container.astro";
+import Card from "@/components/Card.astro";
+import BlogEntry from "@/components/BlogEntry.astro";
+import type { Locale } from "@/i18n";
+
+const { t, lang } = Astro.locals;
+
+// Get all non-draft posts for the current locale, sorted by date
+const posts = await getCollection("blog", ({ data }) => {
+	return data.lang === lang && !data.draft;
+});
+
+posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Helper to get the post URL
+function getPostUrl(slug: string, locale: Locale): string {
+	const basePath = locale === "en" ? "/blog" : `/${locale}/blog`;
+	// Remove the locale prefix from slug (e.g., "en/example-post" -> "example-post")
+	const cleanSlug = slug.replace(/^(en|es)\//, "");
+	return `${basePath}/${cleanSlug}`;
+}
+---
+
+<Layout title={t("blog.pageTitle")} description={t("blog.pageDescription")}>
+	<Navbar />
+	<Container as="main" class="flex flex-col gap-8">
+		<Card>
+			<header class="mb-6">
+				<h1 class="text-title text-3xl font-bold">{t("blog.pageTitle")}</h1>
+				<p class="text-subtitle mt-2">{t("blog.pageDescription")}</p>
+			</header>
+
+			{
+				posts.length === 0 ? (
+					<p class="text-subtitle py-8 text-center">{t("blog.empty")}</p>
+				) : (
+					<ul class="m-0 flex list-none flex-col p-0">
+						{posts.map((post) => (
+							<li>
+								<BlogEntry
+									title={post.data.title}
+									category={post.data.category}
+									date={post.data.date}
+									href={getPostUrl(post.id, lang)}
+								/>
+							</li>
+						))}
+					</ul>
+				)
+			}
+		</Card>
+	</Container>
+</Layout>

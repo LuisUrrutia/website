@@ -37,8 +37,16 @@ export const ui = {
 
 		// Blog
 		"blog.title": "Latest posts",
+		"blog.pageTitle": "Blog",
+		"blog.pageDescription":
+			"Thoughts on software engineering, web development, and technology.",
 		"blog.empty": "No posts available",
 		"blog.viewMore": "View More",
+		"blog.allPosts": "All Posts",
+		"blog.backToBlog": "Back to Blog",
+		"blog.publishedOn": "Published on",
+		"blog.updatedOn": "Updated on",
+		"blog.readingTime": "{minutes} min read",
 		"blog.alsoAvailable": "This post is also available in:",
 
 		// Common
@@ -110,8 +118,16 @@ export const ui = {
 
 		// Blog
 		"blog.title": "Últimas publicaciones",
+		"blog.pageTitle": "Blog",
+		"blog.pageDescription":
+			"Reflexiones sobre ingeniería de software, desarrollo web y tecnología.",
 		"blog.empty": "No hay publicaciones disponibles",
 		"blog.viewMore": "Ver más",
+		"blog.allPosts": "Todas las publicaciones",
+		"blog.backToBlog": "Volver al Blog",
+		"blog.publishedOn": "Publicado el",
+		"blog.updatedOn": "Actualizado el",
+		"blog.readingTime": "{minutes} min de lectura",
 		"blog.alsoAvailable": "Esta publicación también está disponible en:",
 
 		// Common
