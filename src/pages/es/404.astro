@@ -4,7 +4,12 @@ import Layout from "@/layouts/Layout.astro";
 const { t } = Astro.locals;
 ---
 
-<Layout title={t("404.title")} description={t("404.description")} noindex>
+<Layout
+	title={t("404.title")}
+	description={t("404.description")}
+	noindex
+	skipLocaleRedirect
+>
 	<main
 		class="mx-auto flex min-h-[80vh] max-w-xl flex-col items-center justify-center px-4 text-center"
 	>
