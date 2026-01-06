@@ -6,29 +6,36 @@ import {
 	getLocalizedPath,
 	useTranslations,
 } from "@/i18n";
+import type { Locale } from "@/i18n";
 
 /**
- * 404 page with no-flash locale detection.
+ * 404 page with client-side locale detection.
  *
- * Renders content for ALL locales (hidden by default), then a blocking
- * script immediately shows only the correct locale based on URL path.
- * This prevents any flash of wrong-language content.
+ * Since this page handles all 404s regardless of URL path,
+ * we need to detect the locale from the original URL on the client
+ * and update the content accordingly.
  */
 
-// Pre-generate translations for all locales
-const localeData = locales.map((locale) => {
-	const t = useTranslations(locale);
-	return {
-		locale,
-		heading: t("404.heading"),
-		description: t("404.description"),
-		backHome: t("404.backHome"),
-		homeHref: getLocalizedPath("/", locale),
-	};
-});
+// Default to the locale from middleware (works for direct /404 access)
+const { lang: serverLang } = Astro.locals;
+const t = useTranslations(serverLang);
 
-// For meta tags, use default locale
-const t = useTranslations(defaultLocale);
+// Pre-generate translations for all locales (for client-side hydration)
+const translations = Object.fromEntries(
+	locales.map((locale) => {
+		const translate = useTranslations(locale);
+		return [
+			locale,
+			{
+				title: translate("404.title"),
+				heading: translate("404.heading"),
+				description: translate("404.description"),
+				backHome: translate("404.backHome"),
+				homeHref: getLocalizedPath("/", locale),
+			},
+		];
+	}),
+);
 ---
 
 <Layout
@@ -37,74 +44,68 @@ const t = useTranslations(defaultLocale);
 	noindex
 	skipLocaleRedirect
 >
-	{/* Blocking script to detect locale BEFORE content renders */}
-	<script
-		is:inline
+	<main
+		class="mx-auto flex min-h-[80vh] max-w-xl flex-col items-center justify-center px-4 text-center"
+		data-translations={JSON.stringify(translations)}
 		data-locales={JSON.stringify(locales)}
 		data-default-locale={defaultLocale}
 	>
-		(function () {
-			const script = document.currentScript;
-			const locales = JSON.parse(script.dataset.locales);
-			const defaultLocale = script.dataset.defaultLocale;
-			const pathname = window.location.pathname;
-
-			let locale = defaultLocale;
-			for (const l of locales) {
-				if (pathname.startsWith("/" + l + "/") || pathname === "/" + l) {
-					locale = l;
-					break;
-				}
-			}
-
-			document.documentElement.lang = locale;
-			document.documentElement.dataset.locale404 = locale;
-		})();
-	</script>
-
-	<style is:inline>
-		/* Hide all locale content by default */
-		[data-locale-content] {
-			display: none;
-		}
-		/* Show only the matching locale */
-		html[data-locale-404="en"] [data-locale-content="en"],
-		html[data-locale-404="es"] [data-locale-content="es"] {
-			display: block;
-		}
-		/* For the link inside, use inline display */
-		html[data-locale-404="en"] a[data-locale-content="en"],
-		html[data-locale-404="es"] a[data-locale-content="es"] {
-			display: inline-flex;
-		}
-	</style>
-
-	<main
-		class="mx-auto flex min-h-[80vh] max-w-xl flex-col items-center justify-center px-4 text-center"
-	>
 		<h1 class="text-title mb-4 text-6xl font-bold">404</h1>
-
-		{
-			localeData.map(({ locale, heading, description, backHome, homeHref }) => (
-				<>
-					<h2
-						data-locale-content={locale}
-						class="text-title mb-4 text-2xl font-semibold"
-					>
-						{heading}
-					</h2>
-					<p data-locale-content={locale} class="text-subtitle mb-8">
-						{description}
-					</p>
-					<a
-						data-locale-content={locale}
-						href={homeHref}
-						class="bg-button text-button-foreground hover:bg-button-hover rounded-lg px-6 py-3 font-medium transition-colors"
-					>
-						{backHome}
-					</a>
-				</>
-			))
-		}
+		<h2 id="heading-404" class="text-title mb-4 text-2xl font-semibold">
+			{t("404.heading")}
+		</h2>
+		<p id="description-404" class="text-subtitle mb-8">
+			{t("404.description")}
+		</p>
+		<a
+			id="back-home-404"
+			href={getLocalizedPath("/", serverLang)}
+			class="bg-button text-button-foreground hover:bg-button-hover rounded-lg px-6 py-3 font-medium transition-colors"
+		>
+			{t("404.backHome")}
+		</a>
 	</main>
 </Layout>
+
+<script is:inline>
+	(function () {
+		const main = document.querySelector("main[data-translations]");
+		if (!main) return;
+
+		const translations = JSON.parse(main.dataset.translations);
+		const locales = JSON.parse(main.dataset.locales);
+		const defaultLocale = main.dataset.defaultLocale;
+
+		// Detect locale from current URL path
+		const pathname = window.location.pathname;
+		let detectedLocale = defaultLocale;
+
+		for (const locale of locales) {
+			if (
+				pathname.startsWith("/" + locale + "/") ||
+				pathname === "/" + locale
+			) {
+				detectedLocale = locale;
+				break;
+			}
+		}
+
+		// Update page content if locale differs from server-rendered default
+		const t = translations[detectedLocale];
+		if (t) {
+			document.documentElement.lang = detectedLocale;
+			document.title = t.title;
+
+			const heading = document.getElementById("heading-404");
+			const description = document.getElementById("description-404");
+			const backHome = document.getElementById("back-home-404");
+
+			if (heading) heading.textContent = t.heading;
+			if (description) description.textContent = t.description;
+			if (backHome) {
+				backHome.textContent = t.backHome;
+				backHome.href = t.homeHref;
+			}
+		}
+	})();
+</script>
