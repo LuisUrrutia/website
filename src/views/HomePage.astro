@@ -1,0 +1,45 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { PersonJsonLd } from "@/components/seo";
+import type { Post } from "@/types/post";
+import { socials } from "@/data/socials";
+import { technologies } from "@/data/technologies";
+import { testimonials } from "@/data/testimonials";
+import Container from "@/components/Container.astro";
+import HeroSection from "@/sections/HeroSection.astro";
+import StackSection from "@/sections/StackSection.astro";
+import LatestPostsSection from "@/sections/LatestPostsSection.astro";
+import TestimonialsSection from "@/sections/TestimonialsSection.astro";
+import ContactSection from "@/sections/ContactSection.astro";
+
+const { t } = Astro.locals;
+
+// Use Astro.site from config, fallback to request origin in dev
+const siteUrl = (Astro.site ?? Astro.url.origin).toString().replace(/\/$/, "");
+const description = t("meta.description");
+
+const posts: Post[] = [];
+---
+
+<Layout ogImageAlt={t("meta.ogImageAlt")}>
+	<PersonJsonLd
+		slot="head"
+		siteUrl={siteUrl}
+		jobTitle={t("meta.jobTitle")}
+		description={description}
+	/>
+	<Container as="main" class="flex flex-col gap-8">
+		<HeroSection socials={socials} />
+		<StackSection technologies={technologies} />
+		{
+			posts && posts.length > 0 && (
+				<LatestPostsSection
+					posts={posts}
+					viewMoreHref="https://localhost:8080"
+				/>
+			)
+		}
+		<TestimonialsSection testimonials={testimonials} />
+		<ContactSection contactHref="mailto:hello@urrutia.me" socials={socials} />
+	</Container>
+</Layout>

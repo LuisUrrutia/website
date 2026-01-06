@@ -1,0 +1,25 @@
+---
+import Layout from "@/layouts/Layout.astro";
+
+const { t } = Astro.locals;
+---
+
+<Layout title={t("404.title")} description={t("404.description")} noindex>
+	<main
+		class="mx-auto flex min-h-[80vh] max-w-xl flex-col items-center justify-center px-4 text-center"
+	>
+		<h1 class="text-title mb-4 text-6xl font-bold">404</h1>
+		<h2 class="text-title mb-4 text-2xl font-semibold">
+			{t("404.heading")}
+		</h2>
+		<p class="text-subtitle mb-8">
+			{t("404.description")}
+		</p>
+		<a
+			href="/"
+			class="bg-button text-button-foreground hover:bg-button-hover rounded-lg px-6 py-3 font-medium transition-colors"
+		>
+			{t("404.backHome")}
+		</a>
+	</main>
+</Layout>

@@ -1,0 +1,104 @@
+---
+/**
+ * LocaleScript - Inline blocking script for locale detection and redirect.
+ *
+ * Handles:
+ * - Reading stored locale preference from localStorage (with cookie fallback)
+ * - Browser language detection for first-time visitors
+ * - Automatic redirect to preferred locale
+ *
+ * Must be placed in <head> before any rendering.
+ *
+ * NOTE: This script uses `is:inline` for blocking behavior, so it cannot import
+ * from @/lib/locale-storage. The storage logic is duplicated here intentionally.
+ * Keep in sync with src/lib/locale-storage.ts
+ */
+import { locales, defaultLocale } from "@/i18n/locales";
+
+interface Props {
+	currentLocale: string;
+}
+
+const { currentLocale } = Astro.props;
+const localesJson = JSON.stringify(locales);
+---
+
+<script
+	is:inline
+	data-current-locale={currentLocale}
+	data-default-locale={defaultLocale}
+	data-locales={localesJson}
+>
+	(function () {
+		const script = document.currentScript;
+		const currentLocale = script.dataset.currentLocale;
+		const defaultLocale = script.dataset.defaultLocale;
+		const locales = JSON.parse(script.dataset.locales);
+
+		const STORAGE_KEY = "preferred-locale";
+		const COOKIE_NAME = "preferred-locale";
+
+		function getCookie(name) {
+			const match = document.cookie.match(
+				new RegExp("(^| )" + name + "=([^;]+)"),
+			);
+			return match ? match[2] : null;
+		}
+
+		function getStoredLocale() {
+			try {
+				return localStorage.getItem(STORAGE_KEY);
+			} catch {
+				return getCookie(COOKIE_NAME);
+			}
+		}
+
+		function getBrowserLocale() {
+			const browserLang = navigator.language || navigator.userLanguage;
+			if (!browserLang) return null;
+
+			// Check exact match first (e.g., "es-CL" -> "es")
+			const langCode = browserLang.split("-")[0].toLowerCase();
+			return locales.includes(langCode) ? langCode : null;
+		}
+
+		function getLocalizedPath(path, locale) {
+			if (locale === defaultLocale) return path;
+			return "/" + locale + path;
+		}
+
+		function getPathWithoutLocale(pathname) {
+			for (const locale of locales) {
+				if (pathname.startsWith("/" + locale + "/")) {
+					return pathname.slice(locale.length + 1);
+				}
+				if (pathname === "/" + locale) {
+					return "/";
+				}
+			}
+			return pathname;
+		}
+
+		// Check stored preference
+		const storedLocale = getStoredLocale();
+		if (storedLocale && locales.includes(storedLocale)) {
+			if (storedLocale !== currentLocale) {
+				const pathWithoutLocale = getPathWithoutLocale(
+					window.location.pathname,
+				);
+				const newPath = getLocalizedPath(pathWithoutLocale, storedLocale);
+				window.location.replace(newPath + window.location.search);
+				return;
+			}
+			return; // Already on correct locale
+		}
+
+		// No stored preference - detect browser language
+		const browserLocale = getBrowserLocale();
+		if (browserLocale && browserLocale !== currentLocale) {
+			const pathWithoutLocale = getPathWithoutLocale(window.location.pathname);
+			const newPath = getLocalizedPath(pathWithoutLocale, browserLocale);
+			window.location.replace(newPath + window.location.search);
+		}
+	})();
+</script>

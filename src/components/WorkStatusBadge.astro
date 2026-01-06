@@ -6,23 +6,13 @@ type WorkStatus = "open" | "busy";
 
 interface Props {
 	status: WorkStatus;
-	texts?: {
-		open?: string;
-		busy?: string;
-	};
+	/** Status text to display. */
+	statusText: string;
 }
 
-const DEFAULT_TEXTS = {
-	open: "Open to work",
-	busy: "Currently working",
-} as const;
-
-const { status, texts } = Astro.props;
+const { status, statusText } = Astro.props;
 
 const isOpen = status === "open";
-const statusText = isOpen
-	? (texts?.open ?? DEFAULT_TEXTS.open)
-	: (texts?.busy ?? DEFAULT_TEXTS.busy);
 ---
 
 <div class="relative h-fit w-fit">

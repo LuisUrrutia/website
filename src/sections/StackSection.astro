@@ -5,6 +5,7 @@ import ClearFilterButton from "@/components/ClearFilterButton.astro";
 import FilterChip from "@/components/FilterChip.astro";
 import TechItem from "@/components/TechItem.astro";
 import ExpandButton from "@/components/ExpandButton.astro";
+import { formatExperience } from "@/lib/formatters";
 
 interface Props {
 	technologies: Technology[];
@@ -12,11 +13,12 @@ interface Props {
 }
 
 const { technologies, initialVisible = 9 } = Astro.props;
+const { t } = Astro.locals;
 
 const categories: { id: TechnologyCategory; label: string }[] = [
-	{ id: "frameworks", label: "Frameworks" },
-	{ id: "languages", label: "Languages" },
-	{ id: "tools", label: "Tools" },
+	{ id: "frameworks", label: t("stack.frameworks") },
+	{ id: "languages", label: t("stack.languages") },
+	{ id: "tools", label: t("stack.tools") },
 ];
 
 // Pre-compute indices by category at build time
@@ -26,7 +28,7 @@ const indicesByCategory = technologies.reduce(
 		acc[tech.category].push(index);
 		return acc;
 	},
-	{} as Record<Category, number[]>,
+	{} as Record<TechnologyCategory, number[]>,
 );
 ---
 
@@ -35,13 +37,17 @@ const indicesByCategory = technologies.reduce(
 		class="stack-section flex flex-col gap-6"
 		data-initial-visible={initialVisible}
 		data-indices={JSON.stringify(indicesByCategory)}
+		data-status-template={t("stack.showing")}
 	>
 		<header
 			class="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
 		>
-			<h2 class="text-title text-2xl font-semibold">Stack</h2>
+			<h2 class="text-title text-2xl font-semibold">{t("stack.title")}</h2>
 			<div class="stack-filters flex items-center gap-2">
-				<ClearFilterButton class="stack-clear order-1 sm:order-first" />
+				<ClearFilterButton
+					class="stack-clear order-1 sm:order-first"
+					aria-label={t("common.clearFilters")}
+				/>
 				{
 					categories.map(({ id, label }) => (
 						<FilterChip
@@ -66,7 +72,7 @@ const indicesByCategory = technologies.reduce(
 							name={tech.name}
 							icon={tech.icon}
 							colorMode={tech.colorMode}
-							experience={tech.experience}
+							experienceText={formatExperience(tech.experience, t)}
 						/>
 					</li>
 				))
@@ -74,6 +80,9 @@ const indicesByCategory = technologies.reduce(
 		</ul>
 
 		<ExpandButton
+			id="stack-expand-btn"
+			expandedText={t("common.viewLess")}
+			collapsedText={t("common.viewMore")}
 			class:list={[
 				"stack-expand-btn",
 				{ hidden: technologies.length <= initialVisible },
@@ -114,6 +123,7 @@ const indicesByCategory = technologies.reduce(
 				const indicesByCategory: Record<string, number[]> = JSON.parse(
 					section.dataset.indices || "{}",
 				);
+				const statusTemplate = section.dataset.statusTemplate || "";
 
 				// Build arrays from pre-computed counts
 				const allIndices = Array.from({ length: totalItems }, (_, i) => i);
@@ -184,9 +194,11 @@ const indicesByCategory = technologies.reduce(
 					}
 
 					// Announce to screen readers
-					if (statusEl) {
+					if (statusEl && statusTemplate) {
 						const showing = nextVisible.size;
-						statusEl.textContent = `Showing ${showing} of ${totalMatching} items`;
+						statusEl.textContent = statusTemplate
+							.replace("{visible}", String(showing))
+							.replace("{total}", String(totalMatching));
 					}
 				}
 

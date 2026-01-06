@@ -16,15 +16,13 @@ import TestimonialCard from "@/components/TestimonialCard.astro";
 
 interface Props {
 	testimonials: Testimonial[];
-	title?: string;
 	id?: string;
 }
 
-const {
-	testimonials,
-	title = "Testimonials",
-	id = "testimonials",
-} = Astro.props;
+const { testimonials, id = "testimonials" } = Astro.props;
+const { t, lang } = Astro.locals;
+
+const title = t("testimonials.title");
 ---
 
 <section id={id} class="flex flex-col gap-6" aria-labelledby={`${id}-heading`}>
@@ -39,9 +37,9 @@ const {
 			testimonials.map((testimonial) => (
 				<TestimonialCard
 					name={testimonial.name}
-					role={testimonial.role}
+					role={testimonial.role[lang]}
 					photo={testimonial.photo}
-					quote={testimonial.quote}
+					quote={testimonial.quote[lang]}
 				/>
 			))
 		}

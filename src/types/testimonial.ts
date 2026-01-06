@@ -1,6 +1,8 @@
+import type { Locale } from "@/i18n";
+
 export interface Testimonial {
 	name: string;
-	role: string;
+	role: Record<Locale, string>;
 	photo: ImageMetadata;
-	quote: string;
+	quote: Record<Locale, string>;
 }

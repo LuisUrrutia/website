@@ -5,7 +5,7 @@ interface Props {
 	name: string;
 	icon: string | ThemedIcon;
 	colorMode?: ColorMode;
-	experience: number;
+	experienceText: string;
 	class?: string;
 }
 
@@ -13,7 +13,7 @@ const {
 	name,
 	icon,
 	colorMode = "keep",
-	experience,
+	experienceText,
 	class: className,
 } = Astro.props;
 
@@ -22,12 +22,6 @@ const iconSrc = isThemedIcon ? null : icon;
 const lightIcon = isThemedIcon ? icon.light : null;
 const darkIcon = isThemedIcon ? icon.dark : null;
 const isAutoColor = !isThemedIcon && colorMode === "auto";
-
-const formatExperience = (years: number) => {
-	if (years < 1) return "Less than 1 year of experience";
-	if (years === 1) return "+1 year of experience";
-	return `+${years} years of experience`;
-};
 ---
 
 <div class:list={["flex items-center gap-3 p-2", className]}>
@@ -76,7 +70,7 @@ const formatExperience = (years: number) => {
 	<div class="flex flex-col gap-0.5">
 		<span class="text-title text-lg font-medium">{name}</span>
 		<span class="text-subtitle text-sm">
-			{formatExperience(experience)}
+			{experienceText}
 		</span>
 	</div>
 </div>

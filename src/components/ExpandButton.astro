@@ -9,15 +9,17 @@
  * @example
  * ```astro
  * <!-- Basic usage (collapsed by default) -->
- * <ExpandButton controlsId="my-list" />
+ * <ExpandButton
+ *   expandedText={t("common.viewLess")}
+ *   collapsedText={t("common.viewMore")}
+ *   controlsId="my-list"
+ * />
  *
  * <!-- Initially expanded -->
- * <ExpandButton aria-expanded={true} controlsId="my-list" />
- *
- * <!-- Custom text -->
  * <ExpandButton
- *   collapsedText="Show More"
+ *   aria-expanded={true}
  *   expandedText="Show Less"
+ *   collapsedText="Show More"
  *   controlsId="my-list"
  * />
  *
@@ -34,18 +36,18 @@ import type { HTMLAttributes } from "astro/types";
 import IconChevronDown from "@/assets/icons/chevron-down.svg";
 
 interface Props extends HTMLAttributes<"button"> {
-	/** Text shown when expanded. Defaults to "View Less". */
-	expandedText?: string;
-	/** Text shown when collapsed. Defaults to "View More". */
-	collapsedText?: string;
 	/** ID of the element this button controls (for aria-controls). */
 	controlsId?: string;
+	/** Text to display when expanded. */
+	expandedText: string;
+	/** Text to display when collapsed. */
+	collapsedText: string;
 }
 
 const {
-	expandedText = "View Less",
-	collapsedText = "View More",
 	controlsId,
+	expandedText,
+	collapsedText,
 	"aria-expanded": ariaExpanded = false,
 	class: className,
 	...attrs
@@ -88,10 +90,10 @@ const {
 
 					btn.setAttribute("aria-expanded", String(newExpanded));
 
-					if (textEl) {
+					if (textEl && btn.dataset.expandedText && btn.dataset.collapsedText) {
 						textEl.textContent = newExpanded
-							? (btn.dataset.expandedText ?? "View Less")
-							: (btn.dataset.collapsedText ?? "View More");
+							? btn.dataset.expandedText
+							: btn.dataset.collapsedText;
 					}
 
 					btn.dispatchEvent(
