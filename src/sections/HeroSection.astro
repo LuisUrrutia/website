@@ -16,41 +16,48 @@ interface Props {
 }
 
 const { socials } = Astro.props;
+const { t } = Astro.locals;
 ---
 
 <Card class="flex flex-col gap-5">
 	<div class="flex flex-col gap-4 md:flex-row">
-		<ProfilePicture alt="Photo of Luis Urrutia" />
+		<ProfilePicture alt={t("hero.photoAlt")} />
 
 		<div class="flex flex-1 flex-col gap-4">
 			<div class="flex flex-row justify-between gap-5 py-2 md:py-0">
-				<WorkStatusBadge status="busy" />
+				<WorkStatusBadge status="busy" statusText={t("status.busy")} />
 				<div class="flex items-center gap-3">
 					<ThemeToggle />
-					{socials && <SocialLinks {...socials} />}
+					{
+						socials && (
+							<SocialLinks ariaLabel={t("a11y.socialLinks")} {...socials} />
+						)
+					}
 				</div>
 			</div>
 
 			<div class="flex flex-col gap-2.5 py-2.5">
 				<h1 class="text-title text-4xl font-semibold">
-					Hi there!
-					<span class="block sm:inline">I'm Luis Urrutia</span>
+					{t("hero.greeting")}
+					<span class="block sm:inline">{t("hero.intro")}</span>
 				</h1>
 				<p class="relative text-base font-light text-pretty lg:w-11/12">
-					I'm a <Highlight color="sky">Software Engineer</Highlight> with over <Highlight
-						color="orange">12 years of experience</Highlight
-					>, excelling in tackling technological challenges and driving growth
-					through innovative solutions
+					{t("hero.bio.prefix")}<Highlight color="sky"
+						>{t("hero.bio.role")}</Highlight
+					>{t("hero.bio.middle")}<Highlight color="orange"
+						>{t("hero.bio.experience")}</Highlight
+					>{t("hero.bio.suffix")}
 				</p>
 			</div>
 
-			<LocationBadge location="Santiago, Chile" />
+			<LocationBadge location={t("hero.location")} />
 		</div>
 	</div>
 
 	<div class="flex flex-col gap-3">
 		<p class="flex items-center gap-1.5 text-sm font-extralight">
-			<IconRocket /> Some companies I added value to:
+			<IconRocket />
+			{t("hero.companies")}
 		</p>
 		<CompanyMarquee
 			companies={[

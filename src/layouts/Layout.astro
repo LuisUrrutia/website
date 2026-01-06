@@ -1,23 +1,40 @@
 ---
-import { ClientRouter } from "astro:transitions";
 import ThemeScript from "@/components/ThemeScript.astro";
+import LocaleScript from "@/components/LocaleScript.astro";
 import ViewportIndicator from "@/components/ViewportIndicator.astro";
+import { SEO, type SEOProps } from "@/components/seo";
 
 import "../styles/global.css";
+
+export interface Props extends Partial<SEOProps> {
+	/** Page title (defaults to meta.title translation) */
+	title?: string;
+	/** Page description (defaults to meta.description translation) */
+	description?: string;
+	/** Skip locale redirect script (use on 404 pages to prevent redirect loops) */
+	skipLocaleRedirect?: boolean;
+}
+
+const { lang, t } = Astro.locals;
+const {
+	title = t("meta.title"),
+	description = t("meta.description"),
+	skipLocaleRedirect = false,
+	...seoProps
+} = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class="scrollbar-gutter-stable">
+<html lang={lang} dir="ltr" class="scrollbar-gutter-stable">
 	<head>
 		<ThemeScript />
+		{!skipLocaleRedirect && <LocaleScript currentLocale={lang} />}
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Luis Urrutia | Senior Software Engineer</title>
-		<meta
-			name="description"
-			content="Senior Software Engineer with 12+ years of experience in React, TypeScript, Go, and cloud technologies. Explore my portfolio, tech stack, and blog posts about software development."
-		/>
+
+		<!-- SEO Meta Tags -->
+		<SEO title={title} description={description} {...seoProps} />
 
 		<!-- Favicons -->
 		<link rel="icon" type="image/svg+xml" href="/favicons/favicon.svg" />
@@ -65,10 +82,11 @@ import "../styles/global.css";
 		<link rel="prefetch" href="/tech/chatgpt.svg" as="image" />
 		<link rel="prefetch" href="/tech/claude.svg" as="image" />
 
-		<!-- <ClientRouter /> -->
+		<!-- JSON-LD slot for page-specific structured data -->
+		<slot name="head" />
 	</head>
 	<body
-		class="bg-background text-foreground m-0 bg-[url('/patterns/dots.svg')] bg-[length:24px_auto] bg-repeat py-6"
+		class="bg-background text-foreground m-0 bg-[url('/patterns/dots.svg')] bg-size-[24px_auto] bg-repeat py-6"
 	>
 		<slot />
 		{import.meta.env.DEV && <ViewportIndicator />}

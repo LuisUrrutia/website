@@ -6,27 +6,20 @@ import ViewMoreLink from "@/components/ViewMoreLink.astro";
 
 interface Props {
 	posts: Post[];
-	title?: string;
 	id?: string;
 	viewMoreHref?: string;
-	viewMoreText?: string;
 }
 
-const {
-	posts,
-	title = "Latest posts",
-	id = "latest-posts",
-	viewMoreHref,
-	viewMoreText,
-} = Astro.props;
+const { posts, id = "latest-posts", viewMoreHref } = Astro.props;
+const { t } = Astro.locals;
 ---
 
 <Card id={id} class="flex flex-col gap-6">
-	<h2 class="text-title text-2xl font-semibold">{title}</h2>
+	<h2 class="text-title text-2xl font-semibold">{t("blog.title")}</h2>
 
 	{
 		posts.length === 0 ? (
-			<p class="text-secondary">No posts available.</p>
+			<p class="text-secondary">{t("blog.empty")}</p>
 		) : (
 			<ul class="m-0 flex list-none flex-col p-0">
 				{posts.map((post) => (
@@ -45,7 +38,11 @@ const {
 
 	{
 		viewMoreHref && (
-			<ViewMoreLink class="py-6" href={viewMoreHref} text={viewMoreText} />
+			<ViewMoreLink
+				class="py-6"
+				href={viewMoreHref}
+				text={t("blog.viewMore")}
+			/>
 		)
 	}
 </Card>

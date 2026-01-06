@@ -1,0 +1,108 @@
+---
+/**
+ * SEO - Comprehensive SEO meta tags component.
+ *
+ * Orchestrates all SEO-related meta tags by composing:
+ * - Basic meta (title, description, robots)
+ * - CanonicalMeta (canonical URL and hreflang)
+ * - OpenGraphMeta (og:* tags)
+ * - TwitterCardMeta (twitter:* tags)
+ *
+ * @example
+ * ```astro
+ * <SEO
+ *   title="My Page"
+ *   description="Page description"
+ *   ogType="article"
+ *   article={{ publishedTime: "2024-01-01" }}
+ * />
+ * ```
+ */
+import CanonicalMeta from "./CanonicalMeta.astro";
+import OpenGraphMeta, { type ArticleMeta } from "./OpenGraphMeta.astro";
+import TwitterCardMeta from "./TwitterCardMeta.astro";
+import { locales, getLocalizedPath } from "@/i18n";
+import { defaultOgImage } from "@/data/seo";
+
+export type { ArticleMeta };
+
+export interface Props {
+	/** Page title */
+	title: string;
+	/** Page description for meta and OG */
+	description: string;
+	/** OG image URL (relative path or absolute URL) */
+	ogImage?: string;
+	/** OG image alt text */
+	ogImageAlt?: string;
+	/** Open Graph type */
+	ogType?: "website" | "article";
+	/** Article-specific metadata (only used when ogType is "article") */
+	article?: ArticleMeta;
+	/** Prevent search engines from indexing this page */
+	noindex?: boolean;
+}
+
+const { lang, pathWithoutLocale } = Astro.locals;
+
+const {
+	title,
+	description,
+	ogImage = defaultOgImage,
+	ogImageAlt = title,
+	ogType = "website",
+	article,
+	noindex = false,
+} = Astro.props;
+
+// Use Astro.site from config, fallback to request origin in dev
+const siteUrl = (Astro.site ?? Astro.url.origin).toString().replace(/\/$/, "");
+
+// Resolve OG image to absolute URL
+const ogImageUrl = ogImage.startsWith("http")
+	? ogImage
+	: `${siteUrl}${ogImage.startsWith("/") ? "" : "/"}${ogImage}`;
+
+// Canonical URL
+const canonicalPath = getLocalizedPath(pathWithoutLocale, lang);
+const canonicalUrl = `${siteUrl}${canonicalPath}`;
+
+// Get alternate locale for og:locale:alternate
+const alternateLocale = locales.find((l) => l !== lang) ?? lang;
+
+// Robots content
+const robotsContent = noindex ? "noindex, nofollow" : "index, follow";
+---
+
+<!-- Basic Meta -->
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="robots" content={robotsContent} />
+
+<!-- Canonical and hreflang -->
+<CanonicalMeta
+	siteUrl={siteUrl}
+	pathWithoutLocale={pathWithoutLocale}
+	locale={lang}
+/>
+
+<!-- Open Graph -->
+<OpenGraphMeta
+	title={title}
+	description={description}
+	url={canonicalUrl}
+	image={ogImageUrl}
+	imageAlt={ogImageAlt}
+	locale={lang}
+	alternateLocale={alternateLocale}
+	type={ogType}
+	article={article}
+/>
+
+<!-- Twitter Card -->
+<TwitterCardMeta
+	title={title}
+	description={description}
+	image={ogImageUrl}
+	imageAlt={ogImageAlt}
+/>

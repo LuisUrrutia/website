@@ -8,13 +8,13 @@
  * @example
  * ```astro
  * <!-- Basic usage -->
- * <ViewMoreLink href="/blog" />
+ * <ViewMoreLink href="/blog" text={t("common.viewMore")} />
  *
  * <!-- Custom text -->
  * <ViewMoreLink href="/blog" text="See all posts" />
  *
  * <!-- With additional classes -->
- * <ViewMoreLink href="/blog" class="mt-4" />
+ * <ViewMoreLink href="/blog" text={t("blog.viewMore")} class="mt-4" />
  * ```
  */
 import type { HTMLAttributes } from "astro/types";
@@ -23,11 +23,11 @@ import IconArrowRight from "@/assets/icons/arrow-right.svg";
 interface Props extends HTMLAttributes<"a"> {
 	/** The URL to navigate to. */
 	href: string;
-	/** Link text. Defaults to "View More". */
-	text?: string;
+	/** Link text. */
+	text: string;
 }
 
-const { href, text = "View More", class: className, ...attrs } = Astro.props;
+const { href, text, class: className, ...attrs } = Astro.props;
 ---
 
 <a

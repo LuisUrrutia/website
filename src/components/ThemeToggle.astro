@@ -12,12 +12,14 @@ interface Props extends HTMLAttributes<"button"> {
 	};
 }
 
+const { t } = Astro.locals;
+
 const {
 	class: className,
 	labels = {
-		auto: "Theme: Auto (click to switch to Light)",
-		light: "Theme: Light (click to switch to Dark)",
-		dark: "Theme: Dark (click to switch to Auto)",
+		auto: t("theme.auto"),
+		light: t("theme.light"),
+		dark: t("theme.dark"),
 	},
 	...attrs
 } = Astro.props;

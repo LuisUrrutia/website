@@ -1,0 +1,78 @@
+---
+/**
+ * LanguageSwitcher - A component for switching between available languages.
+ *
+ * Automatically detects current locale from Astro.locals and generates
+ * links to the same page in other available languages.
+ * Stores user preference in localStorage for persistence.
+ *
+ * @example
+ * ```astro
+ * <LanguageSwitcher />
+ * ```
+ */
+import { locales, localeNames, getLocalizedPath } from "@/i18n";
+
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
+const { lang, pathWithoutLocale, t } = Astro.locals;
+---
+
+<nav
+	aria-label={t("a11y.languageSwitcher")}
+	class:list={["language-switcher", className]}
+	data-current-lang={lang}
+>
+	<ul class="flex gap-2">
+		{
+			locales.map((locale) => (
+				<li>
+					<a
+						href={getLocalizedPath(pathWithoutLocale, locale)}
+						hreflang={locale}
+						data-locale={locale}
+						aria-current={locale === lang ? "page" : undefined}
+						class:list={[
+							"lang-link rounded px-2 py-1 text-sm transition-colors",
+							locale === lang
+								? "bg-button text-button-foreground"
+								: "text-subtitle hover:text-title hover:bg-card",
+						]}
+					>
+						{localeNames[locale]}
+					</a>
+				</li>
+			))
+		}
+	</ul>
+</nav>
+
+<script>
+	import { setStoredLocale } from "@/lib/locale-storage";
+
+	function initLanguageSwitcher(): void {
+		document
+			.querySelectorAll<HTMLElement>(".language-switcher")
+			.forEach((nav) => {
+				if (nav.dataset.init) return;
+				nav.dataset.init = "true";
+
+				nav
+					.querySelectorAll<HTMLAnchorElement>(".lang-link")
+					.forEach((link) => {
+						link.addEventListener("click", () => {
+							const locale = link.dataset.locale;
+							if (locale) {
+								setStoredLocale(locale);
+							}
+						});
+					});
+			});
+	}
+
+	initLanguageSwitcher();
+	document.addEventListener("astro:after-swap", initLanguageSwitcher);
+</script>

@@ -1,0 +1,77 @@
+---
+/**
+ * OpenGraphMeta - Open Graph protocol meta tags.
+ *
+ * Renders og:* meta tags for social sharing on Facebook,
+ * LinkedIn, Discord, WhatsApp, Telegram, and other platforms.
+ *
+ * @see https://ogp.me/
+ */
+import { ogLocales, type Locale } from "@/i18n";
+
+export interface ArticleMeta {
+	publishedTime: string;
+	modifiedTime?: string;
+	author?: string;
+	tags?: string[];
+}
+
+export interface Props {
+	/** Page title */
+	title: string;
+	/** Page description */
+	description: string;
+	/** Canonical URL of the page */
+	url: string;
+	/** Absolute URL to the OG image */
+	image: string;
+	/** Alt text for the OG image */
+	imageAlt: string;
+	/** Current locale */
+	locale: Locale;
+	/** Alternate locale */
+	alternateLocale: Locale;
+	/** Open Graph type */
+	type?: "website" | "article";
+	/** Article-specific metadata (only used when type is "article") */
+	article?: ArticleMeta;
+}
+
+const {
+	title,
+	description,
+	url,
+	image,
+	imageAlt,
+	locale,
+	alternateLocale,
+	type = "website",
+	article,
+} = Astro.props;
+---
+
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={url} />
+<meta property="og:type" content={type} />
+<meta property="og:locale" content={ogLocales[locale]} />
+<meta property="og:locale:alternate" content={ogLocales[alternateLocale]} />
+<meta property="og:image" content={image} />
+<meta property="og:image:alt" content={imageAlt} />
+
+{
+	type === "article" && article && (
+		<>
+			<meta property="article:published_time" content={article.publishedTime} />
+			{article.modifiedTime && (
+				<meta property="article:modified_time" content={article.modifiedTime} />
+			)}
+			{article.author && (
+				<meta property="article:author" content={article.author} />
+			)}
+			{article.tags?.map((tag) => (
+				<meta property="article:tag" content={tag} />
+			))}
+		</>
+	)
+}

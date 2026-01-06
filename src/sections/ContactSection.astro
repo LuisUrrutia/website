@@ -21,26 +21,19 @@ import Logo from "@/assets/logo.svg";
 interface Props {
 	/** URL for the main CTA button (e.g., mailto: or contact page). */
 	contactHref: string;
-	/** Text for the CTA button. Defaults to "Let's Connect". */
-	contactText?: string;
-	/** Heading text. Defaults to "We should work together". */
-	heading?: string;
-	/** Subheading text. Defaults to "I'm one click away". */
-	subheading?: string;
 	/** Social media links configuration. */
 	socials?: SocialLinksProps;
 	/** Section ID for navigation. Defaults to "contact". */
 	id?: string;
 }
 
-const {
-	contactHref,
-	contactText = "Let's Connect",
-	heading = "We should work together",
-	subheading = "I'm one click away",
-	socials,
-	id = "contact",
-} = Astro.props;
+const { contactHref, socials, id = "contact" } = Astro.props;
+const { t } = Astro.locals;
+
+const contactText = t("contact.cta");
+const heading = t("contact.heading");
+const subheading = t("contact.subheading");
+const opensEmailClient = t("a11y.opensEmailClient");
 ---
 
 <Card
@@ -57,7 +50,7 @@ const {
 
 	<a
 		href={contactHref}
-		aria-label={`${contactText} - opens email client`}
+		aria-label={`${contactText} - ${opensEmailClient}`}
 		class="bg-button text-button-foreground group focus-visible:outline-button mb-6 inline-flex items-center gap-2 rounded-full px-6 py-3 font-medium transition-colors hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2"
 	>
 		<span>{contactText}</span>
@@ -66,5 +59,13 @@ const {
 		</span>
 	</a>
 
-	{socials && <SocialLinks {...socials} iconClass="size-6" />}
+	{
+		socials && (
+			<SocialLinks
+				ariaLabel={t("a11y.socialLinks")}
+				{...socials}
+				iconClass="size-6"
+			/>
+		)
+	}
 </Card>

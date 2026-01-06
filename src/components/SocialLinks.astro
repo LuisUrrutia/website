@@ -8,6 +8,8 @@ import IconX from "@/assets/icons/x.svg";
 type Props = SocialLinksProps & {
 	/** Icon size classes. Defaults to "size-6 sm:size-4". */
 	iconClass?: string;
+	/** Aria label for the social links navigation. */
+	ariaLabel: string;
 };
 
 const {
@@ -16,6 +18,7 @@ const {
 	instagram,
 	x,
 	iconClass = "size-6 sm:size-4",
+	ariaLabel,
 } = Astro.props;
 
 const socialConfig = [
@@ -53,7 +56,7 @@ const links = socialConfig
 
 {
 	links.length > 0 && (
-		<nav aria-label="Social links" class="flex items-center gap-3.5">
+		<nav aria-label={ariaLabel} class="flex items-center gap-3.5">
 			{links.map(({ key, icon: Icon, url, label }) => (
 				<a
 					href={url}

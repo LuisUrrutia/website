@@ -15,6 +15,9 @@ interface Props {
 	dateFormat?: Intl.DateTimeFormatOptions;
 }
 
+const { lang } = Astro.locals;
+const localeMap = { en: "en-US", es: "es-ES" } as const;
+
 const {
 	title,
 	category,
@@ -24,7 +27,7 @@ const {
 	external,
 	readingTime,
 	ariaLabel,
-	locale = "en-US",
+	locale = localeMap[lang],
 	dateFormat = { day: "numeric", month: "short", year: "numeric" },
 } = Astro.props;
 

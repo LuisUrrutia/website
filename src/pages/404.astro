@@ -1,0 +1,111 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import {
+	locales,
+	defaultLocale,
+	getLocalizedPath,
+	useTranslations,
+} from "@/i18n";
+import type { Locale } from "@/i18n";
+
+/**
+ * 404 page with client-side locale detection.
+ *
+ * Since this page handles all 404s regardless of URL path,
+ * we need to detect the locale from the original URL on the client
+ * and update the content accordingly.
+ */
+
+// Default to the locale from middleware (works for direct /404 access)
+const { lang: serverLang } = Astro.locals;
+const t = useTranslations(serverLang);
+
+// Pre-generate translations for all locales (for client-side hydration)
+const translations = Object.fromEntries(
+	locales.map((locale) => {
+		const translate = useTranslations(locale);
+		return [
+			locale,
+			{
+				title: translate("404.title"),
+				heading: translate("404.heading"),
+				description: translate("404.description"),
+				backHome: translate("404.backHome"),
+				homeHref: getLocalizedPath("/", locale),
+			},
+		];
+	}),
+);
+---
+
+<Layout
+	title={t("404.title")}
+	description={t("404.description")}
+	noindex
+	skipLocaleRedirect
+>
+	<main
+		class="mx-auto flex min-h-[80vh] max-w-xl flex-col items-center justify-center px-4 text-center"
+		data-translations={JSON.stringify(translations)}
+		data-locales={JSON.stringify(locales)}
+		data-default-locale={defaultLocale}
+	>
+		<h1 class="text-title mb-4 text-6xl font-bold">404</h1>
+		<h2 id="heading-404" class="text-title mb-4 text-2xl font-semibold">
+			{t("404.heading")}
+		</h2>
+		<p id="description-404" class="text-subtitle mb-8">
+			{t("404.description")}
+		</p>
+		<a
+			id="back-home-404"
+			href={getLocalizedPath("/", serverLang)}
+			class="bg-button text-button-foreground hover:bg-button-hover rounded-lg px-6 py-3 font-medium transition-colors"
+		>
+			{t("404.backHome")}
+		</a>
+	</main>
+</Layout>
+
+<script is:inline>
+	(function () {
+		const main = document.querySelector("main[data-translations]");
+		if (!main) return;
+
+		const translations = JSON.parse(main.dataset.translations);
+		const locales = JSON.parse(main.dataset.locales);
+		const defaultLocale = main.dataset.defaultLocale;
+
+		// Detect locale from current URL path
+		const pathname = window.location.pathname;
+		let detectedLocale = defaultLocale;
+
+		for (const locale of locales) {
+			if (
+				pathname.startsWith("/" + locale + "/") ||
+				pathname === "/" + locale
+			) {
+				detectedLocale = locale;
+				break;
+			}
+		}
+
+		// Update page content if locale differs from server-rendered default
+		const t = translations[detectedLocale];
+		if (t) {
+			document.documentElement.lang = detectedLocale;
+			document.title = t.title;
+
+			const heading = document.getElementById("heading-404");
+			const description = document.getElementById("description-404");
+			const backHome = document.getElementById("back-home-404");
+
+			if (heading) heading.textContent = t.heading;
+			if (description) description.textContent = t.description;
+			if (backHome) {
+				backHome.textContent = t.backHome;
+				backHome.href = t.homeHref;
+			}
+		}
+	})();
+</script>
