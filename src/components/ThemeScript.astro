@@ -1,10 +1,10 @@
 ---
 // Inline blocking script to prevent theme flash
-// This runs before any rendering occurs
+// This runs before any rendering occurs and on view transitions
 ---
 
 <script is:inline>
-	(function () {
+	function applyTheme() {
 		const key = "theme";
 		const stored = localStorage.getItem(key);
 		const prefersDark = window.matchMedia(
@@ -23,5 +23,11 @@
 
 		document.documentElement.dataset.theme = theme;
 		document.documentElement.dataset.themeMode = mode;
-	})();
+	}
+
+	// Apply on initial load
+	applyTheme();
+
+	// Apply after view transitions swap to prevent flash
+	document.addEventListener("astro:after-swap", applyTheme);
 </script>

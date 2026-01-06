@@ -31,7 +31,7 @@ const baseUrl = lang === "en" ? "/blog" : `/${lang}/blog`;
 
 <Layout title={t("blog.pageTitle")} description={t("blog.pageDescription")}>
 	<Navbar />
-	<Container as="main" class="flex flex-col gap-8">
+	<Container as="main" class="flex flex-col gap-8" transition:animate="slide">
 		<Card>
 			<header class="mb-6">
 				<h1 class="text-title text-3xl font-bold">{t("blog.pageTitle")}</h1>
