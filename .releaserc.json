@@ -18,6 +18,12 @@
       {
         "successCommentCondition": "<% return issue.pull_request; %>"
       }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "successCmd": "echo \"new-release-published=true\" >> $GITHUB_OUTPUT && echo \"new-release-version=${nextRelease.version}\" >> $GITHUB_OUTPUT"
+      }
     ]
   ]
 }

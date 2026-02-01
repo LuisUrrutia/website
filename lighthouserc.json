@@ -6,9 +6,7 @@
         "http://localhost/",
         "http://localhost/es/",
         "http://localhost/blog/",
-        "http://localhost/es/blog/",
-        "http://localhost/blog/example-post/",
-        "http://localhost/es/blog/example-post/"
+        "http://localhost/es/blog/"
       ],
       "numberOfRuns": 3
     },
