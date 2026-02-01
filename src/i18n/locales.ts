@@ -13,3 +13,9 @@ export const ogLocales: Record<Locale, string> = {
 	en: "en_US",
 	es: "es_ES",
 };
+
+/** Intl API locale format for date/number formatting */
+export const intlLocales: Record<Locale, string> = {
+	en: "en-US",
+	es: "es-ES",
+};

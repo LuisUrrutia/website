@@ -1,13 +1,14 @@
 ---
 import { getCollection } from "astro:content";
 import BlogPage from "@/views/BlogPage.astro";
+import { matchesLocale } from "@/i18n";
 
 export async function getStaticPaths() {
 	const POSTS_PER_PAGE = 10;
 
-	const allPosts = await getCollection("blog", ({ data }) => {
-		return data.lang === "en" && !data.draft;
-	});
+	const allPosts = await getCollection("blog", ({ data }) =>
+		matchesLocale("en")(data),
+	);
 
 	allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 

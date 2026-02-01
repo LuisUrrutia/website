@@ -4,6 +4,7 @@ export {
 	defaultLocale,
 	localeNames,
 	ogLocales,
+	intlLocales,
 	type Locale,
 } from "./locales";
 
@@ -16,5 +17,9 @@ export {
 	useTranslations,
 	getLocalizedPath,
 	getPathWithoutLocale,
+	getSlugWithoutLocale,
 	isValidLocale,
+	isDefaultLocale,
+	getAlternateLocale,
+	matchesLocale,
 } from "./utils";

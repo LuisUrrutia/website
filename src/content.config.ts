@@ -1,5 +1,6 @@
 import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
+import { locales } from "@/i18n";
 
 const blog = defineCollection({
 	loader: glob({ pattern: "**/*.mdx", base: "./src/content/blog" }),
@@ -11,7 +12,7 @@ const blog = defineCollection({
 		category: z.string(),
 		tags: z.array(z.string()).default([]),
 		draft: z.boolean().default(false),
-		lang: z.enum(["en", "es"]),
+		lang: z.enum(locales),
 		/** Slug for the alternate language version (without locale prefix) */
 		translationSlug: z.string().optional(),
 	}),

@@ -67,6 +67,13 @@ export const ui = {
 		"a11y.opensEmailClient": "opens email client",
 		"a11y.languageSwitcher": "Language switcher",
 		"a11y.socialLinks": "Social links",
+		"a11y.mainNavigation": "Main navigation",
+		"a11y.home": "Home",
+		"a11y.pagination": "Pagination",
+
+		// Pagination
+		"pagination.previous": "Previous page",
+		"pagination.next": "Next page",
 
 		// Theme
 		"theme.auto": "Theme: Auto (click to switch to Light)",
@@ -148,6 +155,13 @@ export const ui = {
 		"a11y.opensEmailClient": "abre el cliente de correo",
 		"a11y.languageSwitcher": "Selector de idioma",
 		"a11y.socialLinks": "Redes sociales",
+		"a11y.mainNavigation": "Navegación principal",
+		"a11y.home": "Inicio",
+		"a11y.pagination": "Paginación",
+
+		// Pagination
+		"pagination.previous": "Página anterior",
+		"pagination.next": "Página siguiente",
 
 		// Theme
 		"theme.auto": "Tema: Auto (clic para cambiar a Claro)",

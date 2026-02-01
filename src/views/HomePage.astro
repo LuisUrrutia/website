@@ -12,7 +12,7 @@ import StackSection from "@/sections/StackSection.astro";
 import LatestPostsSection from "@/sections/LatestPostsSection.astro";
 import TestimonialsSection from "@/sections/TestimonialsSection.astro";
 import ContactSection from "@/sections/ContactSection.astro";
-import { getLocalizedPath } from "@/i18n";
+import { getLocalizedPath, getSlugWithoutLocale } from "@/i18n";
 
 const { t, lang } = Astro.locals;
 
@@ -32,7 +32,7 @@ const posts = allPosts
 		title: post.data.title,
 		category: post.data.category,
 		date: post.data.date,
-		href: getLocalizedPath(`/blog/${post.id.replace(/^(en|es)\//, "")}`, lang),
+		href: getLocalizedPath(`/blog/${getSlugWithoutLocale(post.id)}`, lang),
 	}));
 ---
 

@@ -1,13 +1,14 @@
 ---
 import { getCollection } from "astro:content";
 import BlogPage from "@/views/BlogPage.astro";
+import { matchesLocale } from "@/i18n";
 
 const POSTS_PER_PAGE = 10;
 
 // Get all non-draft posts for Spanish locale, sorted by date
-const allPosts = await getCollection("blog", ({ data }) => {
-	return data.lang === "es" && !data.draft;
-});
+const allPosts = await getCollection("blog", ({ data }) =>
+	matchesLocale("es")(data),
+);
 
 allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 

@@ -1,10 +1,9 @@
 ---
 /**
- * LanguageSwitcher - A component for switching between available languages.
+ * LanguageSwitcher - A compact select-based language switcher.
  *
- * Automatically detects current locale from Astro.locals and generates
- * links to the same page in other available languages.
- * Stores user preference in localStorage for persistence.
+ * Automatically detects current locale from Astro.locals and provides
+ * a dropdown to switch between available languages.
  *
  * @example
  * ```astro
@@ -19,57 +18,66 @@ interface Props {
 
 const { class: className } = Astro.props;
 const { lang, pathWithoutLocale, t } = Astro.locals;
+
+// Pre-compute paths for each locale
+const localePaths = Object.fromEntries(
+	locales.map((locale) => [
+		locale,
+		getLocalizedPath(pathWithoutLocale, locale),
+	]),
+);
 ---
 
-<nav
-	aria-label={t("a11y.languageSwitcher")}
-	class:list={["language-switcher", className]}
+<div
+	class:list={["language-switcher relative", className]}
 	data-current-lang={lang}
 >
-	<ul class="flex gap-2">
+	<label class="sr-only" for="language-select"
+		>{t("a11y.languageSwitcher")}</label
+	>
+	<select
+		id="language-select"
+		class="bg-card text-foreground hover:bg-card/80 focus:ring-accent cursor-pointer appearance-none rounded px-2 py-1 pr-7 text-sm transition-colors focus:ring-2 focus:outline-none"
+		data-locale-paths={JSON.stringify(localePaths)}
+	>
 		{
 			locales.map((locale) => (
-				<li>
-					<a
-						href={getLocalizedPath(pathWithoutLocale, locale)}
-						hreflang={locale}
-						data-locale={locale}
-						aria-current={locale === lang ? "page" : undefined}
-						class:list={[
-							"lang-link rounded px-2 py-1 text-sm transition-colors",
-							locale === lang
-								? "bg-button text-button-foreground"
-								: "text-subtitle hover:text-title hover:bg-card",
-						]}
-					>
-						{localeNames[locale]}
-					</a>
-				</li>
+				<option value={locale} selected={locale === lang}>
+					{localeNames[locale]}
+				</option>
 			))
 		}
-	</ul>
-</nav>
+	</select>
+	<svg
+		class="text-subtitle pointer-events-none absolute top-1/2 right-1.5 size-4 -translate-y-1/2"
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 20 20"
+		fill="currentColor"
+		aria-hidden="true"
+	>
+		<path
+			fill-rule="evenodd"
+			d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+			clip-rule="evenodd"></path>
+	</svg>
+</div>
 
 <script>
-	import { setStoredLocale } from "@/lib/locale-storage";
-
 	function initLanguageSwitcher(): void {
 		document
-			.querySelectorAll<HTMLElement>(".language-switcher")
-			.forEach((nav) => {
-				if (nav.dataset.init) return;
-				nav.dataset.init = "true";
+			.querySelectorAll<HTMLSelectElement>("#language-select")
+			.forEach((select) => {
+				if (select.dataset.init) return;
+				select.dataset.init = "true";
 
-				nav
-					.querySelectorAll<HTMLAnchorElement>(".lang-link")
-					.forEach((link) => {
-						link.addEventListener("click", () => {
-							const locale = link.dataset.locale;
-							if (locale) {
-								setStoredLocale(locale);
-							}
-						});
-					});
+				select.addEventListener("change", () => {
+					const locale = select.value;
+					const paths = JSON.parse(select.dataset.localePaths || "{}");
+					const path = paths[locale];
+					if (path) {
+						window.location.href = path;
+					}
+				});
 			});
 	}
 

@@ -6,7 +6,7 @@ import Container from "@/components/Container.astro";
 import Card from "@/components/Card.astro";
 import BlogEntry from "@/components/BlogEntry.astro";
 import Pagination from "@/components/Pagination.astro";
-import type { Locale } from "@/i18n";
+import { getLocalizedPath, getSlugWithoutLocale } from "@/i18n";
 
 interface Props {
 	posts: CollectionEntry<"blog">[];
@@ -18,21 +18,19 @@ const { posts, currentPage, totalPages } = Astro.props;
 const { t, lang } = Astro.locals;
 
 // Helper to get the post URL
-function getPostUrl(slug: string, locale: Locale): string {
-	const basePath = locale === "en" ? "/blog" : `/${locale}/blog`;
-	// Remove the locale prefix from slug (e.g., "en/example-post" -> "example-post")
-	const cleanSlug = slug.replace(/^(en|es)\//, "");
-	return `${basePath}/${cleanSlug}`;
+function getPostUrl(id: string): string {
+	const slug = getSlugWithoutLocale(id);
+	return getLocalizedPath(`/blog/${slug}`, lang);
 }
 
 // Base URL for pagination
-const baseUrl = lang === "en" ? "/blog" : `/${lang}/blog`;
+const baseUrl = getLocalizedPath("/blog", lang);
 ---
 
 <Layout title={t("blog.pageTitle")} description={t("blog.pageDescription")}>
 	<Navbar />
 	<Container as="main" class="flex flex-col gap-8" transition:animate="slide">
-		<Card>
+		<Card style="view-transition-name: post-card">
 			<header class="mb-6">
 				<h1 class="text-title text-3xl font-bold">{t("blog.pageTitle")}</h1>
 				<p class="text-subtitle mt-2">{t("blog.pageDescription")}</p>
@@ -49,7 +47,8 @@ const baseUrl = lang === "en" ? "/blog" : `/${lang}/blog`;
 									title={post.data.title}
 									category={post.data.category}
 									date={post.data.date}
-									href={getPostUrl(post.id, lang)}
+									href={getPostUrl(post.id)}
+									slug={getSlugWithoutLocale(post.id)}
 								/>
 							</li>
 						))}

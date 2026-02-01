@@ -6,7 +6,13 @@ import Navbar from "@/components/Navbar.astro";
 import Container from "@/components/Container.astro";
 import Card from "@/components/Card.astro";
 import Pill from "@/components/Pill.astro";
-import { getLocalizedPath, localeNames, type Locale } from "@/i18n";
+import {
+	getAlternateLocale,
+	getLocalizedPath,
+	getSlugWithoutLocale,
+	intlLocales,
+	localeNames,
+} from "@/i18n";
 import { calculateReadingTime, formatReadingTime } from "@/lib/formatters";
 
 interface Props {
@@ -22,7 +28,6 @@ const readingTime = calculateReadingTime(post.body ?? "");
 const formattedReadingTime = formatReadingTime(readingTime, t);
 const { Content } = await render(post);
 
-const localeMap = { en: "en-US", es: "es-ES" } as const;
 const dateFormat: Intl.DateTimeFormatOptions = {
 	day: "numeric",
 	month: "long",
@@ -30,23 +35,28 @@ const dateFormat: Intl.DateTimeFormatOptions = {
 };
 
 const formattedDate = post.data.date.toLocaleDateString(
-	localeMap[lang],
+	intlLocales[lang],
 	dateFormat,
 );
 const isoDate = post.data.date.toISOString().split("T")[0];
 
 const formattedUpdatedDate = post.data.updatedDate
-	? post.data.updatedDate.toLocaleDateString(localeMap[lang], dateFormat)
+	? post.data.updatedDate.toLocaleDateString(intlLocales[lang], dateFormat)
 	: null;
 
 // Get the alternate language URL
-const alternateLang: Locale = lang === "en" ? "es" : "en";
+const alternateLang = getAlternateLocale(lang);
 const alternateUrl = translatedPost
 	? getLocalizedPath(
-			`/blog/${translatedPost.id.replace(/^(en|es)\//, "")}`,
+			`/blog/${getSlugWithoutLocale(translatedPost.id)}`,
 			alternateLang,
 		)
 	: null;
+
+// Generate transition names from post slug
+const slug = getSlugWithoutLocale(post.id);
+const titleTransitionName = `post-title-${slug}`;
+const pillTransitionName = `post-pill-${slug}`;
 ---
 
 <Layout
@@ -61,10 +71,16 @@ const alternateUrl = translatedPost
 >
 	<Navbar />
 	<Container as="main" class="flex flex-col gap-8" transition:animate="slide">
-		<Card as="article" class="prose prose-neutral dark:prose-invert max-w-none">
+		<Card
+			as="article"
+			class="prose prose-neutral dark:prose-invert max-w-none"
+			style="view-transition-name: post-card"
+		>
 			<header class="not-prose mb-8">
 				<div class="flex flex-wrap items-center gap-3">
-					<Pill>{post.data.category}</Pill>
+					<Pill style={`view-transition-name: ${pillTransitionName}`}
+						>{post.data.category}</Pill
+					>
 					<span class="text-subtitle text-sm">
 						<time datetime={isoDate}
 							>{t("blog.publishedOn")} {formattedDate}</time
@@ -82,7 +98,10 @@ const alternateUrl = translatedPost
 					}
 				</div>
 
-				<h1 class="text-title mt-4 text-3xl font-bold md:text-4xl">
+				<h1
+					class="text-title mt-4 text-3xl font-bold md:text-4xl"
+					style={`view-transition-name: ${titleTransitionName}`}
+				>
 					{post.data.title}
 				</h1>
 
