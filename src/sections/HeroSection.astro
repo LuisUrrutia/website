@@ -65,7 +65,10 @@ const statusTextKey = workStatus === "open" ? "status.open" : "status.busy";
 				<div class="flex items-center gap-3">
 					{
 						socials && (
-							<SocialLinks ariaLabel={t("a11y.socialLinks")} {...socials} />
+							<SocialLinks
+								ariaLabel={t("a11y.socialLinksHeader")}
+								{...socials}
+							/>
 						)
 					}
 				</div>

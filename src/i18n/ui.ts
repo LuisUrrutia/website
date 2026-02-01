@@ -69,7 +69,8 @@ export const ui = {
 		// Accessibility
 		"a11y.opensEmailClient": "opens email client",
 		"a11y.languageSwitcher": "Language switcher",
-		"a11y.socialLinks": "Social links",
+		"a11y.socialLinksHeader": "Social links in header",
+		"a11y.socialLinksFooter": "Social links in footer",
 		"a11y.mainNavigation": "Main navigation",
 		"a11y.home": "Home",
 		"a11y.pagination": "Pagination",
@@ -165,7 +166,8 @@ export const ui = {
 		// Accessibility
 		"a11y.opensEmailClient": "abre el cliente de correo",
 		"a11y.languageSwitcher": "Selector de idioma",
-		"a11y.socialLinks": "Redes sociales",
+		"a11y.socialLinksHeader": "Redes sociales en encabezado",
+		"a11y.socialLinksFooter": "Redes sociales en pie de página",
 		"a11y.mainNavigation": "Navegación principal",
 		"a11y.home": "Inicio",
 		"a11y.pagination": "Paginación",

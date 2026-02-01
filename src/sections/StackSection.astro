@@ -96,6 +96,7 @@ const indicesByCategory = technologies.reduce(
 							icon={tech.icon}
 							colorMode={tech.colorMode}
 							experienceText={formatExperience(tech.experience, t)}
+							loading={index < initialVisible ? "eager" : "lazy"}
 						/>
 					</li>
 				))
@@ -207,6 +208,7 @@ const indicesByCategory = technologies.reduce(
 
 					if (clearBtn) {
 						clearBtn.setAttribute("aria-hidden", String(!hasFilter));
+						clearBtn.setAttribute("tabindex", hasFilter ? "0" : "-1");
 					}
 
 					if (expandBtn) {
