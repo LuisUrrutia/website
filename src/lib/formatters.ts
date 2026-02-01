@@ -40,7 +40,8 @@ export function calculateReadingTime(content: string): number {
 	// Remove MDX/JSX components, HTML tags, and code blocks
 	const cleanText = stripHtmlTags(
 		content
-			.replace(/```[\s\S]*?```/g, "") // Remove code blocks
+			.replace(/```[\s\S]*?```/g, "") // Remove fenced code blocks
+			.replace(/`[^`]+`/g, "") // Remove inline code
 			.replace(/import\s+.*?;?\n/g, "") // Remove imports
 			.replace(/export\s+.*?;?\n/g, "") // Remove exports
 			.replace(/\{[^}]*\}/g, ""), // Remove JSX expressions
