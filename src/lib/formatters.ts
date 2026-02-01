@@ -18,17 +18,33 @@ export function formatExperience(
 const WORDS_PER_MINUTE = 200;
 
 /**
+ * Remove all HTML/JSX tags by repeatedly applying the pattern
+ * until no more matches are found (prevents nested tag bypass).
+ */
+function stripHtmlTags(input: string): string {
+	const pattern = /<[^>]+>/g;
+	let result = input;
+	let previous: string;
+	do {
+		previous = result;
+		result = result.replace(pattern, "");
+	} while (result !== previous);
+	return result;
+}
+
+/**
  * Calculate reading time in minutes from text content.
  * Strips MDX/HTML and counts words.
  */
 export function calculateReadingTime(content: string): number {
 	// Remove MDX/JSX components, HTML tags, and code blocks
-	const cleanText = content
-		.replace(/```[\s\S]*?```/g, "") // Remove code blocks
-		.replace(/<[^>]+>/g, "") // Remove HTML/JSX tags
-		.replace(/import\s+.*?;?\n/g, "") // Remove imports
-		.replace(/export\s+.*?;?\n/g, "") // Remove exports
-		.replace(/\{[^}]*\}/g, "") // Remove JSX expressions
+	const cleanText = stripHtmlTags(
+		content
+			.replace(/```[\s\S]*?```/g, "") // Remove code blocks
+			.replace(/import\s+.*?;?\n/g, "") // Remove imports
+			.replace(/export\s+.*?;?\n/g, "") // Remove exports
+			.replace(/\{[^}]*\}/g, ""), // Remove JSX expressions
+	)
 		.replace(/[#*`~[\]]/g, "") // Remove markdown formatting
 		.trim();
 
