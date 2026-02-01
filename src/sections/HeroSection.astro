@@ -56,14 +56,13 @@ const statusTextKey = workStatus === "open" ? "status.open" : "status.busy";
 	aria-labelledby={`${id}-heading`}
 	class="flex flex-col gap-5"
 >
-	<div class="flex flex-col gap-4 md:flex-row">
+	<div class="flex flex-col gap-4 lg:flex-row">
 		<ProfilePicture alt={t("hero.photoAlt")} />
 
 		<div class="flex flex-1 flex-col gap-4">
 			<div class="flex flex-row justify-between gap-5 py-2 md:py-0">
 				<WorkStatusBadge status={workStatus} statusText={t(statusTextKey)} />
 				<div class="flex items-center gap-3">
-					<ThemeToggle />
 					{
 						socials && (
 							<SocialLinks ariaLabel={t("a11y.socialLinks")} {...socials} />
@@ -73,16 +72,27 @@ const statusTextKey = workStatus === "open" ? "status.open" : "status.busy";
 			</div>
 
 			<div class="flex flex-col gap-2.5 py-2.5">
-				<h1 id={`${id}-heading`} class="text-title text-4xl font-semibold">
-					{t("hero.greeting")}
-					<span class="block sm:inline">{t("hero.intro")}</span>
-				</h1>
-				<p class="relative text-base font-light text-pretty lg:w-11/12">
-					{t("hero.bio.prefix")}<Highlight color="sky"
-						>{t("hero.bio.role")}</Highlight
-					>{t("hero.bio.middle")}<Highlight color="orange"
-						>{t("hero.bio.experience")}</Highlight
-					>{t("hero.bio.suffix")}
+				<div>
+					<h1 id={`${id}-heading`} class="text-title text-4xl font-semibold">
+						{t("hero.greeting")}
+						<span class="block sm:inline">{t("hero.intro")}</span>
+					</h1>
+					<p class="text-muted my-1 text-sm">
+						{t("hero.tagline.prefix")}<a
+							href="https://www.openzeppelin.com/"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="text-accent underline-offset-2 hover:underline"
+							>OpenZeppelin</a
+						> · {t("hero.tagline.tech")}
+					</p>
+				</div>
+				<p class="relative text-base font-light text-pretty">
+					<Highlight color="sky">{t("hero.bio.role")}</Highlight>{
+						t("hero.bio.middle")
+					}<Highlight color="orange">{t("hero.bio.experience")}</Highlight>{
+						t("hero.bio.suffix")
+					}
 				</p>
 			</div>
 

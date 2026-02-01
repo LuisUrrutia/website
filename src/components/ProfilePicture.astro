@@ -10,18 +10,23 @@ interface Props {
 
 const { alt, class: className } = Astro.props;
 
-const HEIGHT = 224;
+const HEIGHT = 252;
+const VERTICAL_WIDTH = 205;
 
-// Horizontal photo widths (mobile < 768px):
-// - Container: 100vw - 32px (mx-4) - 40px (card padding) = ~calc(100vw - 72px)
-// - At 320px: ~248px, at 640px: ~568px, at 767px: ~600px (capped by container)
-// - 300px: 1x small, 600px: 2x small / 1x large, 1200px: 2x large
-const HORIZONTAL_WIDTHS = [300, 600, 1200];
+// Horizontal photo widths (below lg):
+// - Below sm: max 552px container, above sm: max 600px
+// - Srcset: 552px (1x xs), 600px (1x sm+), 1104px (2x xs), 1200px (2x sm+)
+const HORIZONTAL_WIDTH = 600;
+const HORIZONTAL_WIDTHS = [552, HORIZONTAL_WIDTH, 1104, 1200];
 
-// Vertical photo widths (desktop >= 768px):
-// - Fixed width: 168px
-// - With 2x/3x DPR: 336px, 504px
-const VERTICAL_WIDTHS = [168, 336, 504];
+// Vertical photo widths (lg and above):
+// - Fixed at VERTICAL_WIDTH across lg (1024px), xl (1280px), 2xl (1536px)
+// - Srcset: 1x, 2x, 3x DPR variants
+const VERTICAL_WIDTHS = [
+	VERTICAL_WIDTH,
+	VERTICAL_WIDTH * 2,
+	VERTICAL_WIDTH * 3,
+];
 
 const [horizontalAvif, horizontalWebp, verticalAvif, verticalWebp] =
 	await Promise.all([
@@ -52,40 +57,47 @@ const [horizontalAvif, horizontalWebp, verticalAvif, verticalWebp] =
 	]);
 ---
 
-<picture class={className}>
-	{/* Mobile: horizontal photo */}
+<picture
+	class:list={[className, "lg:shrink-0", `lg:max-w-[${VERTICAL_WIDTH}px]`]}
+>
+	{/* Mobile and md: horizontal photo */}
 	<source
 		type="image/avif"
 		srcset={horizontalAvif.srcSet.attribute}
-		media="(max-width: 767px)"
-		sizes="(max-width: 640px) calc(100vw - 72px), 600px"
+		media="(max-width: 1023px)"
+		sizes="(max-width: 639px) 552px, 600px"
 	/>
 	<source
 		type="image/webp"
 		srcset={horizontalWebp.srcSet.attribute}
-		media="(max-width: 767px)"
-		sizes="(max-width: 640px) calc(100vw - 72px), 600px"
+		media="(max-width: 1023px)"
+		sizes="(max-width: 639px) 552px, 600px"
 	/>
-	{/* Desktop: vertical photo */}
+	{/* lg and above: vertical photo */}
 	<source
 		type="image/avif"
 		srcset={verticalAvif.srcSet.attribute}
-		media="(min-width: 768px)"
-		sizes="168px"
+		media="(min-width: 1024px)"
+		sizes={`${VERTICAL_WIDTH}px`}
 	/>
 	<source
 		type="image/webp"
 		srcset={verticalWebp.srcSet.attribute}
-		media="(min-width: 768px)"
-		sizes="168px"
+		media="(min-width: 1024px)"
+		sizes={`${VERTICAL_WIDTH}px`}
 	/>
 	<img
 		src={horizontalWebp.src}
 		alt={alt}
-		width="600"
-		height="224"
+		width={HORIZONTAL_WIDTH}
+		height={HEIGHT}
 		loading="eager"
 		fetchpriority="high"
-		class="h-56 w-full rounded-xl object-cover md:h-56 md:w-[168px]"
+		class:list={[
+			"w-full rounded-xl object-cover lg:shrink-0",
+			`h-[${HEIGHT}px]`,
+			`lg:w-[${VERTICAL_WIDTH}px]`,
+			`lg:max-w-[${VERTICAL_WIDTH}px]`,
+		]}
 	/>
 </picture>
