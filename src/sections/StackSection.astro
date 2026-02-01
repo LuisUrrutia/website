@@ -1,4 +1,21 @@
 ---
+/**
+ * StackSection - An interactive section displaying technology skills.
+ *
+ * Features category filtering, expand/collapse functionality, and accessibility
+ * announcements for screen readers. Technologies can be filtered by category
+ * and the list expands to show all items.
+ *
+ * @example
+ * ```astro
+ * <StackSection
+ *   technologies={[
+ *     { name: "React", icon: "/tech/react.svg", experience: 5, category: "frameworks" }
+ *   ]}
+ *   initialVisible={9}
+ * />
+ * ```
+ */
 import type { Technology, TechnologyCategory } from "@/types/technology";
 import Card from "@/components/Card.astro";
 import ClearFilterButton from "@/components/ClearFilterButton.astro";
@@ -8,11 +25,15 @@ import ExpandButton from "@/components/ExpandButton.astro";
 import { formatExperience } from "@/lib/formatters";
 
 interface Props {
+	/** Array of technologies to display. */
 	technologies: Technology[];
+	/** Number of items visible before expanding. Defaults to 9. */
 	initialVisible?: number;
+	/** Section ID for navigation. Defaults to "stack". */
+	id?: string;
 }
 
-const { technologies, initialVisible = 9 } = Astro.props;
+const { technologies, initialVisible = 9, id = "stack" } = Astro.props;
 const { t } = Astro.locals;
 
 const categories: { id: TechnologyCategory; label: string }[] = [
@@ -32,7 +53,7 @@ const indicesByCategory = technologies.reduce(
 );
 ---
 
-<Card>
+<Card as="section" id={id} aria-labelledby={`${id}-heading`}>
 	<div
 		class="stack-section flex flex-col gap-6"
 		data-initial-visible={initialVisible}
@@ -42,7 +63,9 @@ const indicesByCategory = technologies.reduce(
 		<header
 			class="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
 		>
-			<h2 class="text-title text-2xl font-semibold">{t("stack.title")}</h2>
+			<h2 id={`${id}-heading`} class="text-title text-2xl font-semibold">
+				{t("stack.title")}
+			</h2>
 			<div class="stack-filters flex items-center gap-2">
 				<ClearFilterButton
 					class="stack-clear order-1 sm:order-first"
@@ -62,7 +85,7 @@ const indicesByCategory = technologies.reduce(
 		</header>
 
 		<ul
-			class="stack-grid m-0 grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 md:grid-cols-3"
+			class="stack-grid grid list-none grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
 			role="list"
 		>
 			{
