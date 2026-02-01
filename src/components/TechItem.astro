@@ -28,14 +28,14 @@ const isAutoColor = !isThemedIcon && colorMode === "auto";
 ---
 
 <div class:list={["flex items-center gap-3 p-2", className]}>
-	<div class="size-12 shrink-0">
+	<div class="relative size-12 shrink-0">
 		{
 			isThemedIcon ? (
 				<>
 					<img
 						src={lightIcon}
 						alt={`${name} logo`}
-						class="tech-icon tech-icon-light size-12 object-contain"
+						class="tech-icon tech-icon-light absolute inset-0 size-12 object-contain"
 						width="48"
 						height="48"
 						loading={loading}
@@ -44,7 +44,7 @@ const isAutoColor = !isThemedIcon && colorMode === "auto";
 					<img
 						src={darkIcon}
 						alt={`${name} logo`}
-						class="tech-icon tech-icon-dark size-12 object-contain"
+						class="tech-icon tech-icon-dark absolute inset-0 size-12 object-contain"
 						width="48"
 						height="48"
 						loading={loading}
