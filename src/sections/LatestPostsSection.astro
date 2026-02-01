@@ -1,12 +1,29 @@
 ---
+/**
+ * LatestPostsSection - A section displaying recent blog posts.
+ *
+ * Shows a list of blog entries with optional "view more" link.
+ * Displays an empty state message when no posts are available.
+ *
+ * @example
+ * ```astro
+ * <LatestPostsSection
+ *   posts={[{ title: "My Post", category: "tech", date: "2024-01-01", href: "/blog/my-post", slug: "my-post" }]}
+ *   viewMoreHref="/blog"
+ * />
+ * ```
+ */
 import type { Post } from "@/types/post";
 import Card from "@/components/Card.astro";
 import BlogEntry from "@/components/BlogEntry.astro";
 import ViewMoreLink from "@/components/ViewMoreLink.astro";
 
 interface Props {
+	/** Array of blog posts to display. */
 	posts: Post[];
+	/** Section ID for navigation. Defaults to "latest-posts". */
 	id?: string;
+	/** URL for the "view more" link. */
 	viewMoreHref?: string;
 }
 
@@ -14,14 +31,21 @@ const { posts, id = "latest-posts", viewMoreHref } = Astro.props;
 const { t } = Astro.locals;
 ---
 
-<Card id={id} class="flex flex-col gap-6">
-	<h2 class="text-title text-2xl font-semibold">{t("blog.title")}</h2>
+<Card
+	as="section"
+	id={id}
+	aria-labelledby={`${id}-heading`}
+	class="flex flex-col gap-6"
+>
+	<h2 id={`${id}-heading`} class="text-title text-2xl font-semibold">
+		{t("blog.title")}
+	</h2>
 
 	{
 		posts.length === 0 ? (
 			<p class="text-secondary">{t("blog.empty")}</p>
 		) : (
-			<ul class="m-0 flex list-none flex-col p-0">
+			<ul class="flex list-none flex-col">
 				{posts.map((post) => (
 					<li>
 						<BlogEntry

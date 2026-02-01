@@ -1,4 +1,19 @@
 ---
+/**
+ * HeroSection - The main introduction section of the portfolio.
+ *
+ * Displays profile picture, name, bio, work status, location, social links,
+ * and a marquee of companies worked with.
+ *
+ * @example
+ * ```astro
+ * <HeroSection
+ *   socials={{ github: "https://github.com/user", linkedin: "https://linkedin.com/in/user" }}
+ *   workStatus="open"
+ * />
+ * ```
+ */
+import type { Company } from "@/types/company";
 import type { SocialLinksProps } from "@/types/social";
 import Card from "@/components/Card.astro";
 import CompanyMarquee from "@/components/CompanyMarquee.astro";
@@ -9,23 +24,44 @@ import ProfilePicture from "@/components/ProfilePicture.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
 import WorkStatusBadge from "@/components/WorkStatusBadge.astro";
+import { companies as defaultCompanies } from "@/data/companies";
+
+type WorkStatus = "open" | "busy";
 
 interface Props {
 	/** Social media links configuration. */
 	socials?: SocialLinksProps;
+	/** Current work availability status. Defaults to "busy". */
+	workStatus?: WorkStatus;
+	/** List of companies to display in the marquee. */
+	companies?: Company[];
+	/** Section ID for navigation. Defaults to "hero". */
+	id?: string;
 }
 
-const { socials } = Astro.props;
+const {
+	socials,
+	workStatus = "busy",
+	companies = defaultCompanies,
+	id = "hero",
+} = Astro.props;
 const { t } = Astro.locals;
+
+const statusTextKey = workStatus === "open" ? "status.open" : "status.busy";
 ---
 
-<Card class="flex flex-col gap-5">
+<Card
+	as="section"
+	id={id}
+	aria-labelledby={`${id}-heading`}
+	class="flex flex-col gap-5"
+>
 	<div class="flex flex-col gap-4 md:flex-row">
 		<ProfilePicture alt={t("hero.photoAlt")} />
 
 		<div class="flex flex-1 flex-col gap-4">
 			<div class="flex flex-row justify-between gap-5 py-2 md:py-0">
-				<WorkStatusBadge status="busy" statusText={t("status.busy")} />
+				<WorkStatusBadge status={workStatus} statusText={t(statusTextKey)} />
 				<div class="flex items-center gap-3">
 					<ThemeToggle />
 					{
@@ -37,7 +73,7 @@ const { t } = Astro.locals;
 			</div>
 
 			<div class="flex flex-col gap-2.5 py-2.5">
-				<h1 class="text-title text-4xl font-semibold">
+				<h1 id={`${id}-heading`} class="text-title text-4xl font-semibold">
 					{t("hero.greeting")}
 					<span class="block sm:inline">{t("hero.intro")}</span>
 				</h1>
@@ -59,45 +95,6 @@ const { t } = Astro.locals;
 			<IconRocket />
 			{t("hero.companies")}
 		</p>
-		<CompanyMarquee
-			companies={[
-				{
-					name: "Rappi",
-					logo: "/companies/rappi.svg",
-					url: "https://www.rappi.com",
-					width: 67,
-				},
-				{
-					name: "Premise",
-					logo: "/companies/premise.svg",
-					url: "https://www.premise.com",
-					width: 144,
-				},
-				{
-					name: "OpenZeppelin",
-					logo: "/companies/openzeppelin.svg",
-					url: "https://www.openzeppelin.com",
-					width: 168,
-				},
-				{
-					name: "Resit",
-					logo: "/companies/resit.svg",
-					url: "https://www.resit.cl",
-					width: 62,
-				},
-				{
-					name: "Vitamina",
-					logo: "/companies/vitamina.svg",
-					url: "https://www.vitamina.cl",
-					width: 48,
-				},
-				{
-					name: "Socotra",
-					logo: "/companies/socotra.svg",
-					url: "https://www.socotra.com",
-					width: 92,
-				},
-			]}
-		/>
+		<CompanyMarquee companies={companies} />
 	</div>
 </Card>
