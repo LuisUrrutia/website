@@ -65,8 +65,14 @@ const postUrl = `${siteUrl}${getLocalizedPath(`/blog/${slug}`, lang)}`;
 
 // Breadcrumb items for blog post page
 const breadcrumbItems = [
-	{ name: "Home", url: `${siteUrl}${getLocalizedPath("/", lang)}` },
-	{ name: "Blog", url: `${siteUrl}${getLocalizedPath("/blog", lang)}` },
+	{
+		name: t("breadcrumb.home"),
+		url: `${siteUrl}${getLocalizedPath("/", lang)}`,
+	},
+	{
+		name: t("breadcrumb.blog"),
+		url: `${siteUrl}${getLocalizedPath("/blog", lang)}`,
+	},
 	{ name: post.data.title, url: postUrl },
 ];
 ---

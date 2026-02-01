@@ -40,6 +40,7 @@ export const ui = {
 		// Blog
 		"blog.title": "Latest posts",
 		"blog.pageTitle": "Luis Urrutia | Engineering Notes",
+		"blog.heading": "Engineering Notes",
 		"blog.pageDescription":
 			"Engineering notes by Luis Urrutia on system design, reliability, and building production software at scale.",
 		"blog.empty": "No posts available",
@@ -72,6 +73,10 @@ export const ui = {
 		"a11y.mainNavigation": "Main navigation",
 		"a11y.home": "Home",
 		"a11y.pagination": "Pagination",
+
+		// Breadcrumbs
+		"breadcrumb.home": "Home",
+		"breadcrumb.blog": "Engineering Notes",
 
 		// Pagination
 		"pagination.previous": "Previous page",
@@ -130,7 +135,8 @@ export const ui = {
 
 		// Blog
 		"blog.title": "Últimas publicaciones",
-		"blog.pageTitle": "Luis Urrutia | Engineering Notes",
+		"blog.pageTitle": "Luis Urrutia | Notas de Ingeniería",
+		"blog.heading": "Notas de Ingeniería",
 		"blog.pageDescription":
 			"Notas de ingeniería de Luis Urrutia sobre diseño de sistemas, confiabilidad y construcción de software de producción a escala.",
 		"blog.empty": "No hay publicaciones disponibles",
@@ -163,6 +169,10 @@ export const ui = {
 		"a11y.mainNavigation": "Navegación principal",
 		"a11y.home": "Inicio",
 		"a11y.pagination": "Paginación",
+
+		// Breadcrumbs
+		"breadcrumb.home": "Inicio",
+		"breadcrumb.blog": "Notas de Ingeniería",
 
 		// Pagination
 		"pagination.previous": "Página anterior",
