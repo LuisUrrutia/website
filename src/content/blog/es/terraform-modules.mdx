@@ -1,0 +1,61 @@
+---
+title: "Escribiendo Módulos Reutilizables de Terraform"
+description: "Cómo estructurar módulos de Terraform para máxima reutilización y mantenibilidad."
+date: 2025-12-22
+category: "DevOps"
+tags: ["terraform", "iac", "devops"]
+lang: "es"
+translationSlug: "terraform-modules"
+---
+
+La Infraestructura como Código solo es valiosa si es mantenible. Los módulos son la clave.
+
+## Estructura de Módulos
+
+Mantén una estructura consistente en todos los módulos.
+
+```
+modules/
+  vpc/
+    main.tf
+    variables.tf
+    outputs.tf
+    README.md
+```
+
+## Variables de Entrada
+
+Haz los módulos configurables con valores por defecto sensatos.
+
+```hcl
+variable "environment" {
+  description = "Nombre del entorno (dev, staging, prod)"
+  type        = string
+}
+
+variable "vpc_cidr" {
+  description = "Bloque CIDR para la VPC"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+```
+
+## Outputs
+
+Expón valores que otros módulos podrían necesitar.
+
+```hcl
+output "vpc_id" {
+  description = "El ID de la VPC"
+  value       = aws_vpc.main.id
+}
+
+output "private_subnet_ids" {
+  description = "Lista de IDs de subnets privadas"
+  value       = aws_subnet.private[*].id
+}
+```
+
+## Conclusión
+
+Un buen diseño de módulos rinde dividendos en menos duplicación y mantenimiento más fácil.

@@ -1,0 +1,60 @@
+---
+title: "Consejos de Optimización de Rendimiento en PostgreSQL"
+description: "Técnicas prácticas para mejorar el rendimiento de tu base de datos PostgreSQL."
+date: 2025-12-31
+category: "Base de Datos"
+tags: ["postgresql", "base de datos", "rendimiento"]
+lang: "es"
+translationSlug: "postgres-performance"
+---
+
+PostgreSQL es una base de datos poderosa, pero obtener un rendimiento óptimo requiere entender sus internos.
+
+## Estrategias de Indexación
+
+La indexación apropiada es la optimización más impactante que puedes hacer.
+
+```sql
+-- Índice B-tree para consultas de igualdad y rango
+CREATE INDEX idx_users_email ON users(email);
+
+-- Índice parcial para consultas comunes
+CREATE INDEX idx_orders_pending ON orders(created_at)
+WHERE status = 'pending';
+
+-- Índice compuesto para consultas multi-columna
+CREATE INDEX idx_orders_user_date ON orders(user_id, created_at DESC);
+```
+
+## Análisis de Consultas con EXPLAIN
+
+Siempre analiza tus consultas antes de optimizar.
+
+```sql
+EXPLAIN ANALYZE
+SELECT * FROM orders
+WHERE user_id = 123
+AND created_at > '2025-01-01'
+ORDER BY created_at DESC
+LIMIT 10;
+```
+
+## Connection Pooling
+
+Usa un pooler de conexiones como PgBouncer para aplicaciones de alto rendimiento.
+
+## Vacuum y Analyze
+
+Mantén tus tablas saludables con mantenimiento regular.
+
+```sql
+-- Analizar estadísticas de tabla
+ANALYZE orders;
+
+-- Vacuum para reclamar espacio
+VACUUM ANALYZE orders;
+```
+
+## Conclusión
+
+El rendimiento de base de datos se trata de entender tus patrones de datos y aplicar las optimizaciones correctas.

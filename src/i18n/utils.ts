@@ -2,6 +2,30 @@ import { ui, type TranslationKey } from "./ui";
 import { locales, defaultLocale, type Locale } from "./locales";
 
 /**
+ * Check if the given locale is the default locale.
+ */
+export function isDefaultLocale(locale: Locale): boolean {
+	return locale === defaultLocale;
+}
+
+/**
+ * Get the alternate locale (for language toggle).
+ * Useful for switching between locales.
+ */
+export function getAlternateLocale(locale: Locale): Locale {
+	return locale === "en" ? "es" : "en";
+}
+
+/**
+ * Create a filter predicate for content by locale.
+ * Filters out drafts by default.
+ */
+export function matchesLocale(locale: Locale) {
+	return (data: { lang: Locale; draft?: boolean }): boolean =>
+		data.lang === locale && !data.draft;
+}
+
+/**
  * Type guard to check if a string is a valid locale.
  */
 export function isValidLocale(value: string): value is Locale {
@@ -37,7 +61,7 @@ export function useTranslations(lang: Locale) {
  * getLocalizedPath("/about", "en") → "/about"
  */
 export function getLocalizedPath(path: string, lang: Locale): string {
-	if (lang === defaultLocale) return path;
+	if (isDefaultLocale(lang)) return path;
 	return `/${lang}${path}`;
 }
 
@@ -56,4 +80,16 @@ export function getPathWithoutLocale(pathname: string): string {
 		}
 	}
 	return pathname;
+}
+
+/** Regex pattern to match locale prefix in content slugs */
+const localeSlugPattern = new RegExp(`^(${locales.join("|")})/`);
+
+/**
+ * Remove locale prefix from a content collection slug/id.
+ * "en/my-post" → "my-post"
+ * "es/mi-post" → "mi-post"
+ */
+export function getSlugWithoutLocale(slug: string): string {
+	return slug.replace(localeSlugPattern, "");
 }

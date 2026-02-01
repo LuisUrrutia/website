@@ -1,0 +1,63 @@
+---
+title: "Consejos de Tailwind CSS para Código más Limpio"
+description: "Técnicas para escribir Tailwind CSS mantenible sin la sopa de clases."
+date: 2025-12-26
+category: "CSS"
+tags: ["tailwind", "css", "frontend"]
+lang: "es"
+translationSlug: "tailwind-tips"
+---
+
+Tailwind CSS es poderoso, pero las listas largas de clases pueden volverse difíciles de manejar.
+
+## Usa Abstracción de Componentes
+
+Extrae patrones repetidos en componentes, no clases CSS.
+
+```astro
+---
+interface Props {
+	class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<!-- Card.astro -->
+<div class:list={["bg-card rounded-xl p-6 shadow-sm", className]}>
+	<slot />
+</div>
+```
+
+## Aprovecha class:list
+
+La directiva `class:list` de Astro hace las clases condicionales más limpias.
+
+```astro
+<button
+	class:list={[
+		"rounded-lg px-4 py-2 font-medium",
+		{
+			"bg-primary text-white": variant === "primary",
+			"border bg-transparent": variant === "outline",
+		},
+	]}
+>
+	<slot />
+</button>
+```
+
+## Design Tokens en CSS
+
+Define colores semánticos que mapean a tu sistema de diseño.
+
+```css
+:root {
+	--color-background: oklch(98% 0 0);
+	--color-foreground: oklch(20% 0 0);
+	--color-primary: oklch(55% 0.2 260);
+}
+```
+
+## Conclusión
+
+Tailwind funciona mejor cuando se combina con buena arquitectura de componentes.

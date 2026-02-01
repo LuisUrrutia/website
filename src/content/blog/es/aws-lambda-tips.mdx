@@ -1,0 +1,59 @@
+---
+title: "Mejores Prácticas de AWS Lambda para Producción"
+description: "Lecciones aprendidas ejecutando funciones serverless a escala."
+date: 2025-12-23
+category: "Cloud"
+tags: ["aws", "lambda", "serverless"]
+lang: "es"
+translationSlug: "aws-lambda-tips"
+---
+
+Serverless es poderoso pero tiene sus peculiaridades. Esto es lo que he aprendido ejecutando Lambda en producción.
+
+## Mitigación de Cold Starts
+
+Los cold starts son reales. Minimízalos con estas estrategias.
+
+```typescript
+// Mantén conexiones fuera del handler
+const db = createConnection();
+
+export const handler = async (event: APIGatewayEvent) => {
+	// Reutiliza conexión entre invocaciones
+	const result = await db.query("SELECT * FROM users");
+	return { statusCode: 200, body: JSON.stringify(result) };
+};
+```
+
+## Dimensionamiento Correcto de Memoria
+
+Más memoria significa CPU más rápida. Encuentra el punto óptimo.
+
+```yaml
+# Empieza con 256MB y ajusta basándote en métricas
+Resources:
+  MyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      MemorySize: 256
+      Timeout: 30
+```
+
+## Logging Estructurado
+
+Facilita el debugging con logs estructurados.
+
+```typescript
+console.log(
+	JSON.stringify({
+		level: "info",
+		message: "Procesando orden",
+		orderId: event.orderId,
+		timestamp: new Date().toISOString(),
+	}),
+);
+```
+
+## Conclusión
+
+Serverless requiere una mentalidad diferente, pero los beneficios operacionales son significativos.

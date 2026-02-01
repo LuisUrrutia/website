@@ -3,4 +3,5 @@ export interface Post {
 	category: string;
 	date: Date;
 	href: string;
+	slug?: string;
 }

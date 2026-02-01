@@ -86,4 +86,15 @@ const isOpen = status === "open";
 			opacity: 0;
 		}
 	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.gradient-border {
+			animation: none;
+		}
+
+		.ripple::after {
+			animation: none;
+			opacity: 0.4;
+		}
+	}
 </style>

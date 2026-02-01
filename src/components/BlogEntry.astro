@@ -1,6 +1,10 @@
 ---
+import type { HTMLTag } from "astro/types";
 import IconArrowRight from "@/assets/icons/arrow-right.svg";
 import Pill from "@/components/Pill.astro";
+import { intlLocales } from "@/i18n";
+
+type HeadingLevel = Extract<HTMLTag, "h1" | "h2" | "h3" | "h4" | "h5" | "h6">;
 
 interface Props {
 	title: string;
@@ -10,13 +14,16 @@ interface Props {
 	href?: string;
 	external?: boolean;
 	readingTime?: string;
-	ariaLabel?: string;
+	"aria-label"?: string;
 	locale?: string;
 	dateFormat?: Intl.DateTimeFormatOptions;
+	/** Unique slug for view transition name (enables title animation between pages) */
+	slug?: string;
+	/** Heading level for the title. Defaults to "h3". */
+	headingLevel?: HeadingLevel;
 }
 
 const { lang } = Astro.locals;
-const localeMap = { en: "en-US", es: "es-ES" } as const;
 
 const {
 	title,
@@ -26,10 +33,16 @@ const {
 	href,
 	external,
 	readingTime,
-	ariaLabel,
-	locale = localeMap[lang],
+	"aria-label": ariaLabel,
+	locale = intlLocales[lang],
 	dateFormat = { day: "numeric", month: "short", year: "numeric" },
+	slug,
+	headingLevel: Heading = "h3",
 } = Astro.props;
+
+// Generate unique transition names from slug (must be unique per page)
+const titleTransitionName = slug ? `post-title-${slug}` : undefined;
+const pillTransitionName = slug ? `post-pill-${slug}` : undefined;
 
 const formattedDate = date.toLocaleDateString(locale, dateFormat);
 
@@ -56,8 +69,20 @@ const linkProps = href
 	</div>
 	<div class="border-border flex-1 border-b pb-8">
 		<div class="flex flex-col gap-3">
-			<Pill color={categoryColor}>{category}</Pill>
-			<h3 class="text-title text-lg font-medium md:text-xl">{title}</h3>
+			<Pill
+				color={categoryColor}
+				style={pillTransitionName
+					? `view-transition-name: ${pillTransitionName}`
+					: undefined}>{category}</Pill
+			>
+			<Heading
+				class="text-title text-lg font-medium md:text-xl"
+				style={titleTransitionName
+					? `view-transition-name: ${titleTransitionName}`
+					: undefined}
+			>
+				{title}
+			</Heading>
 		</div>
 	</div>
 	{

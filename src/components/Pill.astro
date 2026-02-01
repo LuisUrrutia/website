@@ -8,6 +8,7 @@ interface Props {
 	truncate?: boolean;
 	maxWidth?: string;
 	class?: string;
+	style?: string;
 }
 
 const {
@@ -17,6 +18,7 @@ const {
 	truncate = false,
 	maxWidth = "12rem",
 	class: className,
+	style,
 } = Astro.props;
 
 const hasIcon = Astro.slots.has("icon-before") || Astro.slots.has("icon-after");
@@ -32,6 +34,7 @@ const customStyles =
 		color && `background-color: ${color}`,
 		textColor && `color: ${textColor}`,
 		truncate && `max-width: ${maxWidth}`,
+		style,
 	]
 		.filter(Boolean)
 		.join("; ") || undefined;

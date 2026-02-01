@@ -1,0 +1,55 @@
+---
+title: "Effective Caching Strategies with Redis"
+description: "Practical patterns for implementing caching in your applications using Redis."
+date: 2025-12-24
+category: "Database"
+tags: ["redis", "caching", "performance"]
+lang: "en"
+translationSlug: "redis-caching"
+---
+
+Redis is my go-to solution for caching. Here are patterns that work well in production.
+
+## Cache-Aside Pattern
+
+The most common caching pattern: check cache first, then database.
+
+```typescript
+async function getUser(userId: string): Promise<User> {
+	const cached = await redis.get(`user:${userId}`);
+	if (cached) {
+		return JSON.parse(cached);
+	}
+
+	const user = await db.users.findById(userId);
+	await redis.setex(`user:${userId}`, 3600, JSON.stringify(user));
+	return user;
+}
+```
+
+## Cache Invalidation
+
+The hardest problem in computer science. Keep it simple.
+
+```typescript
+async function updateUser(userId: string, data: UserUpdate) {
+	await db.users.update(userId, data);
+	await redis.del(`user:${userId}`);
+}
+```
+
+## TTL Strategy
+
+Set appropriate TTLs based on data volatility.
+
+```typescript
+// Frequently changing data
+await redis.setex("active-sessions", 60, data);
+
+// Rarely changing data
+await redis.setex("static-config", 86400, data);
+```
+
+## Conclusion
+
+Start simple, measure, and optimize based on real usage patterns.

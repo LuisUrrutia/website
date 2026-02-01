@@ -1,0 +1,71 @@
+---
+title: "Mejores Prácticas de TypeScript para Grandes Proyectos"
+description: "Patrones esenciales y prácticas para mantener la seguridad de tipos a escala en aplicaciones empresariales."
+date: 2026-01-05
+category: "TypeScript"
+tags: ["typescript", "mejores prácticas", "arquitectura"]
+lang: "es"
+translationSlug: "typescript-best-practices"
+---
+
+Gestionar tipos en grandes proyectos requiere disciplina y patrones bien establecidos. Estas son las prácticas que me han servido bien a lo largo de los años.
+
+## Preferir Interfaces sobre Types para Objetos
+
+Aunque `type` e `interface` son frecuentemente intercambiables, las interfaces proporcionan mejores mensajes de error y son más extensibles.
+
+```typescript
+// Preferir esto
+interface UserProfile {
+	id: string;
+	name: string;
+	avatar?: string;
+}
+
+// Sobre esto para formas de objetos
+type UserProfile = {
+	id: string;
+	name: string;
+	avatar?: string;
+};
+```
+
+## Usar Tipos Marcados para Seguridad de Dominio
+
+Los tipos marcados previenen mezclar valores que comparten el mismo tipo primitivo pero tienen diferentes significados semánticos.
+
+```typescript
+type UserId = string & { readonly brand: unique symbol };
+type OrderId = string & { readonly brand: unique symbol };
+
+function getUser(id: UserId): User {
+	/* ... */
+}
+function getOrder(id: OrderId): Order {
+	/* ... */
+}
+
+// Ahora no puedes pasar accidentalmente un OrderId donde se espera UserId
+```
+
+## Adoptar Uniones Discriminadas
+
+Las uniones discriminadas hacen imposibles los estados imposibles y proporcionan excelente estrechamiento de tipos.
+
+```typescript
+type Result<T> = { success: true; data: T } | { success: false; error: Error };
+
+function handleResult<T>(result: Result<T>) {
+	if (result.success) {
+		// TypeScript sabe que result.data existe aquí
+		console.log(result.data);
+	} else {
+		// TypeScript sabe que result.error existe aquí
+		console.error(result.error);
+	}
+}
+```
+
+## Conclusión
+
+La seguridad de tipos es una inversión que rinde dividendos en menos bugs y mejor experiencia de desarrollo.

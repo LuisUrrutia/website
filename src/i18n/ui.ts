@@ -37,8 +37,16 @@ export const ui = {
 
 		// Blog
 		"blog.title": "Latest posts",
+		"blog.pageTitle": "Blog",
+		"blog.pageDescription":
+			"Thoughts on software engineering, web development, and technology.",
 		"blog.empty": "No posts available",
 		"blog.viewMore": "View More",
+		"blog.allPosts": "All Posts",
+		"blog.backToBlog": "Back to Blog",
+		"blog.publishedOn": "Published on",
+		"blog.updatedOn": "Updated on",
+		"blog.readingTime": "{minutes} min read",
 		"blog.alsoAvailable": "This post is also available in:",
 
 		// Common
@@ -59,6 +67,13 @@ export const ui = {
 		"a11y.opensEmailClient": "opens email client",
 		"a11y.languageSwitcher": "Language switcher",
 		"a11y.socialLinks": "Social links",
+		"a11y.mainNavigation": "Main navigation",
+		"a11y.home": "Home",
+		"a11y.pagination": "Pagination",
+
+		// Pagination
+		"pagination.previous": "Previous page",
+		"pagination.next": "Next page",
 
 		// Theme
 		"theme.auto": "Theme: Auto (click to switch to Light)",
@@ -110,8 +125,16 @@ export const ui = {
 
 		// Blog
 		"blog.title": "Últimas publicaciones",
+		"blog.pageTitle": "Blog",
+		"blog.pageDescription":
+			"Reflexiones sobre ingeniería de software, desarrollo web y tecnología.",
 		"blog.empty": "No hay publicaciones disponibles",
 		"blog.viewMore": "Ver más",
+		"blog.allPosts": "Todas las publicaciones",
+		"blog.backToBlog": "Volver al Blog",
+		"blog.publishedOn": "Publicado el",
+		"blog.updatedOn": "Actualizado el",
+		"blog.readingTime": "{minutes} min de lectura",
 		"blog.alsoAvailable": "Esta publicación también está disponible en:",
 
 		// Common
@@ -132,6 +155,13 @@ export const ui = {
 		"a11y.opensEmailClient": "abre el cliente de correo",
 		"a11y.languageSwitcher": "Selector de idioma",
 		"a11y.socialLinks": "Redes sociales",
+		"a11y.mainNavigation": "Navegación principal",
+		"a11y.home": "Inicio",
+		"a11y.pagination": "Paginación",
+
+		// Pagination
+		"pagination.previous": "Página anterior",
+		"pagination.next": "Página siguiente",
 
 		// Theme
 		"theme.auto": "Tema: Auto (clic para cambiar a Claro)",

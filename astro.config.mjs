@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
+import mdx from "@astrojs/mdx";
 import compressor from "astro-compressor";
 import sitemap from "@astrojs/sitemap";
 
@@ -34,6 +35,7 @@ export default defineConfig({
 	},
 
 	integrations: [
+		mdx(),
 		sitemap({
 			i18n: {
 				defaultLocale: "en",

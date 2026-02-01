@@ -1,0 +1,65 @@
+---
+title: "Empezando con Rust como Desarrollador JavaScript"
+description: "Conceptos clave y cambios de modelo mental al aprender Rust viniendo de JavaScript."
+date: 2025-12-25
+category: "Rust"
+tags: ["rust", "javascript", "aprendizaje"]
+lang: "es"
+translationSlug: "rust-beginners"
+---
+
+Viniendo de JavaScript, Rust puede sentirse intimidante. Esto es lo que me ayudó a empezar.
+
+## Ownership: El Gran Concepto
+
+El modelo de ownership de Rust es único. Cada valor tiene un propietario, y solo puede haber uno.
+
+```rust
+fn main() {
+    let s1 = String::from("hello");
+    let s2 = s1; // s1 ya no es válido!
+
+    // println!("{}", s1); // Esto fallaría
+    println!("{}", s2); // Esto funciona
+}
+```
+
+## El Borrow Checker
+
+Puedes referenciar valores sin tomar ownership usando préstamos.
+
+```rust
+fn calculate_length(s: &String) -> usize {
+    s.len()
+}
+
+fn main() {
+    let s = String::from("hello");
+    let len = calculate_length(&s);
+    println!("Longitud de '{}' es {}", s, len);
+}
+```
+
+## Pattern Matching
+
+El pattern matching es más poderoso que el switch de JavaScript.
+
+```rust
+enum Status {
+    Active,
+    Inactive,
+    Pending(String),
+}
+
+fn handle_status(status: Status) {
+    match status {
+        Status::Active => println!("Activo"),
+        Status::Inactive => println!("Inactivo"),
+        Status::Pending(reason) => println!("Pendiente: {}", reason),
+    }
+}
+```
+
+## Conclusión
+
+La curva de aprendizaje de Rust es empinada pero vale la pena. El compilador se convierte en tu aliado.

@@ -1,0 +1,56 @@
+---
+title: "Testing Strategies for Modern Web Apps"
+description: "A practical approach to testing that balances coverage with development speed."
+date: 2025-12-29
+category: "Testing"
+tags: ["testing", "vitest", "playwright"]
+lang: "en"
+translationSlug: "testing-strategies"
+---
+
+Testing is essential, but not all tests are created equal. Here's my approach to effective testing.
+
+## The Testing Trophy
+
+Instead of the traditional testing pyramid, I prefer the testing trophy approach:
+
+1. **Static Analysis** - TypeScript, ESLint
+2. **Unit Tests** - Pure functions, utilities
+3. **Integration Tests** - Component interactions
+4. **E2E Tests** - Critical user flows
+
+## Unit Testing with Vitest
+
+Fast, modern testing for JavaScript.
+
+```typescript
+import { describe, it, expect } from "vitest";
+import { formatPrice } from "./utils";
+
+describe("formatPrice", () => {
+	it("formats whole numbers", () => {
+		expect(formatPrice(100)).toBe("$100.00");
+	});
+
+	it("handles decimals", () => {
+		expect(formatPrice(99.99)).toBe("$99.99");
+	});
+});
+```
+
+## E2E Testing with Playwright
+
+Test real user scenarios across browsers.
+
+```typescript
+test("user can complete checkout", async ({ page }) => {
+	await page.goto("/products");
+	await page.click('[data-testid="add-to-cart"]');
+	await page.click('[data-testid="checkout"]');
+	await expect(page.locator(".confirmation")).toBeVisible();
+});
+```
+
+## Conclusion
+
+Focus your testing efforts where they provide the most value: integration and E2E tests.

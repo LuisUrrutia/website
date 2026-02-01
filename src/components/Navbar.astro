@@ -1,0 +1,56 @@
+---
+/**
+ * Navbar - Site navigation bar with logo, links, theme toggle, and language switcher.
+ *
+ * @example
+ * ```astro
+ * <Navbar />
+ * ```
+ */
+import Container from "@/components/Container.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
+import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
+import Logo from "@/assets/logo.svg";
+import { getLocalizedPath } from "@/i18n";
+
+const { lang, t } = Astro.locals;
+
+const homeHref = getLocalizedPath("/", lang);
+const blogHref = getLocalizedPath("/blog", lang);
+---
+
+<header class="mb-6">
+	<Container>
+		<nav
+			class="bg-card shadow-soft flex items-center justify-between rounded-2xl px-4 py-3"
+			aria-label={t("a11y.mainNavigation")}
+		>
+			<div class="flex items-center gap-6">
+				<a
+					href={homeHref}
+					class="text-title flex items-center gap-2 font-semibold transition-opacity hover:opacity-80"
+					aria-label={t("a11y.home")}
+				>
+					<Logo class="size-6" aria-hidden="true" />
+					<span class="hidden sm:inline">Luis Urrutia</span>
+				</a>
+
+				<ul class="flex items-center gap-4">
+					<li>
+						<a
+							href={blogHref}
+							class="text-subtitle hover:text-title text-sm transition-colors"
+						>
+							{t("blog.pageTitle")}
+						</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="flex items-center gap-3">
+				<ThemeToggle />
+				<LanguageSwitcher />
+			</div>
+		</nav>
+	</Container>
+</header>

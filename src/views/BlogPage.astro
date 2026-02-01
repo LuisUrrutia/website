@@ -1,0 +1,67 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Container from "@/components/Container.astro";
+import Card from "@/components/Card.astro";
+import BlogEntry from "@/components/BlogEntry.astro";
+import Pagination from "@/components/Pagination.astro";
+import { getLocalizedPath, getSlugWithoutLocale } from "@/i18n";
+
+interface Props {
+	posts: CollectionEntry<"blog">[];
+	currentPage: number;
+	totalPages: number;
+}
+
+const { posts, currentPage, totalPages } = Astro.props;
+const { t, lang } = Astro.locals;
+
+// Helper to get the post URL
+function getPostUrl(id: string): string {
+	const slug = getSlugWithoutLocale(id);
+	return getLocalizedPath(`/blog/${slug}`, lang);
+}
+
+// Base URL for pagination
+const baseUrl = getLocalizedPath("/blog", lang);
+---
+
+<Layout title={t("blog.pageTitle")} description={t("blog.pageDescription")}>
+	<Navbar />
+	<Container as="main" class="flex flex-col gap-8" transition:animate="slide">
+		<Card style="view-transition-name: post-card">
+			<header class="mb-6">
+				<h1 class="text-title text-3xl font-bold">{t("blog.pageTitle")}</h1>
+				<p class="text-subtitle mt-2">{t("blog.pageDescription")}</p>
+			</header>
+
+			{
+				posts.length === 0 ? (
+					<p class="text-subtitle py-8 text-center">{t("blog.empty")}</p>
+				) : (
+					<ul class="m-0 flex list-none flex-col p-0">
+						{posts.map((post) => (
+							<li>
+								<BlogEntry
+									title={post.data.title}
+									category={post.data.category}
+									date={post.data.date}
+									href={getPostUrl(post.id)}
+									slug={getSlugWithoutLocale(post.id)}
+								/>
+							</li>
+						))}
+					</ul>
+				)
+			}
+
+			<Pagination
+				currentPage={currentPage}
+				totalPages={totalPages}
+				baseUrl={baseUrl}
+				class="mt-8"
+			/>
+		</Card>
+	</Container>
+</Layout>

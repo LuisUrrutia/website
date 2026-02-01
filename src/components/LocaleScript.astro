@@ -3,15 +3,11 @@
  * LocaleScript - Inline blocking script for locale detection and redirect.
  *
  * Handles:
- * - Reading stored locale preference from localStorage (with cookie fallback)
- * - Browser language detection for first-time visitors
- * - Automatic redirect to preferred locale
+ * - Browser language detection for first-time visitors only
+ * - Automatic redirect to preferred locale on first visit
  *
+ * After the first visit, users can navigate freely between locales.
  * Must be placed in <head> before any rendering.
- *
- * NOTE: This script uses `is:inline` for blocking behavior, so it cannot import
- * from @/lib/locale-storage. The storage logic is duplicated here intentionally.
- * Keep in sync with src/lib/locale-storage.ts
  */
 import { locales, defaultLocale } from "@/i18n/locales";
 
@@ -35,8 +31,8 @@ const localesJson = JSON.stringify(locales);
 		const defaultLocale = script.dataset.defaultLocale;
 		const locales = JSON.parse(script.dataset.locales);
 
-		const STORAGE_KEY = "preferred-locale";
-		const COOKIE_NAME = "preferred-locale";
+		const HAS_VISITED_KEY = "has-visited";
+		const COOKIE_NAME = "has-visited";
 
 		function getCookie(name) {
 			const match = document.cookie.match(
@@ -45,12 +41,27 @@ const localesJson = JSON.stringify(locales);
 			return match ? match[2] : null;
 		}
 
-		function getStoredLocale() {
+		function setCookie(name, value, maxAge) {
+			document.cookie =
+				name + "=" + value + ";path=/;max-age=" + maxAge + ";SameSite=Lax";
+		}
+
+		function hasVisited() {
 			try {
-				return localStorage.getItem(STORAGE_KEY);
+				return localStorage.getItem(HAS_VISITED_KEY) === "true";
 			} catch {
-				return getCookie(COOKIE_NAME);
+				return getCookie(COOKIE_NAME) === "true";
 			}
+		}
+
+		function setHasVisited() {
+			const maxAge = 60 * 60 * 24 * 365; // 1 year
+			try {
+				localStorage.setItem(HAS_VISITED_KEY, "true");
+			} catch {
+				// localStorage not available
+			}
+			setCookie(COOKIE_NAME, "true", maxAge);
 		}
 
 		function getBrowserLocale() {
@@ -79,21 +90,15 @@ const localesJson = JSON.stringify(locales);
 			return pathname;
 		}
 
-		// Check stored preference
-		const storedLocale = getStoredLocale();
-		if (storedLocale && locales.includes(storedLocale)) {
-			if (storedLocale !== currentLocale) {
-				const pathWithoutLocale = getPathWithoutLocale(
-					window.location.pathname,
-				);
-				const newPath = getLocalizedPath(pathWithoutLocale, storedLocale);
-				window.location.replace(newPath + window.location.search);
-				return;
-			}
-			return; // Already on correct locale
+		// Only redirect on first visit
+		if (hasVisited()) {
+			return;
 		}
 
-		// No stored preference - detect browser language
+		// Mark as visited
+		setHasVisited();
+
+		// Detect browser language and redirect if needed
 		const browserLocale = getBrowserLocale();
 		if (browserLocale && browserLocale !== currentLocale) {
 			const pathWithoutLocale = getPathWithoutLocale(window.location.pathname);

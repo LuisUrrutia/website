@@ -1,0 +1,65 @@
+---
+title: "Why I Chose Astro for My Portfolio"
+description: "Exploring Astro's unique approach to building fast, content-focused websites."
+date: 2025-12-28
+category: "Astro"
+tags: ["astro", "static-site", "performance"]
+lang: "en"
+translationSlug: "astro-introduction"
+---
+
+When rebuilding my portfolio, I evaluated many frameworks. Astro stood out for several reasons.
+
+## Zero JavaScript by Default
+
+Astro ships zero JavaScript unless you explicitly need it. This results in incredibly fast page loads.
+
+```astro
+---
+// This runs at build time
+const posts = await getCollection("blog");
+---
+
+<ul>
+	{posts.map((post) => <li>{post.data.title}</li>)}
+</ul>
+```
+
+## Island Architecture
+
+Add interactivity only where needed with client directives.
+
+```astro
+<!-- Only loads JS for this component -->
+<ReactCounter client:visible />
+
+<!-- Static, no JS -->
+<StaticHeader />
+```
+
+## Content Collections
+
+Type-safe content management built-in.
+
+```typescript
+const blogCollection = defineCollection({
+	schema: z.object({
+		title: z.string(),
+		date: z.date(),
+		tags: z.array(z.string()),
+	}),
+});
+```
+
+## Performance Results
+
+My Lighthouse scores speak for themselves:
+
+- Performance: 100
+- Accessibility: 100
+- Best Practices: 100
+- SEO: 100
+
+## Conclusion
+
+For content-focused sites, Astro delivers the best developer and user experience.
