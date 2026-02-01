@@ -43,7 +43,8 @@ export function setMode(mode: ThemeMode): void {
 export function cycleMode(currentMode?: ThemeMode): ThemeMode {
 	const current = currentMode ?? getStoredMode();
 	// Inline cycle: auto -> light -> dark -> auto
-	const next: ThemeMode = current === "auto" ? "light" : current === "light" ? "dark" : "auto";
+	const next: ThemeMode =
+		current === "auto" ? "light" : current === "light" ? "dark" : "auto";
 	setMode(next);
 	return next;
 }

@@ -73,12 +73,7 @@ const linkProps = href
 		<time datetime={isoDate}>{formattedDate}</time>
 		{readingTime && <span class="text-xs">{readingTime}</span>}
 	</div>
-	<div
-		class:list={[
-			"flex-1 pb-8",
-			!hideBorder && "border-border border-b",
-		]}
-	>
+	<div class:list={["flex-1 pb-8", !hideBorder && "border-border border-b"]}>
 		<div class="flex flex-col gap-3">
 			<Pill
 				color={categoryColor}
@@ -112,7 +107,9 @@ const linkProps = href
 <script>
 	function initLazyTransitions(): void {
 		document.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => {
-			const elements = link.querySelectorAll<HTMLElement>("[data-transition-name]");
+			const elements = link.querySelectorAll<HTMLElement>(
+				"[data-transition-name]",
+			);
 			if (elements.length === 0) return;
 
 			link.addEventListener("click", () => {

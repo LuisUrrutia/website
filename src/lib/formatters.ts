@@ -6,7 +6,10 @@ import type { TranslationKey } from "@/i18n";
  * formatExperience(1, t) → "1 year"
  * formatExperience(3, t) → "3 years"
  */
-export function formatExperience(years: number, t: (key: TranslationKey) => string): string {
+export function formatExperience(
+	years: number,
+	t: (key: TranslationKey) => string,
+): string {
 	if (years < 1) return t("experience.lessThanYear");
 	if (years === 1) return t("experience.oneYear");
 	return t("experience.years").replace("{count}", String(years));
@@ -46,7 +49,9 @@ export function calculateReadingTime(content: string): number {
 		.replace(/[#*`~[\]]/g, "") // Remove markdown formatting
 		.trim();
 
-	const wordCount = cleanText.split(/\s+/).filter((word) => word.length > 0).length;
+	const wordCount = cleanText
+		.split(/\s+/)
+		.filter((word) => word.length > 0).length;
 
 	return Math.max(1, Math.ceil(wordCount / WORDS_PER_MINUTE));
 }
@@ -54,6 +59,9 @@ export function calculateReadingTime(content: string): number {
 /**
  * Format reading time using localized string.
  */
-export function formatReadingTime(minutes: number, t: (key: TranslationKey) => string): string {
+export function formatReadingTime(
+	minutes: number,
+	t: (key: TranslationKey) => string,
+): string {
 	return t("blog.readingTime").replace("{minutes}", String(minutes));
 }

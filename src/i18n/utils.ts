@@ -21,7 +21,8 @@ export function getAlternateLocale(locale: Locale): Locale {
  * Filters out drafts by default.
  */
 export function matchesLocale(locale: Locale) {
-	return (data: { lang: Locale; draft?: boolean }): boolean => data.lang === locale && !data.draft;
+	return (data: { lang: Locale; draft?: boolean }): boolean =>
+		data.lang === locale && !data.draft;
 }
 
 /**

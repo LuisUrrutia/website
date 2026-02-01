@@ -4,8 +4,8 @@ import horizontalPhoto from "@/assets/images/me-horizontal.jpeg";
 import verticalPhoto from "@/assets/images/me-vertical.jpeg";
 
 interface Props {
-  alt: string;
-  class?: string;
+	alt: string;
+	class?: string;
 }
 
 const { alt, class: className } = Astro.props;
@@ -23,81 +23,81 @@ const HORIZONTAL_WIDTHS = [552, HORIZONTAL_WIDTH, 1104, 1200];
 // - Fixed at VERTICAL_WIDTH across lg (1024px), xl (1280px), 2xl (1536px)
 // - Srcset: 1x, 2x, 3x DPR variants
 const VERTICAL_WIDTHS = [
-  VERTICAL_WIDTH,
-  VERTICAL_WIDTH * 2,
-  VERTICAL_WIDTH * 3,
+	VERTICAL_WIDTH,
+	VERTICAL_WIDTH * 2,
+	VERTICAL_WIDTH * 3,
 ];
 
 const [horizontalAvif, horizontalWebp, verticalAvif, verticalWebp] =
-  await Promise.all([
-    getImage({
-      src: horizontalPhoto,
-      height: HEIGHT,
-      widths: HORIZONTAL_WIDTHS,
-      format: "avif",
-    }),
-    getImage({
-      src: horizontalPhoto,
-      height: HEIGHT,
-      widths: HORIZONTAL_WIDTHS,
-      format: "webp",
-    }),
-    getImage({
-      src: verticalPhoto,
-      height: HEIGHT,
-      widths: VERTICAL_WIDTHS,
-      format: "avif",
-    }),
-    getImage({
-      src: verticalPhoto,
-      height: HEIGHT,
-      widths: VERTICAL_WIDTHS,
-      format: "webp",
-    }),
-  ]);
+	await Promise.all([
+		getImage({
+			src: horizontalPhoto,
+			height: HEIGHT,
+			widths: HORIZONTAL_WIDTHS,
+			format: "avif",
+		}),
+		getImage({
+			src: horizontalPhoto,
+			height: HEIGHT,
+			widths: HORIZONTAL_WIDTHS,
+			format: "webp",
+		}),
+		getImage({
+			src: verticalPhoto,
+			height: HEIGHT,
+			widths: VERTICAL_WIDTHS,
+			format: "avif",
+		}),
+		getImage({
+			src: verticalPhoto,
+			height: HEIGHT,
+			widths: VERTICAL_WIDTHS,
+			format: "webp",
+		}),
+	]);
 ---
 
 <picture
-  class:list={[className, "lg:shrink-0", `lg:max-w-[${VERTICAL_WIDTH}px]`]}
+	class:list={[className, "lg:shrink-0", `lg:max-w-[${VERTICAL_WIDTH}px]`]}
 >
-  {/* Mobile and md: horizontal photo */}
-  <source
-    type="image/avif"
-    srcset={horizontalAvif.srcSet.attribute}
-    media="(max-width: 1023px)"
-    sizes="(max-width: 639px) 552px, 600px"
-  />
-  <source
-    type="image/webp"
-    srcset={horizontalWebp.srcSet.attribute}
-    media="(max-width: 1023px)"
-    sizes="(max-width: 639px) 552px, 600px"
-  />
-  {/* lg and above: vertical photo */}
-  <source
-    type="image/avif"
-    srcset={verticalAvif.srcSet.attribute}
-    media="(min-width: 1024px)"
-    sizes={`${VERTICAL_WIDTH}px`}
-  />
-  <source
-    type="image/webp"
-    srcset={verticalWebp.srcSet.attribute}
-    media="(min-width: 1024px)"
-    sizes={`${VERTICAL_WIDTH}px`}
-  />
-  <img
-    src={horizontalWebp.src}
-    alt={alt}
-    width={HORIZONTAL_WIDTH}
-    height={HEIGHT}
-    loading="eager"
-    fetchpriority="high"
-    class:list={[
-      "w-full rounded-xl object-cover lg:shrink-0",
-      `h-[${HEIGHT}px]`,
-      `lg:w-[${VERTICAL_WIDTH}px]`,
-      `lg:max-w-[${VERTICAL_WIDTH}px]`,
-    ]}
-  />
+	{/* Mobile and md: horizontal photo */}
+	<source
+		type="image/avif"
+		srcset={horizontalAvif.srcSet.attribute}
+		media="(max-width: 1023px)"
+		sizes="(max-width: 639px) 552px, 600px"
+	/>
+	<source
+		type="image/webp"
+		srcset={horizontalWebp.srcSet.attribute}
+		media="(max-width: 1023px)"
+		sizes="(max-width: 639px) 552px, 600px"
+	/>
+	{/* lg and above: vertical photo */}
+	<source
+		type="image/avif"
+		srcset={verticalAvif.srcSet.attribute}
+		media="(min-width: 1024px)"
+		sizes={`${VERTICAL_WIDTH}px`}
+	/>
+	<source
+		type="image/webp"
+		srcset={verticalWebp.srcSet.attribute}
+		media="(min-width: 1024px)"
+		sizes={`${VERTICAL_WIDTH}px`}
+	/>
+	<img
+		src={horizontalWebp.src}
+		alt={alt}
+		width={HORIZONTAL_WIDTH}
+		height={HEIGHT}
+		loading="eager"
+		fetchpriority="high"
+		class:list={[
+			"w-full rounded-xl object-cover lg:shrink-0",
+			`h-[${HEIGHT}px]`,
+			`lg:w-[${VERTICAL_WIDTH}px]`,
+			`lg:max-w-[${VERTICAL_WIDTH}px]`,
+		]}
+	/>
 </picture>

@@ -1,9 +1,16 @@
+import * as prettierPluginOxc from "@prettier/plugin-oxc";
+
 /**
  * @see https://prettier.io/docs/configuration
  * @type {import("prettier").Config}
  */
 const config = {
-	plugins: ["prettier-plugin-astro", "prettier-plugin-packagejson", "prettier-plugin-tailwindcss"],
+	plugins: [
+		prettierPluginOxc,
+		"prettier-plugin-astro",
+		"prettier-plugin-packagejson",
+		"prettier-plugin-tailwindcss",
+	],
 	overrides: [
 		{
 			files: "*.astro",

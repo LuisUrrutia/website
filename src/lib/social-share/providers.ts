@@ -1,4 +1,8 @@
-import { SocialProvider, type ProviderConfig, type SocialProviderType } from "./types";
+import {
+	SocialProvider,
+	type ProviderConfig,
+	type SocialProviderType,
+} from "./types";
 
 /**
  * Provider configurations for social sharing.

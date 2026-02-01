@@ -40,7 +40,8 @@ export const ui = {
 		// Blog
 		"blog.title": "Latest posts",
 		"blog.pageTitle": "Blog",
-		"blog.pageDescription": "Thoughts on software engineering, web development, and technology.",
+		"blog.pageDescription":
+			"Thoughts on software engineering, web development, and technology.",
 		"blog.empty": "No posts available",
 		"blog.viewMore": "View More",
 		"blog.allPosts": "All Posts",
@@ -84,7 +85,8 @@ export const ui = {
 		// 404
 		"404.title": "Page Not Found",
 		"404.heading": "Oops! Page not found",
-		"404.description": "The page you're looking for doesn't exist or has been moved.",
+		"404.description":
+			"The page you're looking for doesn't exist or has been moved.",
 		"404.backHome": "Back to Home",
 	},
 	es: {
@@ -98,7 +100,8 @@ export const ui = {
 		// Hero
 		"hero.greeting": "¡Hola!",
 		"hero.intro": "Soy Luis Urrutia",
-		"hero.tagline.prefix": "Actualmente construyendo infraestructura blockchain en ",
+		"hero.tagline.prefix":
+			"Actualmente construyendo infraestructura blockchain en ",
 		"hero.tagline.tech": "Rust y TypeScript",
 		"hero.bio.role": "Ingeniero de Software Senior",
 		"hero.bio.middle": " con ",

@@ -35,16 +35,18 @@ const { name, role, photo, quote, linkedin } = Astro.props;
 ---
 
 <Card as="figure" class="relative flex flex-col items-center gap-4 text-center">
-	{linkedin && (
-		<div class="absolute top-4 right-4">
-			<SocialLinks
-				linkedin={linkedin}
-				ariaLabel={`${name} on LinkedIn`}
-				iconClass="size-5"
-				vertical
-			/>
-		</div>
-	)}
+	{
+		linkedin && (
+			<div class="absolute top-4 right-4">
+				<SocialLinks
+					linkedin={linkedin}
+					ariaLabel={`${name} on LinkedIn`}
+					iconClass="size-5"
+					vertical
+				/>
+			</div>
+		)
+	}
 
 	<Image
 		src={photo}
