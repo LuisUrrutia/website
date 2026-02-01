@@ -8,6 +8,7 @@
  * @see https://ogp.me/
  */
 import { ogLocales, type Locale } from "@/i18n";
+import { siteName } from "@/data/seo";
 
 export interface ArticleMeta {
 	publishedTime: string;
@@ -53,6 +54,7 @@ const {
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={url} />
+<meta property="og:site_name" content={siteName} />
 <meta property="og:type" content={type} />
 <meta property="og:locale" content={ogLocales[locale]} />
 <meta property="og:locale:alternate" content={ogLocales[alternateLocale]} />

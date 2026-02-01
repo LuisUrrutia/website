@@ -6,6 +6,7 @@ import Container from "@/components/Container.astro";
 import Card from "@/components/Card.astro";
 import BlogEntry from "@/components/BlogEntry.astro";
 import Pagination from "@/components/Pagination.astro";
+import { BreadcrumbJsonLd } from "@/components/seo";
 import { getLocalizedPath, getSlugWithoutLocale } from "@/i18n";
 
 interface Props {
@@ -16,6 +17,15 @@ interface Props {
 
 const { posts, currentPage, totalPages } = Astro.props;
 const { t, lang } = Astro.locals;
+
+// Use Astro.site from config, fallback to request origin in dev
+const siteUrl = (Astro.site ?? Astro.url.origin).toString().replace(/\/$/, "");
+
+// Breadcrumb items for blog listing page
+const breadcrumbItems = [
+	{ name: "Home", url: `${siteUrl}${getLocalizedPath("/", lang)}` },
+	{ name: "Blog", url: `${siteUrl}${getLocalizedPath("/blog", lang)}` },
+];
 
 // Helper to get the post URL
 function getPostUrl(id: string): string {
@@ -28,6 +38,7 @@ const baseUrl = getLocalizedPath("/blog", lang);
 ---
 
 <Layout title={t("blog.pageTitle")} description={t("blog.pageDescription")}>
+	<BreadcrumbJsonLd slot="head" items={breadcrumbItems} />
 	<Navbar />
 	<Container as="main" class="flex flex-col gap-8" transition:animate="slide">
 		<Card style="view-transition-name: post-card">

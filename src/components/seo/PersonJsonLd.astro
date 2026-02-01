@@ -3,10 +3,10 @@
  * PersonJsonLd - Renders JSON-LD Person schema for SEO.
  *
  * Generates Person schema with site owner information,
- * job title, social links, and location data.
+ * job title, social links, location data, and employment info.
  * Used on homepage and about pages.
  */
-import { siteOwner, socialUrls } from "@/data/seo";
+import { siteOwner, socialUrls, employer, profileImage } from "@/data/seo";
 
 interface Props {
 	siteUrl: string;
@@ -21,10 +21,17 @@ const jsonLd = {
 	"@type": "Person",
 	name: siteOwner.name,
 	url: siteUrl,
+	image: `${siteUrl}${profileImage}`,
+	email: `mailto:${siteOwner.email}`,
 	jobTitle,
 	description,
 	sameAs: socialUrls,
 	knowsLanguage: siteOwner.languages,
+	worksFor: {
+		"@type": "Organization",
+		name: employer.name,
+		url: employer.url,
+	},
 	address: {
 		"@type": "PostalAddress",
 		addressLocality: siteOwner.address.locality,

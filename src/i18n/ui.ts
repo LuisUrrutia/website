@@ -3,7 +3,7 @@ export const ui = {
 		// Meta
 		"meta.title": "Luis Urrutia | Senior Software Engineer",
 		"meta.description":
-			"Senior Software Engineer with 12+ years of experience building scalable web applications and leading development teams.",
+			"Senior Software Engineer with 12+ years of experience building and operating large-scale production systems, focused on system design, reliability, and measurable business impact.",
 		"meta.jobTitle": "Senior Software Engineer",
 		"meta.ogImageAlt": "Luis Urrutia - Senior Software Engineer",
 
@@ -39,9 +39,9 @@ export const ui = {
 
 		// Blog
 		"blog.title": "Latest posts",
-		"blog.pageTitle": "Blog",
+		"blog.pageTitle": "Luis Urrutia | Engineering Notes",
 		"blog.pageDescription":
-			"Thoughts on software engineering, web development, and technology.",
+			"Engineering notes by Luis Urrutia on system design, reliability, and building production software at scale.",
 		"blog.empty": "No posts available",
 		"blog.viewMore": "View More",
 		"blog.allPosts": "All Posts",
@@ -93,7 +93,7 @@ export const ui = {
 		// Meta
 		"meta.title": "Luis Urrutia | Ingeniero de Software Senior",
 		"meta.description":
-			"Ingeniero de Software Senior con más de 12 años de experiencia construyendo aplicaciones web escalables y liderando equipos de desarrollo.",
+			"Ingeniero de Software Senior con más de 12 años de experiencia construyendo y operando sistemas de producción a gran escala, enfocado en diseño de sistemas, confiabilidad e impacto medible en el negocio.",
 		"meta.jobTitle": "Ingeniero de Software Senior",
 		"meta.ogImageAlt": "Luis Urrutia - Ingeniero de Software Senior",
 
@@ -130,9 +130,9 @@ export const ui = {
 
 		// Blog
 		"blog.title": "Últimas publicaciones",
-		"blog.pageTitle": "Blog",
+		"blog.pageTitle": "Luis Urrutia | Engineering Notes",
 		"blog.pageDescription":
-			"Reflexiones sobre ingeniería de software, desarrollo web y tecnología.",
+			"Notas de ingeniería de Luis Urrutia sobre diseño de sistemas, confiabilidad y construcción de software de producción a escala.",
 		"blog.empty": "No hay publicaciones disponibles",
 		"blog.viewMore": "Ver más",
 		"blog.allPosts": "Todas las publicaciones",
