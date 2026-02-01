@@ -86,14 +86,14 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
       - name: Lighthouse audit
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
             https://urrutia.me/
             https://urrutia.me/es/
+            https://urrutia.me/blog/
+            https://urrutia.me/es/blog/
+          runs: 3
           uploadArtifacts: true
           temporaryPublicStorage: true
