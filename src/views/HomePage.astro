@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Navbar from "@/components/Navbar.astro";
-import { PersonJsonLd } from "@/components/seo";
+import { HomePageJsonLd } from "@/components/seo";
 import { socials } from "@/data/socials";
 import { technologies } from "@/data/technologies";
 import { testimonials } from "@/data/testimonials";
@@ -41,7 +41,7 @@ const posts = allPosts
 ---
 
 <Layout ogImageAlt={t("meta.ogImageAlt")}>
-	<PersonJsonLd
+	<HomePageJsonLd
 		slot="head"
 		siteUrl={siteUrl}
 		jobTitle={t("meta.jobTitle")}

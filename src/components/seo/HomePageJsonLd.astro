@@ -1,0 +1,88 @@
+---
+/**
+ * HomePageJsonLd - Combined JSON-LD schema for the homepage.
+ *
+ * Uses @graph to combine multiple schema types:
+ * - WebSite: Site-level information
+ * - ProfilePage: Google's ProfilePage schema for personal sites
+ * - Person: Detailed person information
+ *
+ * @see https://developers.google.com/search/docs/appearance/structured-data/profile-page
+ */
+import {
+	siteOwner,
+	siteName,
+	socialUrls,
+	employer,
+	profileImage,
+} from "@/data/seo";
+
+interface Props {
+	siteUrl: string;
+	jobTitle: string;
+	description: string;
+}
+
+const { siteUrl, jobTitle, description } = Astro.props;
+
+// Person entity (referenced by ProfilePage and WebSite)
+const personEntity = {
+	"@type": "Person",
+	"@id": `${siteUrl}/#person`,
+	name: siteOwner.name,
+	url: siteUrl,
+	image: `${siteUrl}${profileImage}`,
+	email: `mailto:${siteOwner.email}`,
+	jobTitle,
+	description,
+	sameAs: socialUrls,
+	knowsLanguage: [...siteOwner.languages],
+	worksFor: {
+		"@type": "Organization",
+		name: employer.name,
+		url: employer.url,
+	},
+	address: {
+		"@type": "PostalAddress",
+		addressLocality: siteOwner.address.locality,
+		addressCountry: siteOwner.address.country,
+	},
+};
+
+// WebSite entity
+const websiteEntity = {
+	"@type": "WebSite",
+	"@id": `${siteUrl}/#website`,
+	name: siteName,
+	url: siteUrl,
+	description,
+	inLanguage: [...siteOwner.languages],
+	author: {
+		"@id": `${siteUrl}/#person`,
+	},
+};
+
+// ProfilePage entity (Google's schema for personal profile pages)
+const profilePageEntity = {
+	"@type": "ProfilePage",
+	"@id": `${siteUrl}/#profilepage`,
+	url: siteUrl,
+	name: `${siteOwner.name} - ${jobTitle}`,
+	description,
+	isPartOf: {
+		"@id": `${siteUrl}/#website`,
+	},
+	mainEntity: {
+		"@id": `${siteUrl}/#person`,
+	},
+	dateCreated: "2024-01-01",
+	dateModified: new Date().toISOString().split("T")[0],
+};
+
+const jsonLd = {
+	"@context": "https://schema.org",
+	"@graph": [websiteEntity, profilePageEntity, personEntity],
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

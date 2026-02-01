@@ -31,8 +31,7 @@ const isAutoColor = !isThemedIcon && colorMode === "auto";
 				<>
 					<img
 						src={lightIcon}
-						alt=""
-						aria-hidden="true"
+						alt={`${name} logo`}
 						class="tech-icon tech-icon-light size-12 object-contain"
 						width="48"
 						height="48"
@@ -41,8 +40,7 @@ const isAutoColor = !isThemedIcon && colorMode === "auto";
 					/>
 					<img
 						src={darkIcon}
-						alt=""
-						aria-hidden="true"
+						alt={`${name} logo`}
 						class="tech-icon tech-icon-dark size-12 object-contain"
 						width="48"
 						height="48"
@@ -53,8 +51,7 @@ const isAutoColor = !isThemedIcon && colorMode === "auto";
 			) : (
 				<img
 					src={iconSrc}
-					alt=""
-					aria-hidden="true"
+					alt={`${name} logo`}
 					class:list={[
 						"size-12 object-contain",
 						{ "tech-icon-auto": isAutoColor },

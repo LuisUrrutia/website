@@ -1,0 +1,32 @@
+---
+/**
+ * WebSiteJsonLd - Renders JSON-LD WebSite schema for SEO.
+ *
+ * Generates WebSite schema to help search engines understand
+ * the site structure and potentially enable sitelinks.
+ * Used on the homepage.
+ */
+import { siteOwner, siteName } from "@/data/seo";
+
+interface Props {
+	siteUrl: string;
+	description: string;
+}
+
+const { siteUrl, description } = Astro.props;
+
+const jsonLd = {
+	"@context": "https://schema.org",
+	"@type": "WebSite",
+	name: siteName,
+	url: siteUrl,
+	description,
+	inLanguage: [...siteOwner.languages],
+	author: {
+		"@type": "Person",
+		name: siteOwner.name,
+	},
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

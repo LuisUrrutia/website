@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar.astro";
 import Container from "@/components/Container.astro";
 import Card from "@/components/Card.astro";
 import Pill from "@/components/Pill.astro";
+import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo";
 import {
 	getAlternateLocale,
 	getLocalizedPath,
@@ -57,6 +58,17 @@ const alternateUrl = translatedPost
 const slug = getSlugWithoutLocale(post.id);
 const titleTransitionName = `post-title-${slug}`;
 const pillTransitionName = `post-pill-${slug}`;
+
+// Use Astro.site from config, fallback to request origin in dev
+const siteUrl = (Astro.site ?? Astro.url.origin).toString().replace(/\/$/, "");
+const postUrl = `${siteUrl}${getLocalizedPath(`/blog/${slug}`, lang)}`;
+
+// Breadcrumb items for blog post page
+const breadcrumbItems = [
+	{ name: "Home", url: `${siteUrl}${getLocalizedPath("/", lang)}` },
+	{ name: "Blog", url: `${siteUrl}${getLocalizedPath("/blog", lang)}` },
+	{ name: post.data.title, url: postUrl },
+];
 ---
 
 <Layout
@@ -69,6 +81,16 @@ const pillTransitionName = `post-pill-${slug}`;
 		tags: post.data.tags,
 	}}
 >
+	<BreadcrumbJsonLd slot="head" items={breadcrumbItems} />
+	<ArticleJsonLd
+		slot="head"
+		title={post.data.title}
+		description={post.data.description}
+		url={postUrl}
+		publishedTime={post.data.date.toISOString()}
+		modifiedTime={post.data.updatedDate?.toISOString()}
+		tags={post.data.tags}
+	/>
 	<Navbar />
 	<Container as="main" class="flex flex-col gap-8" transition:animate="slide">
 		<Card
