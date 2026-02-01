@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
+import { AstroFont } from "astro-font";
 import ThemeScript from "@/components/ThemeScript.astro";
 import LocaleScript from "@/components/LocaleScript.astro";
 import ViewportIndicator from "@/components/ViewportIndicator.astro";
@@ -36,6 +37,25 @@ const {
 
 		<!-- SEO Meta Tags -->
 		<SEO title={title} description={description} {...seoProps} />
+
+		<!-- Fonts -->
+		<AstroFont
+			config={[
+				{
+					name: "Inter Variable",
+					src: [
+						{
+							style: "normal",
+							weight: "100 900",
+							path: "https://rsms.me/inter/font-files/InterVariable.woff2",
+						},
+					],
+					preload: true,
+					display: "swap",
+					fallback: "sans-serif",
+				},
+			]}
+		/>
 
 		<!-- Favicons -->
 		<link rel="icon" type="image/svg+xml" href="/favicons/favicon.svg" />

@@ -24,6 +24,7 @@
     "@playform/compress": "^0.2.1",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.17.1",
+    "astro-font": "^1.1.0",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3"
   },
