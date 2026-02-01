@@ -10,13 +10,14 @@ export const ui = {
 		// Hero
 		"hero.greeting": "Hi there!",
 		"hero.intro": "I'm Luis Urrutia",
-		"hero.bio.prefix": "I'm a ",
-		"hero.bio.role": "Software Engineer",
-		"hero.bio.middle": " with over ",
-		"hero.bio.experience": "12 years of experience",
+		"hero.tagline.prefix": "Currently building blockchain infrastructure at ",
+		"hero.tagline.tech": "Rust and TypeScript",
+		"hero.bio.role": "Senior Software Engineer",
+		"hero.bio.middle": " with ",
+		"hero.bio.experience": "12+ years",
 		"hero.bio.suffix":
-			", specializing in building scalable, efficient digital solutions. I'm passionate about tackling complex challenges and delivering impactful results that drive business success.",
-		"hero.location": "Santiago, Chile",
+			" of experience building and operating large-scale production systems. I specialize in system design, reliability, and performance, delivering software that drives measurable business outcomes.",
+		"hero.location": "Madrid, Spain",
 		"hero.companies": "Some companies I added value to:",
 		"hero.photoAlt": "Photo of Luis Urrutia",
 
@@ -31,6 +32,7 @@ export const ui = {
 		"contact.heading": "We should work together",
 		"contact.subheading": "I'm one click away",
 		"contact.cta": "Let's Connect",
+		"contact.socialDivider": "or find me on",
 
 		// Testimonials
 		"testimonials.title": "Testimonials",
@@ -38,8 +40,7 @@ export const ui = {
 		// Blog
 		"blog.title": "Latest posts",
 		"blog.pageTitle": "Blog",
-		"blog.pageDescription":
-			"Thoughts on software engineering, web development, and technology.",
+		"blog.pageDescription": "Thoughts on software engineering, web development, and technology.",
 		"blog.empty": "No posts available",
 		"blog.viewMore": "View More",
 		"blog.allPosts": "All Posts",
@@ -83,8 +84,7 @@ export const ui = {
 		// 404
 		"404.title": "Page Not Found",
 		"404.heading": "Oops! Page not found",
-		"404.description":
-			"The page you're looking for doesn't exist or has been moved.",
+		"404.description": "The page you're looking for doesn't exist or has been moved.",
 		"404.backHome": "Back to Home",
 	},
 	es: {
@@ -98,13 +98,14 @@ export const ui = {
 		// Hero
 		"hero.greeting": "¡Hola!",
 		"hero.intro": "Soy Luis Urrutia",
-		"hero.bio.prefix": "Soy ",
-		"hero.bio.role": "Ingeniero de Software",
-		"hero.bio.middle": " con más de ",
-		"hero.bio.experience": "12 años de experiencia",
+		"hero.tagline.prefix": "Actualmente construyendo infraestructura blockchain en ",
+		"hero.tagline.tech": "Rust y TypeScript",
+		"hero.bio.role": "Ingeniero de Software Senior",
+		"hero.bio.middle": " con ",
+		"hero.bio.experience": "más de 12 años",
 		"hero.bio.suffix":
-			", especializado en construir soluciones digitales escalables y eficientes. Me apasiona enfrentar desafíos complejos y entregar resultados impactantes que impulsen el éxito del negocio.",
-		"hero.location": "Santiago, Chile",
+			" de experiencia construyendo y operando sistemas de producción a gran escala. Me especializo en diseño de sistemas, confiabilidad y rendimiento, entregando software que genera resultados de negocio medibles.",
+		"hero.location": "Madrid, Spain",
 		"hero.companies": "Algunas empresas a las que aporté valor:",
 		"hero.photoAlt": "Foto de Luis Urrutia",
 
@@ -119,6 +120,7 @@ export const ui = {
 		"contact.heading": "Deberíamos trabajar juntos",
 		"contact.subheading": "Estoy a un clic de distancia",
 		"contact.cta": "Conectemos",
+		"contact.socialDivider": "o encuéntrame en",
 
 		// Testimonials
 		"testimonials.title": "Testimonios",

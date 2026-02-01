@@ -5,13 +5,13 @@ export const technologies: Technology[] = [
 	{
 		name: "React",
 		icon: "/tech/react.svg",
-		experience: 8,
+		experience: 9,
 		category: "frameworks",
 	},
 	{
 		name: "Next.js",
 		icon: "/tech/next.svg",
-		experience: 3,
+		experience: 4,
 		category: "frameworks",
 	},
 	{
@@ -26,26 +26,26 @@ export const technologies: Technology[] = [
 	{
 		name: "Svelte",
 		icon: "/tech/svelte.svg",
-		experience: 1,
+		experience: 3,
 		category: "frameworks",
 	},
 	{
 		name: "Tailwind",
 		icon: "/tech/tailwind.svg",
-		experience: 4,
+		experience: 7,
 		category: "frameworks",
 	},
 	// Languages
 	{
 		name: "JavaScript",
 		icon: "/tech/javascript.svg",
-		experience: 10,
+		experience: 12,
 		category: "languages",
 	},
 	{
 		name: "TypeScript",
 		icon: "/tech/typescript.svg",
-		experience: 4,
+		experience: 9,
 		category: "languages",
 	},
 	{
@@ -57,7 +57,7 @@ export const technologies: Technology[] = [
 	{
 		name: "Python",
 		icon: "/tech/python.svg",
-		experience: 4,
+		experience: 9,
 		category: "languages",
 	},
 	{
@@ -76,16 +76,15 @@ export const technologies: Technology[] = [
 	},
 	// Tools
 	{
-		name: "GitHub",
-		icon: "/tech/github.svg",
-		colorMode: "auto",
-		experience: 6,
+		name: "Git",
+		icon: "/tech/git.svg",
+		experience: 11,
 		category: "tools",
 	},
 	{
 		name: "Docker",
 		icon: "/tech/docker.svg",
-		experience: 5,
+		experience: 9,
 		category: "tools",
 	},
 	{
@@ -112,7 +111,7 @@ export const technologies: Technology[] = [
 	{
 		name: "PostgreSQL",
 		icon: "/tech/postgresql.svg",
-		experience: 6,
+		experience: 11,
 		category: "tools",
 	},
 	{
@@ -136,7 +135,7 @@ export const technologies: Technology[] = [
 	{
 		name: "Figma",
 		icon: "/tech/figma.svg",
-		experience: 1,
+		experience: 2,
 		category: "tools",
 	},
 	{

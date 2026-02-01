@@ -14,8 +14,7 @@ export const SocialProvider = {
 	Email: "email",
 } as const;
 
-export type SocialProviderType =
-	(typeof SocialProvider)[keyof typeof SocialProvider];
+export type SocialProviderType = (typeof SocialProvider)[keyof typeof SocialProvider];
 
 export interface ShareParams {
 	url: string;

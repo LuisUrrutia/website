@@ -10,6 +10,8 @@ type Props = SocialLinksProps & {
 	iconClass?: string;
 	/** Aria label for the social links navigation. */
 	ariaLabel: string;
+	/** Display links vertically. Defaults to false. */
+	vertical?: boolean;
 };
 
 const {
@@ -19,6 +21,7 @@ const {
 	x,
 	iconClass = "size-6 sm:size-4",
 	ariaLabel,
+	vertical = false,
 } = Astro.props;
 
 const socialConfig = [
@@ -56,7 +59,10 @@ const links = socialConfig
 
 {
 	links.length > 0 && (
-		<nav aria-label={ariaLabel} class="flex items-center gap-3.5">
+		<nav
+			aria-label={ariaLabel}
+			class:list={["flex gap-3.5", vertical ? "flex-col" : "items-center"]}
+		>
 			{links.map(({ key, icon: Icon, url, label }) => (
 				<a
 					href={url}

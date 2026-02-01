@@ -9,8 +9,8 @@
 @theme {
 	/* Typography */
 	--font-sans:
-		"Inter Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-		"Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+		"Inter Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+		"Segoe UI Symbol", "Noto Color Emoji";
 
 	/*
 	 * Semantic Colors
@@ -41,11 +41,10 @@
 
 	/* Shadows */
 	--shadow-soft:
-		0 2px 6px -4px #2c2d3014, 0 3.02px 1.51px -0.625px #2c2d3003,
-		0 7.17px 3.58px -1.25px #2c2d3003, 0 13.07px 6.54px -1.875px #2c2d3003,
-		0 21.73px 10.87px -2.5px #2c2d3003, 0 35.09px 17.55px -3.125px #2c2d3003,
-		0 57.44px 28.72px -3.75px #2c2d3003, 0 98.91px 49.46px -4.375px #2c2d3000,
-		0 180px 90px -5px #2c2d3000;
+		0 2px 6px -4px #2c2d3014, 0 3.02px 1.51px -0.625px #2c2d3003, 0 7.17px 3.58px -1.25px #2c2d3003,
+		0 13.07px 6.54px -1.875px #2c2d3003, 0 21.73px 10.87px -2.5px #2c2d3003,
+		0 35.09px 17.55px -3.125px #2c2d3003, 0 57.44px 28.72px -3.75px #2c2d3003,
+		0 98.91px 49.46px -4.375px #2c2d3000, 0 180px 90px -5px #2c2d3000;
 }
 
 /* Primitive color tokens - light theme */

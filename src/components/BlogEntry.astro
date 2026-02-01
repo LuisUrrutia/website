@@ -21,6 +21,10 @@ interface Props {
 	slug?: string;
 	/** Heading level for the title. Defaults to "h3". */
 	headingLevel?: HeadingLevel;
+	/** Hide the bottom border. Useful for last item in a list. */
+	hideBorder?: boolean;
+	/** Apply view-transition-name only on click (one-directional transition). */
+	lazyTransition?: boolean;
 }
 
 const { lang } = Astro.locals;
@@ -38,6 +42,8 @@ const {
 	dateFormat = { day: "numeric", month: "short", year: "numeric" },
 	slug,
 	headingLevel: Heading = "h3",
+	hideBorder = false,
+	lazyTransition = false,
 } = Astro.props;
 
 // Generate unique transition names from slug (must be unique per page)
@@ -61,25 +67,33 @@ const linkProps = href
 
 <Tag
 	{...linkProps}
-	class="group relative flex flex-col gap-4 overflow-hidden md:flex-row md:pt-8"
+	class="group relative -mx-3 flex flex-col gap-4 overflow-hidden rounded-lg px-3 transition-colors hover:bg-black/[0.02] md:flex-row md:pt-8 dark:hover:bg-white/[0.03]"
 >
-	<div class="text-subtitle flex w-24 flex-col pt-8 text-sm md:pt-0">
+	<div class="text-muted flex w-24 flex-col pt-8 text-sm md:pt-0">
 		<time datetime={isoDate}>{formattedDate}</time>
 		{readingTime && <span class="text-xs">{readingTime}</span>}
 	</div>
-	<div class="border-border flex-1 border-b pb-8">
+	<div
+		class:list={[
+			"flex-1 pb-8",
+			!hideBorder && "border-border border-b",
+		]}
+	>
 		<div class="flex flex-col gap-3">
 			<Pill
 				color={categoryColor}
-				style={pillTransitionName
+				style={!lazyTransition && pillTransitionName
 					? `view-transition-name: ${pillTransitionName}`
-					: undefined}>{category}</Pill
+					: undefined}
+				data-transition-name={lazyTransition ? pillTransitionName : undefined}
+				>{category}</Pill
 			>
 			<Heading
-				class="text-title text-lg font-medium md:text-xl"
-				style={titleTransitionName
+				class="text-title text-lg font-medium underline decoration-transparent decoration-1 underline-offset-2 transition-colors duration-200 group-hover:decoration-current md:text-xl"
+				style={!lazyTransition && titleTransitionName
 					? `view-transition-name: ${titleTransitionName}`
 					: undefined}
+				data-transition-name={lazyTransition ? titleTransitionName : undefined}
 			>
 				{title}
 			</Heading>
@@ -88,9 +102,30 @@ const linkProps = href
 	{
 		href && (
 			<IconArrowRight
-				class="text-subtitle absolute top-1/2 right-0 size-5 shrink-0 translate-x-2 -translate-y-1/2 opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100"
+				class="text-muted absolute top-1/2 right-0 size-5 shrink-0 translate-x-2 -translate-y-1/2 opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100"
 				aria-hidden="true"
 			/>
 		)
 	}
 </Tag>
+
+<script>
+	function initLazyTransitions(): void {
+		document.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => {
+			const elements = link.querySelectorAll<HTMLElement>("[data-transition-name]");
+			if (elements.length === 0) return;
+
+			link.addEventListener("click", () => {
+				elements.forEach((el) => {
+					const name = el.dataset.transitionName;
+					if (name) {
+						el.style.viewTransitionName = name;
+					}
+				});
+			});
+		});
+	}
+
+	initLazyTransitions();
+	document.addEventListener("astro:after-swap", initLazyTransitions);
+</script>

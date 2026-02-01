@@ -5,4 +5,5 @@ export interface Testimonial {
 	role: Record<Locale, string>;
 	photo: ImageMetadata;
 	quote: Record<Locale, string>;
+	linkedin?: string;
 }

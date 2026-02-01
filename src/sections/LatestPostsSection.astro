@@ -46,7 +46,7 @@ const { t } = Astro.locals;
 			<p class="text-secondary">{t("blog.empty")}</p>
 		) : (
 			<ul class="flex list-none flex-col">
-				{posts.map((post) => (
+				{posts.map((post, index) => (
 					<li>
 						<BlogEntry
 							title={post.title}
@@ -54,6 +54,8 @@ const { t } = Astro.locals;
 							date={post.date}
 							href={post.href}
 							slug={post.slug}
+							hideBorder={index === posts.length - 1}
+							lazyTransition
 						/>
 					</li>
 				))}

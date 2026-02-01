@@ -21,10 +21,7 @@ export type { ShareParams, SocialProviderType } from "./types";
  * });
  * ```
  */
-export function createShareUrl(
-	provider: SocialProviderType,
-	params: ShareParams,
-): string {
+export function createShareUrl(provider: SocialProviderType, params: ShareParams): string {
 	if (!params.url) {
 		throw new Error("Share URL is required");
 	}

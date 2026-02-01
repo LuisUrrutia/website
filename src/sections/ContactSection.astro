@@ -34,6 +34,7 @@ const contactText = t("contact.cta");
 const heading = t("contact.heading");
 const subheading = t("contact.subheading");
 const opensEmailClient = t("a11y.opensEmailClient");
+const socialDivider = t("contact.socialDivider");
 ---
 
 <Card
@@ -43,15 +44,15 @@ const opensEmailClient = t("a11y.opensEmailClient");
 	aria-labelledby={`${id}-heading`}
 >
 	<Logo class="size-12" aria-hidden="true" />
-	<h2 id={`${id}-heading`} class="text-title mb-4 text-2xl font-semibold">
+	<h2 id={`${id}-heading`} class="text-title text-3xl font-semibold">
 		{heading}
-		<span class="block">{subheading}</span>
+		<span class="text-muted block text-xl font-normal">{subheading}</span>
 	</h2>
 
 	<a
 		href={contactHref}
 		aria-label={`${contactText} - ${opensEmailClient}`}
-		class="bg-button text-button-foreground group focus-visible:outline-button mb-6 inline-flex items-center gap-2 rounded-full px-6 py-3 font-medium transition-colors hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2"
+		class="bg-button text-button-foreground group focus-visible:outline-button inline-flex items-center gap-2 rounded-full px-6 py-3 font-medium shadow-lg shadow-button/25 transition-all hover:shadow-xl hover:shadow-button/30 focus-visible:outline-2 focus-visible:outline-offset-2"
 	>
 		<span>{contactText}</span>
 		<span class="size-5 transition-transform group-hover:translate-x-1">
@@ -61,11 +62,18 @@ const opensEmailClient = t("a11y.opensEmailClient");
 
 	{
 		socials && (
-			<SocialLinks
-				ariaLabel={t("a11y.socialLinks")}
-				{...socials}
-				iconClass="size-6"
-			/>
+			<div class="flex flex-col items-center gap-6">
+				<div class="flex items-center gap-3">
+					<span class="bg-border h-px w-12" />
+					<span class="text-muted text-sm">{socialDivider}</span>
+					<span class="bg-border h-px w-12" />
+				</div>
+				<SocialLinks
+					ariaLabel={t("a11y.socialLinks")}
+					{...socials}
+					iconClass="size-6"
+				/>
+			</div>
 		)
 	}
 </Card>

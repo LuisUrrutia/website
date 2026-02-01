@@ -28,12 +28,16 @@ const allPosts = await getCollection("blog", ({ data, id }) => {
 const posts = allPosts
 	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 	.slice(0, 3)
-	.map((post) => ({
-		title: post.data.title,
-		category: post.data.category,
-		date: post.data.date,
-		href: getLocalizedPath(`/blog/${getSlugWithoutLocale(post.id)}`, lang),
-	}));
+	.map((post) => {
+		const slug = getSlugWithoutLocale(post.id);
+		return {
+			title: post.data.title,
+			category: post.data.category,
+			date: post.data.date,
+			href: getLocalizedPath(`/blog/${slug}`, lang),
+			slug,
+		};
+	});
 ---
 
 <Layout ogImageAlt={t("meta.ogImageAlt")}>

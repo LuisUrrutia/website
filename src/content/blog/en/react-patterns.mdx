@@ -49,9 +49,7 @@ When you need maximum flexibility in how things render.
 
 ```tsx
 <DataFetcher url="/api/users">
-	{({ data, loading, error }) =>
-		loading ? <Spinner /> : <UserList users={data} />
-	}
+	{({ data, loading, error }) => (loading ? <Spinner /> : <UserList users={data} />)}
 </DataFetcher>
 ```
 
