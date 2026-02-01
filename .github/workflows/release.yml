@@ -88,6 +88,8 @@ jobs:
     steps:
       - name: Lighthouse audit
         uses: treosh/lighthouse-ci-action@v12
+        env:
+          LHCI_BUILD_CONTEXT__CURRENT_HASH: ${{ github.sha }}
         with:
           urls: |
             https://urrutia.me/
