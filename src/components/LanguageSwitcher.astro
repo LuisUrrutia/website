@@ -5,27 +5,23 @@
  * Automatically detects current locale from Astro.locals and provides
  * a dropdown to switch between available languages.
  *
+ * Uses hreflang link tags from the document head as the source of truth
+ * for alternate language URLs. This ensures consistency with SEO meta tags
+ * and works correctly for pages with different slugs per locale (e.g., blog posts).
+ *
  * @example
  * ```astro
  * <LanguageSwitcher />
  * ```
  */
-import { locales, localeNames, getLocalizedPath } from "@/i18n";
+import { locales, localeNames } from "@/i18n";
 
 interface Props {
 	class?: string;
 }
 
 const { class: className } = Astro.props;
-const { lang, pathWithoutLocale, t } = Astro.locals;
-
-// Pre-compute paths for each locale
-const localePaths = Object.fromEntries(
-	locales.map((locale) => [
-		locale,
-		getLocalizedPath(pathWithoutLocale, locale),
-	]),
-);
+const { lang, t } = Astro.locals;
 ---
 
 <div
@@ -38,7 +34,6 @@ const localePaths = Object.fromEntries(
 	<select
 		id="language-select"
 		class="bg-card text-foreground hover:bg-card/80 focus:ring-accent cursor-pointer appearance-none rounded px-2 py-1 pr-7 text-sm transition-colors focus:ring-2 focus:outline-none"
-		data-locale-paths={JSON.stringify(localePaths)}
 	>
 		{
 			locales.map((locale) => (
@@ -63,6 +58,24 @@ const localePaths = Object.fromEntries(
 </div>
 
 <script>
+	/**
+	 * Gets alternate language URLs from hreflang link tags in the document head.
+	 * These are the canonical source of truth for language-specific URLs.
+	 */
+	function getHreflangUrls(): Record<string, string> {
+		const urls: Record<string, string> = {};
+		document
+			.querySelectorAll<HTMLLinkElement>('link[rel="alternate"][hreflang]')
+			.forEach((link) => {
+				const hreflang = link.getAttribute("hreflang");
+				// Skip x-default as it's not a specific locale
+				if (hreflang && hreflang !== "x-default") {
+					urls[hreflang] = link.href;
+				}
+			});
+		return urls;
+	}
+
 	function initLanguageSwitcher(): void {
 		document
 			.querySelectorAll<HTMLSelectElement>("#language-select")
@@ -72,10 +85,10 @@ const localePaths = Object.fromEntries(
 
 				select.addEventListener("change", () => {
 					const locale = select.value;
-					const paths = JSON.parse(select.dataset.localePaths || "{}");
-					const path = paths[locale];
-					if (path) {
-						window.location.href = path;
+					const urls = getHreflangUrls();
+					const url = urls[locale];
+					if (url) {
+						window.location.href = url;
 					}
 				});
 			});

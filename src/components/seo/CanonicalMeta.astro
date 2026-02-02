@@ -6,6 +6,9 @@
  * internationalized pages to help search engines understand
  * language/region variants.
  *
+ * For pages with content that has different slugs per locale (e.g., blog posts),
+ * pass the `alternateUrls` prop to override the default URL computation.
+ *
  * @see https://developers.google.com/search/docs/specialty/international/localized-versions
  */
 import { locales, getLocalizedPath, type Locale } from "@/i18n";
@@ -17,26 +20,33 @@ export interface Props {
 	pathWithoutLocale: string;
 	/** Current locale */
 	locale: Locale;
+	/** Custom alternate URLs per locale (for content with different slugs) */
+	alternateUrls?: Partial<Record<Locale, string>>;
 }
 
-const { siteUrl, pathWithoutLocale, locale } = Astro.props;
+const { siteUrl, pathWithoutLocale, locale, alternateUrls } = Astro.props;
 
-const canonicalPath = getLocalizedPath(pathWithoutLocale, locale);
-const canonicalUrl = `${siteUrl}${canonicalPath}`;
+// Compute URL for a locale, using custom alternateUrls if provided
+const getUrlForLocale = (loc: Locale): string => {
+	if (alternateUrls?.[loc]) {
+		const path = alternateUrls[loc];
+		return path.startsWith("http") ? path : `${siteUrl}${path}`;
+	}
+	return `${siteUrl}${getLocalizedPath(pathWithoutLocale, loc)}`;
+};
+
+const canonicalUrl = getUrlForLocale(locale);
+
+// x-default should point to the default (non-prefixed) path
+const xDefaultUrl = alternateUrls?.en
+	? `${siteUrl}${alternateUrls.en}`
+	: `${siteUrl}${pathWithoutLocale}`;
 ---
 
 <link rel="canonical" href={canonicalUrl} />
 {
 	locales.map((loc) => (
-		<link
-			rel="alternate"
-			hreflang={loc}
-			href={`${siteUrl}${getLocalizedPath(pathWithoutLocale, loc)}`}
-		/>
+		<link rel="alternate" hreflang={loc} href={getUrlForLocale(loc)} />
 	))
 }
-<link
-	rel="alternate"
-	hreflang="x-default"
-	href={`${siteUrl}${pathWithoutLocale}`}
-/>
+<link rel="alternate" hreflang="x-default" href={xDefaultUrl} />

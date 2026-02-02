@@ -11,11 +11,7 @@ export default defineConfig({
 
 	markdown: {
 		shikiConfig: {
-			themes: {
-				light: "catppuccin-mocha",
-				dark: "material-theme-ocean",
-			},
-			defaultColor: "light",
+			theme: "material-theme-ocean",
 		},
 	},
 
