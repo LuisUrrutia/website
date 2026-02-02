@@ -1,0 +1,109 @@
+---
+title: "Git Worktree: The Interruption-Proof Workflow"
+description: "Git worktrees let you work on multiple branches in separate folders. No more stashing, no pre-commit battles, no lost context when urgent fixes come up."
+date: 2026-02-02
+category: "Git"
+tags: ["Git", "Productivity", "Developer Tools", "Workflow"]
+lang: "en"
+translationSlug: "git-worktree-interruption-proof-workflow"
+---
+
+import { Image } from "astro:assets";
+import ThemedImage from "@/components/ThemedImage.astro";
+import twoBranchesFolder from "@/assets/blog/git-worktree/two-branches-folder.png";
+import sharedGitFolderLight from "@/assets/blog/git-worktree/shared-git-folder-light.svg";
+import sharedGitFolderDark from "@/assets/blog/git-worktree/shared-git-folder-dark.svg";
+import worktreeComparison from "@/assets/blog/git-worktree/worktree-comparison.png";
+import Callout from "@/components/Callout.astro";
+
+You're deep in a feature branch. Dev server running. Uncommitted changes across a dozen files. _Finally_ in flow. Then Slack pings: "Hey, can you look into this customer issue?" Or worse: "Can you implement this ASAP?"
+
+You need to switch branches, but your changes aren't ready to commit. I don't like committing unfinished work. And even if I wanted to make a quick WIP commit, the pre-commit hooks won't let me. Linting fails. Tests don't pass. The commit gets rejected.
+
+So the ritual begins. `git stash`. Switch branches. Fix the thing. Switch back. `git stash pop`. Hope nothing conflicts. Somewhere in that shuffle, you've lost **20 minutes** and whatever mental state got you into flow.
+
+I did this for years. Turns out there's been a better way since 2015, _hiding in plain sight_: git worktree creates separate working directories for different branches, all linked to the same repository. Your feature branch stays open in one folder while you fix the hotfix in another. **No stashing. No fighting pre-commit hooks.** Your work stays exactly where you left it.
+
+<Image
+	src={twoBranchesFolder}
+	alt="Split terminal showing two branches open simultaneously in separate directories"
+/>
+
+## Why pre-commit hooks make the stash problem worse
+
+The stash workflow was annoying before teams started using pre-commit hooks. Now it's a _real_ pain.
+
+You can't just make a quick WIP commit to save your place. The hooks run linting, type checking, tests. Unfinished code fails all of them. So you're forced to stash, even when you'd rather commit.
+
+And stashing has its own problems. Which stash was for this branch? Did you include untracked files? Will the pop conflict with changes you made in the other branch? It's a small gamble every time.
+
+Git worktrees skip all of this. Each worktree has its own working directory. You can leave your feature branch mid-thought, with uncommitted changes everywhere, and open a completely separate folder for the urgent fix. When you come back, **everything is exactly as you left it**. Server still running. Files still modified. No digging through old stashes.
+
+<ThemedImage
+	light={sharedGitFolderLight}
+	dark={sharedGitFolderDark}
+	alt="Diagram showing one .git folder connected to two working directories, each with different branch names"
+/>
+
+<Callout icon="git-branch">
+	**Git worktrees** allow multiple working directories to share a single `.git`
+	repository.
+</Callout>
+
+## The friction that kept worktrees hidden for a decade
+
+Git added worktrees in version 2.5, released July 2015. _Over ten years ago._ Yet most developers I talk to have never used them.
+
+The problem isn't the feature. It's **the UX**. Creating a worktree requires typing the branch name three times:
+
+```bash
+git worktree add -b hotfix ../repo.hotfix && cd ../repo.hotfix
+```
+
+Compare that to `git checkout -b hotfix`. The overhead adds up, and most people give up before they see the benefit.
+
+This is where [Worktrunk](https://worktrunk.dev) comes in. It's a CLI that makes worktrees as easy as branches. The same operation becomes:
+
+```bash
+wt switch -c hotfix
+```
+
+Worktrunk addresses worktrees by branch name instead of paths. It handles directory management automatically. It supports hooks to automate setup, so you can have it run `npm install` or copy `.env` files every time you create a new worktree. When you're ready to merge, `wt merge` handles squashing, rebasing, and cleanup in one command.
+
+<Image
+	src={worktreeComparison}
+	alt="Side-by-side comparison of git worktree commands versus Worktrunk equivalents"
+/>
+
+## Why worktrees are suddenly everywhere
+
+Worktrees existed quietly for a decade. So why are developers suddenly talking about them?
+
+**AI coding assistants.** Tools like Claude Code can work autonomously, and developers are using worktrees to give each agent its own isolated sandbox.
+
+[DHH](https://x.com/dhh/status/2005326958578856206) (creator of Ruby on Rails) put it simply: "Git worktrees are perfect for starting sandboxes for agents to propose a solution to a problem while you keep working on master or another branch."
+
+That's not why I started using worktrees, though. For me it was simpler: I got tired of the stash-switch-unstash dance every time someone needed something urgent. The AI use case is interesting, but the everyday interruption problem was reason enough.
+
+## What actually changed for me
+
+I used to think switching branches was just part of the job. Stash, switch, pop. Repeat. Or worse: fight with pre-commit hooks, give up, stash anyway.
+
+Now when someone pings me with something urgent, I run `wt switch -c hotfix`, handle it in a separate folder, and come back to my feature branch exactly as I left it. Server still running. Changes still there. **No lost context.**
+
+Interruptions don't derail me the way they used to. I'm not losing 20 minutes reconstructing where I was. I'm not gambling on stash conflicts.
+
+If you've been playing _stash roulette_, there's a better way. Try creating a worktree next time you're interrupted:
+
+```bash
+brew install worktrunk && wt config shell install
+```
+
+---
+
+**Learn more:**
+
+- [Worktrunk CLI](https://worktrunk.dev)
+- [Official git worktree documentation](https://git-scm.com/docs/git-worktree)
+
+_What Git feature took you embarrassingly long to discover? I'm curious what else I might be missing._
