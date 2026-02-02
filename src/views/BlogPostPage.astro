@@ -15,6 +15,7 @@ import {
 	localeNames,
 } from "@/i18n";
 import { calculateReadingTime, formatReadingTime } from "@/lib/formatters";
+import Giscus from "@/components/Giscus.astro";
 
 interface Props {
 	post: CollectionEntry<"blog">;
@@ -45,6 +46,9 @@ const formattedUpdatedDate = post.data.updatedDate
 	? post.data.updatedDate.toLocaleDateString(intlLocales[lang], dateFormat)
 	: null;
 
+// Generate transition names from post slug
+const slug = getSlugWithoutLocale(post.id);
+
 // Get the alternate language URL
 const alternateLang = getAlternateLocale(lang);
 const alternateUrl = translatedPost
@@ -54,8 +58,14 @@ const alternateUrl = translatedPost
 		)
 	: null;
 
-// Generate transition names from post slug
-const slug = getSlugWithoutLocale(post.id);
+// Build alternate URLs for hreflang tags (used by SEO and language switcher)
+const currentPostUrl = getLocalizedPath(`/blog/${slug}`, lang);
+const alternateUrls = {
+	[lang]: currentPostUrl,
+	[alternateLang]:
+		alternateUrl ?? getLocalizedPath(`/blog/${slug}`, alternateLang),
+};
+
 const titleTransitionName = `post-title-${slug}`;
 const pillTransitionName = `post-pill-${slug}`;
 
@@ -85,6 +95,7 @@ const breadcrumbItems = [
 	description={post.data.description}
 	ogImage={ogImage}
 	ogType="article"
+	alternateUrls={alternateUrls}
 	article={{
 		publishedTime: post.data.date.toISOString(),
 		modifiedTime: post.data.updatedDate?.toISOString(),
@@ -156,6 +167,8 @@ const breadcrumbItems = [
 			<div class="blog-content">
 				<Content />
 			</div>
+
+			<Giscus lang={lang} />
 		</Card>
 	</Container>
 </Layout>

@@ -1,0 +1,90 @@
+---
+/**
+ * Giscus - GitHub Discussions-based comments component.
+ *
+ * Features:
+ * - Syncs theme with site's light/dark mode
+ * - Supports i18n (en/es)
+ * - Lazy loads for performance
+ */
+import type { Locale } from "@/i18n";
+
+interface Props {
+	/** Current page locale */
+	lang?: Locale;
+}
+
+const { lang = "en" } = Astro.props;
+---
+
+<div class="giscus-wrapper border-border mt-8 border-t pt-8">
+	<div class="giscus"></div>
+</div>
+
+<script is:inline data-lang={lang}>
+	function loadGiscus() {
+		const wrapper = document.querySelector(".giscus-wrapper");
+		if (!wrapper || wrapper.dataset.loaded) return;
+
+		const lang = document.currentScript?.dataset.lang || "en";
+		const theme =
+			document.documentElement.dataset.theme === "dark"
+				? "transparent_dark"
+				: "light";
+
+		const script = document.createElement("script");
+		script.src = "https://giscus.app/client.js";
+		script.dataset.repo = "LuisUrrutia/website";
+		script.dataset.repoId = "R_kgDOQnDWeA";
+		script.dataset.category = "General";
+		script.dataset.categoryId = "DIC_kwDOQnDWeM4C1x7v";
+		script.dataset.mapping = "og:title";
+		script.dataset.strict = "0";
+		script.dataset.reactionsEnabled = "1";
+		script.dataset.emitMetadata = "0";
+		script.dataset.inputPosition = "top";
+		script.dataset.theme = theme;
+		script.dataset.lang = lang;
+		script.dataset.loading = "lazy";
+		script.crossOrigin = "anonymous";
+		script.async = true;
+
+		wrapper.appendChild(script);
+		wrapper.dataset.loaded = "true";
+	}
+
+	function updateGiscusTheme() {
+		const iframe = document.querySelector("iframe.giscus-frame");
+		if (!iframe) return;
+
+		const theme =
+			document.documentElement.dataset.theme === "dark"
+				? "transparent_dark"
+				: "light";
+
+		iframe.contentWindow?.postMessage(
+			{ giscus: { setConfig: { theme } } },
+			"https://giscus.app",
+		);
+	}
+
+	// Load on initial page load
+	loadGiscus();
+
+	// Reload after Astro page transitions
+	document.addEventListener("astro:after-swap", loadGiscus);
+
+	// Listen for theme changes
+	const observer = new MutationObserver((mutations) => {
+		for (const mutation of mutations) {
+			if (mutation.attributeName === "data-theme") {
+				updateGiscusTheme();
+			}
+		}
+	});
+
+	observer.observe(document.documentElement, {
+		attributes: true,
+		attributeFilter: ["data-theme"],
+	});
+</script>

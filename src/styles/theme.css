@@ -95,7 +95,7 @@
 	--oklch-foreground: 0.82 0.02 269.76;
 	--oklch-title: 96% 0 0;
 	--oklch-subtitle: 0.72 0.04 275.55;
-	--oklch-card: 0.22 0.05 269.24;
+	--oklch-card: 0.21 0.04 269.51;
 	--oklch-card-foreground: 85% 0.01 270;
 	--oklch-available: 45% 0.12 150;
 	--oklch-available-foreground: 90% 0.05 150;
@@ -114,10 +114,4 @@
 	/* Code */
 	--oklch-code-foreground: 0.78 0.15 3.85;
 	--oklch-code-background: 0.29 0.06 327.01;
-}
-
-[data-theme="dark"] .astro-code,
-[data-theme="dark"] .astro-code span {
-	background-color: var(--shiki-dark-bg) !important;
-	color: var(--shiki-dark) !important;
 }
