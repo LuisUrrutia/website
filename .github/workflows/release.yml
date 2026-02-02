@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-2
     outputs:
       new-release-published: ${{ steps.release.outputs.new-release-published }}
       new-release-version: ${{ steps.release.outputs.new-release-version }}
@@ -64,7 +64,7 @@ jobs:
   deploy:
     needs: release
     if: needs.release.outputs.new-release-published == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-2
     environment:
       name: production
       url: https://urrutia.me
@@ -84,7 +84,7 @@ jobs:
 
   lighthouse:
     needs: deploy
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-2
     steps:
       - name: Lighthouse audit
         uses: treosh/lighthouse-ci-action@v12
