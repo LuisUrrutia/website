@@ -114,7 +114,7 @@ export const ui = {
 		"hero.bio.experience": "más de 12 años",
 		"hero.bio.suffix":
 			" de experiencia construyendo y operando sistemas de producción a gran escala. Me especializo en diseño de sistemas, confiabilidad y rendimiento, entregando software que genera resultados de negocio medibles.",
-		"hero.location": "Madrid, Spain",
+		"hero.location": "Madrid, España",
 		"hero.companies": "Algunas empresas a las que aporté valor:",
 		"hero.photoAlt": "Foto de Luis Urrutia",
 

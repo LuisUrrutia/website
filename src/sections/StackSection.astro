@@ -61,14 +61,16 @@ const indicesByCategory = technologies.reduce(
 		data-status-template={t("stack.showing")}
 	>
 		<header
-			class="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
+			class="relative flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
 		>
 			<h2 id={`${id}-heading`} class="text-title text-2xl font-semibold">
 				{t("stack.title")}
 			</h2>
-			<div class="stack-filters flex items-center gap-2">
+			<div
+				class="stack-filters flex w-full flex-col gap-2 min-[465px]:w-auto min-[465px]:flex-row min-[465px]:items-center"
+			>
 				<ClearFilterButton
-					class="stack-clear order-1 sm:order-first"
+					class="stack-clear absolute top-0 right-0 min-[465px]:static min-[465px]:order-last sm:order-first"
 					aria-label={t("common.clearFilters")}
 				/>
 				{

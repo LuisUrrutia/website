@@ -26,8 +26,8 @@ export const testimonials: Testimonial[] = [
 		},
 		photo: douglasMakeyPhoto,
 		quote: {
-			en: "Luis Sebastian is a highly skilled professional committed to quality standards. He has an excellent ability to learn and implement new technologies quickly, consistently meeting expectations.",
-			es: "Luis Sebastián es un profesional altamente capacitado y comprometido con los estándares de calidad. Tiene una excelente capacidad para aprender e implementar nuevas tecnologías rápidamente, cumpliendo consistentemente con las expectativas.",
+			en: "Luis is a highly skilled professional committed to quality standards. He has an excellent ability to learn and implement new technologies quickly, consistently meeting expectations.",
+			es: "Luis es un profesional altamente capacitado y comprometido con los estándares de calidad. Tiene una excelente capacidad para aprender e implementar nuevas tecnologías rápidamente, cumpliendo consistentemente con las expectativas.",
 		},
 		linkedin: "https://www.linkedin.com/in/douglasmakey",
 	},
