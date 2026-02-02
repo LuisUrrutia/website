@@ -5,3 +5,7 @@
 :root {
 	interpolate-size: allow-keywords;
 }
+
+@view-transition {
+	navigation: auto;
+}
