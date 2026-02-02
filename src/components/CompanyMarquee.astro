@@ -62,7 +62,16 @@ const {
 								<img
 									src={company.logo}
 									alt={`${company.name} logo`}
-									class="marquee-logo"
+									class="marquee-logo block [[data-theme=dark]_&]:hidden"
+									width={company.width}
+									height="28"
+									loading="lazy"
+									decoding="async"
+								/>
+								<img
+									src={company.logoDark}
+									alt=""
+									class="marquee-logo hidden [[data-theme=dark]_&]:block"
 									width={company.width}
 									height="28"
 									loading="lazy"

@@ -9,6 +9,16 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
 	site: "https://urrutia.me",
 
+	markdown: {
+		shikiConfig: {
+			themes: {
+				light: "catppuccin-mocha",
+				dark: "material-theme-ocean",
+			},
+			defaultColor: "light",
+		},
+	},
+
 	i18n: {
 		locales: ["en", "es"],
 		defaultLocale: "en",
