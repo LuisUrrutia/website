@@ -32,9 +32,11 @@
 	--color-accent: oklch(var(--oklch-accent));
 	--color-border: oklch(var(--oklch-border));
 	--color-pill: oklch(var(--oklch-pill));
-	--color-pill-foreground: oklch(var(--oklch-card));
+	--color-pill-foreground: oklch(var(--oklch-pill-foreground));
 	--color-button: oklch(var(--oklch-button));
 	--color-button-foreground: oklch(var(--oklch-button-foreground));
+	--color-code-foreground: oklch(var(--oklch-code-foreground));
+	--color-code-background: oklch(var(--oklch-code-background));
 
 	/* Animation Durations */
 	--spin-duration: 250ms;
@@ -77,19 +79,23 @@
 	/* border - subtle gray matching background */
 	--oklch-border: 92% 0.004 290;
 	/* accent (used for pill, button) */
-	--oklch-accent: 0.52 0.17 278.73;
+	--oklch-accent: 0.48 0.23 274.42;
 	--oklch-pill: var(--oklch-accent);
+	--oklch-pill-foreground: 100% 0 0;
 	--oklch-button: var(--oklch-accent);
 	--oklch-button-foreground: 100% 0 0;
+	/* Code */
+	--oklch-code-foreground: 0.46 0.18 11.14;
+	--oklch-code-background: 0.96 0.02 358.33;
 }
 
 /* Primitive color tokens - dark theme */
 [data-theme="dark"] {
-	--oklch-background: 15% 0.02 270;
-	--oklch-foreground: 85% 0.01 270;
+	--oklch-background: 0.17 0.03 273.98;
+	--oklch-foreground: 0.82 0.02 269.76;
 	--oklch-title: 96% 0 0;
-	--oklch-subtitle: 65% 0.015 270;
-	--oklch-card: 20% 0.015 270;
+	--oklch-subtitle: 0.72 0.04 275.55;
+	--oklch-card: 0.22 0.05 269.24;
 	--oklch-card-foreground: 85% 0.01 270;
 	--oklch-available: 45% 0.12 150;
 	--oklch-available-foreground: 90% 0.05 150;
@@ -98,10 +104,20 @@
 	--oklch-accent: 70% 0.12 264;
 	--oklch-highlight-sky: 0.47 0.12 240.81;
 	--oklch-highlight-orange: 0.59 0.15 60.32;
-	--oklch-border: 28% 0.015 270;
+	--oklch-border: 0.32 0.08 272.49;
 	/* accent (used for pill, button) */
-	--oklch-accent: 61.6% 0.105 283;
+	--oklch-accent: 0.87 0.2 158.95;
 	--oklch-pill: var(--oklch-accent);
+	--oklch-pill-foreground: 0.21 0.04 270;
 	--oklch-button: var(--oklch-accent);
-	--oklch-button-foreground: 100% 0 0;
+	--oklch-button-foreground: 0.21 0.04 270;
+	/* Code */
+	--oklch-code-foreground: 0.78 0.15 3.85;
+	--oklch-code-background: 0.29 0.06 327.01;
+}
+
+[data-theme="dark"] .astro-code,
+[data-theme="dark"] .astro-code span {
+	background-color: var(--shiki-dark-bg) !important;
+	color: var(--shiki-dark) !important;
 }

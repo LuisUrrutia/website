@@ -157,19 +157,36 @@ const breadcrumbItems = [
 </Layout>
 
 <style is:global>
+	.blog-content {
+		font-size: 1rem;
+		text-wrap: pretty;
+	}
+
+	.blog-content > *:first-child {
+		margin-top: 0;
+	}
+
 	.blog-content h2 {
 		color: var(--color-title);
-		margin-top: 2rem;
-		margin-bottom: 1rem;
+		margin-top: 3rem;
+		margin-bottom: 1.25rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--color-border);
 		font-size: 1.5rem;
 		line-height: 2rem;
 		font-weight: 600;
 	}
 
+	.blog-content h2:first-child {
+		border-top: none;
+		padding-top: 0;
+		margin-top: 0;
+	}
+
 	.blog-content h3 {
 		color: var(--color-title);
-		margin-top: 1.5rem;
-		margin-bottom: 0.75rem;
+		margin-top: 2rem;
+		margin-bottom: 1rem;
 		font-size: 1.25rem;
 		line-height: 1.75rem;
 		font-weight: 600;
@@ -177,15 +194,22 @@ const breadcrumbItems = [
 
 	.blog-content p {
 		color: var(--color-foreground);
-		margin-bottom: 1rem;
-		line-height: 1.625;
+		margin-bottom: 1.5rem;
+		line-height: 1.8;
+	}
+
+	.blog-content > p:first-child {
+		font-size: 1.125rem;
+		line-height: 1.75;
+		color: var(--color-subtitle);
 	}
 
 	.blog-content ul,
 	.blog-content ol {
 		color: var(--color-foreground);
-		margin-bottom: 1rem;
+		margin-bottom: 1.5rem;
 		margin-left: 1.5rem;
+		line-height: 1.8;
 		list-style-position: outside;
 	}
 
@@ -198,16 +222,24 @@ const breadcrumbItems = [
 	}
 
 	.blog-content li {
-		margin-bottom: 0.5rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.blog-content li:last-child {
+		margin-bottom: 0;
 	}
 
 	.blog-content pre {
-		background-color: var(--color-card);
-		margin-top: 1.5rem;
-		margin-bottom: 1.5rem;
+		margin-top: 2rem;
+		margin-bottom: 2rem;
 		overflow-x: auto;
 		border-radius: 0.75rem;
-		padding: 1rem;
+		padding: 1.25rem;
+	}
+
+	.blog-content figure {
+		margin-top: 2rem;
+		margin-bottom: 2rem;
 	}
 
 	.blog-content code {
@@ -216,9 +248,10 @@ const breadcrumbItems = [
 	}
 
 	.blog-content :not(pre) > code {
-		background-color: var(--color-card);
-		border-radius: 0.25rem;
+		background-color: var(--color-code-background);
+		color: var(--color-code-foreground);
 		padding: 0.125rem 0.375rem;
+		border-radius: 0.25rem;
 	}
 
 	.blog-content strong {
@@ -237,9 +270,18 @@ const breadcrumbItems = [
 	.blog-content blockquote {
 		border-left: 4px solid var(--color-accent);
 		color: var(--color-subtitle);
-		margin-top: 1.5rem;
-		margin-bottom: 1.5rem;
-		padding-left: 1rem;
+		margin-top: 2rem;
+		margin-bottom: 2rem;
+		padding-left: 1.5rem;
+		font-size: 1.125rem;
+		line-height: 1.75;
 		font-style: italic;
+	}
+
+	.blog-content hr {
+		border: none;
+		border-top: 1px solid var(--color-border);
+		margin-top: 3rem;
+		margin-bottom: 3rem;
 	}
 </style>
