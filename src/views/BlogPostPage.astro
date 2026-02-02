@@ -63,6 +63,9 @@ const pillTransitionName = `post-pill-${slug}`;
 const siteUrl = (Astro.site ?? Astro.url.origin).toString().replace(/\/$/, "");
 const postUrl = `${siteUrl}${getLocalizedPath(`/blog/${slug}`, lang)}`;
 
+// OG image URL - uses the generated image from the og endpoint
+const ogImage = `/og/${post.id}.png`;
+
 // Breadcrumb items for blog post page
 const breadcrumbItems = [
 	{
@@ -80,6 +83,7 @@ const breadcrumbItems = [
 <Layout
 	title={post.data.title}
 	description={post.data.description}
+	ogImage={ogImage}
 	ogType="article"
 	article={{
 		publishedTime: post.data.date.toISOString(),
