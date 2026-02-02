@@ -1,0 +1,50 @@
+---
+interface Props {
+	icon?: string;
+	class?: string;
+}
+
+const { icon, class: className } = Astro.props;
+
+const icons = import.meta.glob<string>("@/assets/icons/*.svg", {
+	query: "?raw",
+	import: "default",
+	eager: true,
+});
+
+const iconPath = `/src/assets/icons/${icon}.svg`;
+const iconSvg = icon ? icons[iconPath] : null;
+---
+
+<aside
+	class:list={[
+		"callout border-accent bg-card text-card-foreground mb-6 flex gap-4 border-l-4 p-5",
+		className,
+	]}
+>
+	{
+		iconSvg && (
+			<div
+				class="callout-icon text-subtitle mt-0.5 shrink-0"
+				set:html={iconSvg}
+			/>
+		)
+	}
+	<div class="callout-content">
+		<slot />
+	</div>
+</aside>
+
+<style>
+	.callout-content :global(p:last-child) {
+		margin-bottom: 0;
+	}
+
+	.callout-content :global(code) {
+		background-color: var(--color-code-background);
+		color: var(--color-code-foreground);
+		padding: 0.125rem 0.375rem;
+		border-radius: 0.25rem;
+		font-size: 0.875em;
+	}
+</style>

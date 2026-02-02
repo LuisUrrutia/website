@@ -1,0 +1,109 @@
+---
+title: "Git Worktree: El Workflow a Prueba de Interrupciones"
+description: "Git worktrees te permite trabajar en múltiples branches en carpetas separadas. Sin stash, sin peleas con pre-commit hooks, sin perder contexto cuando surge algo urgente."
+date: 2026-02-02
+category: "Git"
+tags: ["Git", "Productivity", "Developer Tools", "Workflow"]
+lang: "es"
+translationSlug: "git-worktree-interruption-proof-workflow"
+---
+
+import { Image } from "astro:assets";
+import ThemedImage from "@/components/ThemedImage.astro";
+import twoBranchesFolder from "@/assets/blog/git-worktree/two-branches-folder.png";
+import sharedGitFolderLight from "@/assets/blog/git-worktree/shared-git-folder-light.svg";
+import sharedGitFolderDark from "@/assets/blog/git-worktree/shared-git-folder-dark.svg";
+import worktreeComparison from "@/assets/blog/git-worktree/worktree-comparison.png";
+import Callout from "@/components/Callout.astro";
+
+Estás metido en una feature branch, con el servidor de desarrollo corriendo y cambios sin commitear en una docena de archivos. _Por fin_ en flow. Entonces llega el mensaje de Slack: "Oye, ¿puedes revisar este problema de un cliente?" O peor: "¿Puedes implementar esto urgente?"
+
+Necesitas cambiar de branch, pero tus cambios no están listos para commit. Personalmente, no me gusta hacer commit de código incompleto, y aunque quisiera hacer un commit WIP rápido los pre-commit hooks no me dejan porque el linting falla, los tests no pasan y el commit se rechaza.
+
+Entonces empieza el ritual: `git stash`, cambiar de branch, arreglar el problema, volver a la branch anterior, `git stash pop`, y rezar para que no haya conflictos. En algún punto de todo eso perdiste **20 minutos** y el estado mental que te había costado conseguir.
+
+Hice esto por años, pero resulta que existe una mejor forma desde 2015, _escondida a plena vista_: git worktree crea directorios de trabajo separados para diferentes branches, todos conectados al mismo repositorio. Tu feature branch se queda abierta en una carpeta mientras arreglas el hotfix en otra. **Sin stash, sin pelear con los pre-commit hooks.** Tu trabajo se queda exactamente donde lo dejaste.
+
+<Image
+	src={twoBranchesFolder}
+	alt="Terminal dividida mostrando dos branches abiertas simultáneamente en directorios separados"
+/>
+
+## Por qué los pre-commit hooks empeoran el problema del stash
+
+El workflow con stash ya era molesto antes de que los equipos empezaran a usar pre-commit hooks, pero ahora es un _verdadero_ dolor de cabeza.
+
+No puedes simplemente hacer un commit WIP rápido para guardar tu lugar porque los hooks corren linting, type checking y tests, y el código incompleto falla en todos. Así que te ves forzado a usar stash aunque preferirías hacer commit.
+
+Y el stash tiene sus propios problemas: ¿cuál stash era para esta branch?, ¿incluiste los archivos untracked?, ¿el pop va a generar conflictos con los cambios que hiciste en la otra branch? Es una pequeña apuesta cada vez.
+
+Git worktrees se salta todo esto. Cada worktree tiene su propio directorio de trabajo, así que puedes dejar tu feature branch a medias, con cambios sin commitear por todos lados, y abrir una carpeta completamente separada para el fix urgente. Cuando vuelves, **todo está exactamente como lo dejaste**: servidor corriendo, archivos modificados, sin tener que rebuscar entre stashes.
+
+<ThemedImage
+	light={sharedGitFolderLight}
+	dark={sharedGitFolderDark}
+	alt="Diagrama mostrando una carpeta .git conectada a dos directorios de trabajo, cada uno con diferentes nombres de branch"
+/>
+
+<Callout icon="git-branch">
+	**Git worktrees** permiten que múltiples directorios de trabajo compartan un
+	único repositorio `.git`.
+</Callout>
+
+## La fricción que mantuvo los worktrees escondidos por una década
+
+Git agregó worktrees en la versión 2.5, lanzada en julio de 2015. _Más de diez años._ Sin embargo, la mayoría de los desarrolladores con los que hablo nunca los han usado.
+
+El problema no es la funcionalidad, es **la UX**. Crear un worktree requiere escribir el nombre de la branch tres veces:
+
+```bash
+git worktree add -b hotfix ../repo.hotfix && cd ../repo.hotfix
+```
+
+Compara eso con `git checkout -b hotfix`. El overhead se acumula y la mayoría abandona antes de ver el beneficio.
+
+Aquí es donde entra [Worktrunk](https://worktrunk.dev), un CLI que hace que los worktrees sean tan fáciles como las branches. La misma operación se convierte en:
+
+```bash
+wt switch -c hotfix
+```
+
+Worktrunk te permite acceder a los worktrees por nombre de branch en lugar de paths, maneja la gestión de directorios automáticamente y soporta hooks para automatizar el setup, así que puedes hacer que corra `npm install` o copie archivos `.env` cada vez que creas un nuevo worktree. Cuando estás listo para mergear, `wt merge` maneja el squash, rebase y limpieza en un solo comando.
+
+<Image
+	src={worktreeComparison}
+	alt="Comparación lado a lado de comandos git worktree versus equivalentes de Worktrunk"
+/>
+
+## Por qué los worktrees están de repente en todos lados
+
+Los worktrees existieron silenciosamente por una década, entonces ¿por qué los desarrolladores de repente están hablando de ellos?
+
+**Asistentes de código con IA.** Herramientas como Claude Code pueden trabajar de forma autónoma y los desarrolladores están usando worktrees para darle a cada agente su propio sandbox aislado.
+
+[DHH](https://x.com/dhh/status/2005326958578856206) (creador de Ruby on Rails) lo puso simple: "Git worktrees son perfectos para iniciar sandboxes para que los agentes propongan una solución a un problema mientras sigues trabajando en master u otra branch."
+
+Pero no es por eso que yo empecé a usar worktrees. Para mí fue más simple: me cansé del baile stash-switch-unstash cada vez que alguien necesitaba algo urgente. El caso de uso con IA es interesante, pero el problema cotidiano de las interrupciones fue razón suficiente.
+
+## Lo que realmente cambió para mí
+
+Antes pensaba que cambiar de branches era simplemente parte del trabajo: stash, switch, pop, repetir. O peor: pelear con los pre-commit hooks, rendirse y usar stash de todos modos.
+
+Ahora cuando alguien me escribe con algo urgente corro `wt switch -c hotfix`, lo resuelvo en una carpeta separada y vuelvo a mi feature branch exactamente como la dejé. Servidor corriendo, cambios intactos. **Sin perder contexto.**
+
+Las interrupciones ya no me sacan de foco como antes, no pierdo 20 minutos reconstruyendo donde estaba ni estoy apostando a que no haya conflictos de stash.
+
+Si has estado jugando a la _ruleta del stash_, hay una mejor forma. Prueba crear un worktree la próxima vez que te interrumpan:
+
+```bash
+brew install worktrunk && wt config shell install
+```
+
+---
+
+**Más información:**
+
+- [Worktrunk CLI](https://worktrunk.dev)
+- [Documentación oficial de git worktree](https://git-scm.com/docs/git-worktree)
+
+_¿Qué funcionalidad de Git te tomó vergonzosamente mucho tiempo descubrir? Me da curiosidad qué más me puedo estar perdiendo._
