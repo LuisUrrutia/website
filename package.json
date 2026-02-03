@@ -17,6 +17,12 @@
     "**/*": "prettier --write --ignore-unknown",
     "*.{js,ts,jsx,tsx,astro}": "oxlint --type-aware"
   },
+  "overrides": {
+    "//lodash": "CVE-2025-13465 - remove when @astrojs/check updates yaml-language-server",
+    "//tar": "CVE-2024-28863 - remove when @semantic-release/npm updates npm dependency",
+    "lodash": "4.17.23",
+    "tar": "7.5.7"
+  },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
     "@astrojs/mdx": "^4.3.13",
@@ -39,7 +45,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "oxlint": "^1.42.0",
-    "oxlint-tsgolint": "^0.11.3",
+    "oxlint-tsgolint": "^0.11.4",
     "prettier": "^3.8.1",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-packagejson": "^3.0.0",
