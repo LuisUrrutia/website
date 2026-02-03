@@ -47,7 +47,7 @@ const {
 						{
 							style: "normal",
 							weight: "100 900",
-							path: "https://rsms.me/inter/font-files/InterVariable.woff2",
+							path: "/fonts/InterVariable.woff2",
 						},
 					],
 					preload: true,
@@ -82,6 +82,25 @@ const {
 		<!-- Sitemap -->
 		<link rel="sitemap" href="/sitemap-index.xml" />
 
+		<!-- RSS Feed -->
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="Luis Urrutia - Engineering Notes (EN)"
+			href="/rss.xml"
+		/>
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="Luis Urrutia - Notas de Ingeniería (ES)"
+			href="/es/rss.xml"
+		/>
+
+		<!-- DNS Prefetch for external domains -->
+		<link rel="dns-prefetch" href="https://giscus.app" />
+		<link rel="dns-prefetch" href="https://github.com" />
+		<link rel="dns-prefetch" href="https://linkedin.com" />
+
 		<!-- Windows Tiles -->
 		<meta name="msapplication-TileColor" content="#FBFBF9" />
 		<meta name="msapplication-config" content="/browserconfig.xml" />
@@ -112,6 +131,13 @@ const {
 	<body
 		class="bg-background text-foreground m-0 bg-[url('/patterns/dots.svg')] bg-size-[24px_auto] bg-repeat py-6"
 	>
+		<!-- Skip to main content link for accessibility -->
+		<a
+			href="#main-content"
+			class="bg-accent text-accent-foreground fixed top-0 left-1/2 z-50 -translate-x-1/2 -translate-y-full rounded-b-lg px-4 py-2 font-medium transition-transform focus:translate-y-0"
+		>
+			{t("a11y.skipToContent")}
+		</a>
 		<slot />
 		{import.meta.env.DEV && <ViewportIndicator />}
 	</body>

@@ -32,6 +32,9 @@ interface Props {
 }
 
 const { name, role, photo, quote, linkedin } = Astro.props;
+const { t } = Astro.locals;
+
+const linkedInLabel = t("a11y.onLinkedIn").replace("{name}", name);
 ---
 
 <Card as="figure" class="relative flex flex-col items-center gap-4 text-center">
@@ -40,7 +43,7 @@ const { name, role, photo, quote, linkedin } = Astro.props;
 			<div class="absolute top-4 right-4">
 				<SocialLinks
 					linkedin={linkedin}
-					ariaLabel={`${name} on LinkedIn`}
+					ariaLabel={linkedInLabel}
 					iconClass="size-5"
 					vertical
 				/>

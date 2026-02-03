@@ -1,6 +1,27 @@
 import type { TranslationKey } from "@/i18n";
 
 /**
+ * Format a Date to ISO 8601 with timezone offset.
+ * Example: "2024-12-23T12:34:00-05:00"
+ */
+export function toISOWithTimezone(date: Date): string {
+	const offset = -date.getTimezoneOffset();
+	const sign = offset >= 0 ? "+" : "-";
+	const absOffset = Math.abs(offset);
+	const hours = String(Math.floor(absOffset / 60)).padStart(2, "0");
+	const minutes = String(absOffset % 60).padStart(2, "0");
+
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, "0");
+	const day = String(date.getDate()).padStart(2, "0");
+	const hour = String(date.getHours()).padStart(2, "0");
+	const minute = String(date.getMinutes()).padStart(2, "0");
+	const second = String(date.getSeconds()).padStart(2, "0");
+
+	return `${year}-${month}-${day}T${hour}:${minute}:${second}${sign}${hours}:${minutes}`;
+}
+
+/**
  * Format years of experience using localized strings.
  * formatExperience(0.5, t) → "Less than a year"
  * formatExperience(1, t) → "1 year"
@@ -64,4 +85,15 @@ export function formatReadingTime(
 	t: (key: TranslationKey) => string,
 ): string {
 	return t("blog.readingTime").replace("{minutes}", String(minutes));
+}
+
+/**
+ * Get the site URL from Astro context, removing trailing slash.
+ * Falls back to request origin in development.
+ */
+export function getSiteUrl(astro: {
+	site?: URL;
+	url: { origin: string };
+}): string {
+	return (astro.site ?? astro.url.origin).toString().replace(/\/$/, "");
 }

@@ -74,6 +74,9 @@ export const ui = {
 		"a11y.mainNavigation": "Main navigation",
 		"a11y.home": "Home",
 		"a11y.pagination": "Pagination",
+		"a11y.skipToContent": "Skip to main content",
+		"a11y.backToTop": "Back to top",
+		"a11y.onLinkedIn": "{name} on LinkedIn",
 
 		// Breadcrumbs
 		"breadcrumb.home": "Home",
@@ -94,6 +97,14 @@ export const ui = {
 		"404.description":
 			"The page you're looking for doesn't exist or has been moved.",
 		"404.backHome": "Back to Home",
+		"404.suggestions": "You might want to check out:",
+		"404.blogLink": "Engineering Notes",
+		"404.homeLink": "Homepage",
+
+		// RSS
+		"rss.title": "Luis Urrutia - Engineering Notes",
+		"rss.description":
+			"Engineering notes on system design, reliability, and building production software at scale.",
 	},
 	es: {
 		// Meta
@@ -171,6 +182,9 @@ export const ui = {
 		"a11y.mainNavigation": "Navegación principal",
 		"a11y.home": "Inicio",
 		"a11y.pagination": "Paginación",
+		"a11y.skipToContent": "Ir al contenido principal",
+		"a11y.backToTop": "Volver arriba",
+		"a11y.onLinkedIn": "{name} en LinkedIn",
 
 		// Breadcrumbs
 		"breadcrumb.home": "Inicio",
@@ -190,6 +204,14 @@ export const ui = {
 		"404.heading": "¡Ups! Página no encontrada",
 		"404.description": "La página que buscas no existe o ha sido movida.",
 		"404.backHome": "Volver al inicio",
+		"404.suggestions": "Quizás te interese:",
+		"404.blogLink": "Notas de Ingeniería",
+		"404.homeLink": "Página principal",
+
+		// RSS
+		"rss.title": "Luis Urrutia - Notas de Ingeniería",
+		"rss.description":
+			"Notas de ingeniería sobre diseño de sistemas, confiabilidad y construcción de software de producción a escala.",
 	},
 } as const;
 

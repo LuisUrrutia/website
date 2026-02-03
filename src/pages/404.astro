@@ -32,6 +32,10 @@ const translations = Object.fromEntries(
 				description: translate("404.description"),
 				backHome: translate("404.backHome"),
 				homeHref: getLocalizedPath("/", locale),
+				suggestions: translate("404.suggestions"),
+				blogLink: translate("404.blogLink"),
+				blogHref: getLocalizedPath("/blog", locale),
+				homeLink: translate("404.homeLink"),
 			},
 		];
 	}),
@@ -45,6 +49,7 @@ const translations = Object.fromEntries(
 	skipLocaleRedirect
 >
 	<main
+		id="main-content"
 		class="mx-auto flex min-h-[80vh] max-w-xl flex-col items-center justify-center px-4 text-center"
 		data-translations={JSON.stringify(translations)}
 		data-locales={JSON.stringify(locales)}
@@ -64,6 +69,29 @@ const translations = Object.fromEntries(
 		>
 			{t("404.backHome")}
 		</a>
+
+		<div class="mt-12">
+			<p id="suggestions-404" class="text-muted mb-4 text-sm">
+				{t("404.suggestions")}
+			</p>
+			<div class="flex gap-4">
+				<a
+					id="home-link-404"
+					href={getLocalizedPath("/", serverLang)}
+					class="text-accent hover:underline"
+				>
+					{t("404.homeLink")}
+				</a>
+				<span class="text-muted">|</span>
+				<a
+					id="blog-link-404"
+					href={getLocalizedPath("/blog", serverLang)}
+					class="text-accent hover:underline"
+				>
+					{t("404.blogLink")}
+				</a>
+			</div>
+		</div>
 	</main>
 </Layout>
 
@@ -99,12 +127,24 @@ const translations = Object.fromEntries(
 			const heading = document.getElementById("heading-404");
 			const description = document.getElementById("description-404");
 			const backHome = document.getElementById("back-home-404");
+			const suggestions = document.getElementById("suggestions-404");
+			const homeLink = document.getElementById("home-link-404");
+			const blogLink = document.getElementById("blog-link-404");
 
 			if (heading) heading.textContent = t.heading;
 			if (description) description.textContent = t.description;
 			if (backHome) {
 				backHome.textContent = t.backHome;
 				backHome.href = t.homeHref;
+			}
+			if (suggestions) suggestions.textContent = t.suggestions;
+			if (homeLink) {
+				homeLink.textContent = t.homeLink;
+				homeLink.href = t.homeHref;
+			}
+			if (blogLink) {
+				blogLink.textContent = t.blogLink;
+				blogLink.href = t.blogHref;
 			}
 		}
 	})();

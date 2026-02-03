@@ -9,13 +9,8 @@
  *
  * @see https://developers.google.com/search/docs/appearance/structured-data/profile-page
  */
-import {
-	siteOwner,
-	siteName,
-	socialUrls,
-	employer,
-	profileImage,
-} from "@/data/seo";
+import { siteOwner, siteName, buildPersonEntity } from "@/data/seo";
+import { toISOWithTimezone } from "@/lib/formatters";
 
 interface Props {
 	siteUrl: string;
@@ -26,28 +21,11 @@ interface Props {
 const { siteUrl, jobTitle, description } = Astro.props;
 
 // Person entity (referenced by ProfilePage and WebSite)
-const personEntity = {
-	"@type": "Person",
-	"@id": `${siteUrl}/#person`,
-	name: siteOwner.name,
-	url: siteUrl,
-	image: `${siteUrl}${profileImage}`,
-	email: `mailto:${siteOwner.email}`,
+const personEntity = buildPersonEntity(siteUrl, {
 	jobTitle,
 	description,
-	sameAs: socialUrls,
-	knowsLanguage: [...siteOwner.languages],
-	worksFor: {
-		"@type": "Organization",
-		name: employer.name,
-		url: employer.url,
-	},
-	address: {
-		"@type": "PostalAddress",
-		addressLocality: siteOwner.address.locality,
-		addressCountry: siteOwner.address.country,
-	},
-};
+	withId: true,
+});
 
 // WebSite entity
 const websiteEntity = {
@@ -75,8 +53,8 @@ const profilePageEntity = {
 	mainEntity: {
 		"@id": `${siteUrl}/#person`,
 	},
-	dateCreated: "2024-01-01",
-	dateModified: new Date().toISOString().split("T")[0],
+	dateCreated: toISOWithTimezone(new Date("2024-01-01T00:00:00")),
+	dateModified: toISOWithTimezone(new Date()),
 };
 
 const jsonLd = {

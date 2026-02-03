@@ -23,6 +23,7 @@ import OpenGraphMeta, { type ArticleMeta } from "./OpenGraphMeta.astro";
 import TwitterCardMeta from "./TwitterCardMeta.astro";
 import { locales, getLocalizedPath } from "@/i18n";
 import { defaultOgImage } from "@/data/seo";
+import { getSiteUrl } from "@/lib/formatters";
 
 export type { ArticleMeta };
 
@@ -60,8 +61,7 @@ const {
 	alternateUrls,
 } = Astro.props;
 
-// Use Astro.site from config, fallback to request origin in dev
-const siteUrl = (Astro.site ?? Astro.url.origin).toString().replace(/\/$/, "");
+const siteUrl = getSiteUrl(Astro);
 
 // Resolve OG image to absolute URL
 const ogImageUrl = ogImage.startsWith("http")

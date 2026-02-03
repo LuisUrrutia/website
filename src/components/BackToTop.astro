@@ -1,0 +1,57 @@
+---
+/**
+ * BackToTop - A floating button that scrolls the page to the top.
+ *
+ * Shows after scrolling down and smoothly scrolls to top when clicked.
+ */
+import IconArrowUp from "@/assets/icons/arrow-up.svg";
+
+const { t } = Astro.locals;
+---
+
+<button
+	id="back-to-top"
+	type="button"
+	aria-label={t("a11y.backToTop")}
+	class="bg-card shadow-soft fixed right-6 bottom-6 z-40 flex size-10 translate-y-16 items-center justify-center rounded-full opacity-0 transition-all duration-300 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+>
+	<IconArrowUp class="size-5" />
+</button>
+
+<script>
+	function initBackToTop(): void {
+		const button = document.getElementById("back-to-top");
+		if (!button) return;
+
+		let isVisible = false;
+
+		function toggleVisibility(): void {
+			const shouldShow = window.scrollY > 400;
+
+			if (shouldShow !== isVisible) {
+				isVisible = shouldShow;
+				button!.style.opacity = shouldShow ? "1" : "0";
+				button!.style.transform = shouldShow
+					? "translateY(0)"
+					: "translateY(4rem)";
+				button!.style.pointerEvents = shouldShow ? "auto" : "none";
+			}
+		}
+
+		function scrollToTop(): void {
+			window.scrollTo({ top: 0, behavior: "smooth" });
+		}
+
+		// Initial check
+		toggleVisibility();
+
+		// Listen for scroll
+		window.addEventListener("scroll", toggleVisibility, { passive: true });
+
+		// Handle click
+		button.addEventListener("click", scrollToTop);
+	}
+
+	initBackToTop();
+	document.addEventListener("astro:after-swap", initBackToTop);
+</script>

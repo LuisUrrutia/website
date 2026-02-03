@@ -69,7 +69,7 @@ const localesJson = JSON.stringify(locales);
 		}
 
 		function getBrowserLocale() {
-			const browserLang = navigator.language || navigator.userLanguage;
+			const browserLang = navigator.language;
 			if (!browserLang) return null;
 
 			// Check exact match first (e.g., "es-CL" -> "es")

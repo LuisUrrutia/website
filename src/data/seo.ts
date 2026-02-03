@@ -5,8 +5,8 @@ export const siteOwner = {
 	name: "Luis Urrutia",
 	email: "hello@urrutia.me",
 	address: {
-		locality: "Santiago",
-		country: "CL",
+		locality: "Madrid",
+		country: "ES",
 	},
 	languages: ["en", "es"],
 } as const;
@@ -26,6 +26,9 @@ export const twitterHandle = "@luisurrutia_dev";
 /** Default OG image path (relative to site root) */
 export const defaultOgImage = "/og-image.png";
 
+/** Logo path for og:logo (relative to site root) */
+export const siteLogo = "/favicons/favicon.svg";
+
 /** Profile image path for Person schema (relative to site root) */
 export const profileImage = "/images/profile.jpg";
 
@@ -33,3 +36,42 @@ export const profileImage = "/images/profile.jpg";
 export const socialUrls = Object.values(socials).map((social) =>
 	typeof social === "string" ? social : social.url,
 );
+
+/**
+ * Build a Person JSON-LD entity for use in structured data.
+ * Can be used standalone or as part of a @graph.
+ */
+export function buildPersonEntity(
+	siteUrl: string,
+	options?: {
+		jobTitle?: string;
+		description?: string;
+		/** Include @id for referencing in @graph */
+		withId?: boolean;
+	},
+) {
+	const { jobTitle, description, withId = false } = options ?? {};
+
+	return {
+		"@type": "Person" as const,
+		...(withId && { "@id": `${siteUrl}/#person` }),
+		name: siteOwner.name,
+		url: siteUrl,
+		image: `${siteUrl}${profileImage}`,
+		email: `mailto:${siteOwner.email}`,
+		...(jobTitle && { jobTitle }),
+		...(description && { description }),
+		sameAs: socialUrls,
+		knowsLanguage: [...siteOwner.languages],
+		worksFor: {
+			"@type": "Organization" as const,
+			name: employer.name,
+			url: employer.url,
+		},
+		address: {
+			"@type": "PostalAddress" as const,
+			addressLocality: siteOwner.address.locality,
+			addressCountry: siteOwner.address.country,
+		},
+	};
+}

@@ -8,6 +8,7 @@ import BlogEntry from "@/components/BlogEntry.astro";
 import Pagination from "@/components/Pagination.astro";
 import { BreadcrumbJsonLd } from "@/components/seo";
 import { getLocalizedPath, getSlugWithoutLocale } from "@/i18n";
+import { getSiteUrl } from "@/lib/formatters";
 
 interface Props {
 	posts: CollectionEntry<"blog">[];
@@ -18,8 +19,7 @@ interface Props {
 const { posts, currentPage, totalPages } = Astro.props;
 const { t, lang } = Astro.locals;
 
-// Use Astro.site from config, fallback to request origin in dev
-const siteUrl = (Astro.site ?? Astro.url.origin).toString().replace(/\/$/, "");
+const siteUrl = getSiteUrl(Astro);
 
 // Breadcrumb items for blog listing page
 const breadcrumbItems = [
@@ -46,7 +46,12 @@ const baseUrl = getLocalizedPath("/blog", lang);
 <Layout title={t("blog.pageTitle")} description={t("blog.pageDescription")}>
 	<BreadcrumbJsonLd slot="head" items={breadcrumbItems} />
 	<Navbar />
-	<Container as="main" class="flex flex-col gap-8" transition:animate="slide">
+	<Container
+		as="main"
+		id="main-content"
+		class="flex flex-col gap-8"
+		transition:animate="slide"
+	>
 		<Card style="view-transition-name: post-card">
 			<header class="mb-6">
 				<h1 class="text-title text-3xl font-bold">{t("blog.heading")}</h1>
@@ -58,7 +63,7 @@ const baseUrl = getLocalizedPath("/blog", lang);
 					<p class="text-subtitle py-8 text-center">{t("blog.empty")}</p>
 				) : (
 					<ul class="m-0 flex list-none flex-col p-0">
-						{posts.map((post) => (
+						{posts.map((post, index) => (
 							<li>
 								<BlogEntry
 									title={post.data.title}
@@ -66,6 +71,8 @@ const baseUrl = getLocalizedPath("/blog", lang);
 									date={post.data.date}
 									href={getPostUrl(post.id)}
 									slug={getSlugWithoutLocale(post.id)}
+									headingLevel="h2"
+									hideBorder={index === posts.length - 1}
 								/>
 							</li>
 						))}

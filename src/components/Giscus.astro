@@ -68,14 +68,34 @@ const { lang = "en" } = Astro.props;
 		);
 	}
 
-	// Load on initial page load
-	loadGiscus();
+	function initGiscus() {
+		const wrapper = document.querySelector(".giscus-wrapper");
+		if (!wrapper) return;
 
-	// Reload after Astro page transitions
-	document.addEventListener("astro:after-swap", loadGiscus);
+		// Use Intersection Observer to lazy load when visible
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						loadGiscus();
+						observer.disconnect();
+					}
+				});
+			},
+			{ rootMargin: "400px" },
+		);
+
+		observer.observe(wrapper);
+	}
+
+	// Initialize on page load
+	initGiscus();
+
+	// Reinitialize after Astro page transitions
+	document.addEventListener("astro:after-swap", initGiscus);
 
 	// Listen for theme changes
-	const observer = new MutationObserver((mutations) => {
+	const themeObserver = new MutationObserver((mutations) => {
 		for (const mutation of mutations) {
 			if (mutation.attributeName === "data-theme") {
 				updateGiscusTheme();
@@ -83,7 +103,7 @@ const { lang = "en" } = Astro.props;
 		}
 	});
 
-	observer.observe(document.documentElement, {
+	themeObserver.observe(document.documentElement, {
 		attributes: true,
 		attributeFilter: ["data-theme"],
 	});

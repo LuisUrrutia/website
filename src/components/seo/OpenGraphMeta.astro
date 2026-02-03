@@ -8,12 +8,13 @@
  * @see https://ogp.me/
  */
 import { ogLocales, type Locale } from "@/i18n";
-import { siteName } from "@/data/seo";
+import { siteName, siteLogo } from "@/data/seo";
 
 export interface ArticleMeta {
 	publishedTime: string;
 	modifiedTime?: string;
 	author?: string;
+	section?: string;
 	tags?: string[];
 }
 
@@ -49,12 +50,16 @@ const {
 	type = "website",
 	article,
 } = Astro.props;
+
+// Construct absolute logo URL from canonical URL
+const logoUrl = new URL(siteLogo, url).href;
 ---
 
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={url} />
 <meta property="og:site_name" content={siteName} />
+<meta property="og:logo" content={logoUrl} />
 <meta property="og:type" content={type} />
 <meta property="og:locale" content={ogLocales[locale]} />
 <meta property="og:locale:alternate" content={ogLocales[alternateLocale]} />
@@ -73,6 +78,9 @@ const {
 			)}
 			{article.author && (
 				<meta property="article:author" content={article.author} />
+			)}
+			{article.section && (
+				<meta property="article:section" content={article.section} />
 			)}
 			{article.tags?.map((tag) => (
 				<meta property="article:tag" content={tag} />

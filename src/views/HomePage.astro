@@ -13,11 +13,11 @@ import LatestPostsSection from "@/sections/LatestPostsSection.astro";
 import TestimonialsSection from "@/sections/TestimonialsSection.astro";
 import ContactSection from "@/sections/ContactSection.astro";
 import { getLocalizedPath, getSlugWithoutLocale } from "@/i18n";
+import { getSiteUrl } from "@/lib/formatters";
 
 const { t, lang } = Astro.locals;
 
-// Use Astro.site from config, fallback to request origin in dev
-const siteUrl = (Astro.site ?? Astro.url.origin).toString().replace(/\/$/, "");
+const siteUrl = getSiteUrl(Astro);
 const description = t("meta.description");
 
 // Get latest posts for current locale
@@ -48,7 +48,12 @@ const posts = allPosts
 		description={description}
 	/>
 	<Navbar />
-	<Container as="main" class="flex flex-col gap-8" transition:animate="fade">
+	<Container
+		as="main"
+		id="main-content"
+		class="flex flex-col gap-8"
+		transition:animate="fade"
+	>
 		<HeroSection socials={socials} />
 		<StackSection technologies={technologies} />
 		{

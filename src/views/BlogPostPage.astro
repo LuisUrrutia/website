@@ -14,8 +14,13 @@ import {
 	intlLocales,
 	localeNames,
 } from "@/i18n";
-import { calculateReadingTime, formatReadingTime } from "@/lib/formatters";
+import {
+	calculateReadingTime,
+	formatReadingTime,
+	getSiteUrl,
+} from "@/lib/formatters";
 import Giscus from "@/components/Giscus.astro";
+import BackToTop from "@/components/BackToTop.astro";
 
 interface Props {
 	post: CollectionEntry<"blog">;
@@ -59,18 +64,19 @@ const alternateUrl = translatedPost
 	: null;
 
 // Build alternate URLs for hreflang tags (used by SEO and language switcher)
+// Only include alternate URL if a translation actually exists
 const currentPostUrl = getLocalizedPath(`/blog/${slug}`, lang);
-const alternateUrls = {
-	[lang]: currentPostUrl,
-	[alternateLang]:
-		alternateUrl ?? getLocalizedPath(`/blog/${slug}`, alternateLang),
-};
+const alternateUrls = translatedPost
+	? {
+			[lang]: currentPostUrl,
+			[alternateLang]: alternateUrl!,
+		}
+	: undefined;
 
 const titleTransitionName = `post-title-${slug}`;
 const pillTransitionName = `post-pill-${slug}`;
 
-// Use Astro.site from config, fallback to request origin in dev
-const siteUrl = (Astro.site ?? Astro.url.origin).toString().replace(/\/$/, "");
+const siteUrl = getSiteUrl(Astro);
 const postUrl = `${siteUrl}${getLocalizedPath(`/blog/${slug}`, lang)}`;
 
 // OG image URL - uses the generated image from the og endpoint
@@ -99,6 +105,7 @@ const breadcrumbItems = [
 	article={{
 		publishedTime: post.data.date.toISOString(),
 		modifiedTime: post.data.updatedDate?.toISOString(),
+		section: post.data.category,
 		tags: post.data.tags,
 	}}
 >
@@ -108,12 +115,19 @@ const breadcrumbItems = [
 		title={post.data.title}
 		description={post.data.description}
 		url={postUrl}
-		publishedTime={post.data.date.toISOString()}
-		modifiedTime={post.data.updatedDate?.toISOString()}
+		siteUrl={siteUrl}
+		image={`${siteUrl}${ogImage}`}
+		publishedTime={post.data.date}
+		modifiedTime={post.data.updatedDate}
 		tags={post.data.tags}
 	/>
 	<Navbar />
-	<Container as="main" class="flex flex-col gap-8" transition:animate="slide">
+	<Container
+		as="main"
+		id="main-content"
+		class="flex flex-col gap-8"
+		transition:animate="slide"
+	>
 		<Card
 			as="article"
 			class="prose prose-neutral dark:prose-invert max-w-none"
@@ -170,6 +184,7 @@ const breadcrumbItems = [
 
 			<Giscus lang={lang} />
 		</Card>
+		<BackToTop />
 	</Container>
 </Layout>
 

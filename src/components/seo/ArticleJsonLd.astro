@@ -5,7 +5,8 @@
  * Generates Article/BlogPosting schema with author, dates,
  * and article metadata for better SEO on blog content.
  */
-import { siteOwner } from "@/data/seo";
+import { buildPersonEntity } from "@/data/seo";
+import { toISOWithTimezone } from "@/lib/formatters";
 
 interface Props {
 	/** Article title */
@@ -14,18 +15,36 @@ interface Props {
 	description: string;
 	/** Full URL of the article */
 	url: string;
-	/** ISO 8601 date string */
-	publishedTime: string;
-	/** ISO 8601 date string (optional) */
-	modifiedTime?: string;
-	/** Article cover image URL */
-	image?: string;
+	/** Site URL for building person entity */
+	siteUrl: string;
+	/** Published date */
+	publishedTime: Date;
+	/** Modified date (optional) */
+	modifiedTime?: Date;
+	/** Article cover image URL (absolute URL) */
+	image: string;
 	/** Article tags/keywords */
 	tags?: string[];
 }
 
-const { title, description, url, publishedTime, modifiedTime, image, tags } =
-	Astro.props;
+const {
+	title,
+	description,
+	url,
+	siteUrl,
+	publishedTime,
+	modifiedTime,
+	image,
+	tags,
+} = Astro.props;
+
+const formattedPublishedTime = toISOWithTimezone(publishedTime);
+const formattedModifiedTime = modifiedTime
+	? toISOWithTimezone(modifiedTime)
+	: undefined;
+
+// Use the shared person entity for author and publisher
+const personEntity = buildPersonEntity(siteUrl);
 
 const jsonLd = {
 	"@context": "https://schema.org",
@@ -33,18 +52,12 @@ const jsonLd = {
 	headline: title,
 	description,
 	url,
-	datePublished: publishedTime,
-	...(modifiedTime && { dateModified: modifiedTime }),
-	...(image && { image }),
+	image,
+	datePublished: formattedPublishedTime,
+	...(formattedModifiedTime && { dateModified: formattedModifiedTime }),
 	...(tags && tags.length > 0 && { keywords: tags.join(", ") }),
-	author: {
-		"@type": "Person",
-		name: siteOwner.name,
-	},
-	publisher: {
-		"@type": "Person",
-		name: siteOwner.name,
-	},
+	author: personEntity,
+	publisher: personEntity,
 };
 ---
 

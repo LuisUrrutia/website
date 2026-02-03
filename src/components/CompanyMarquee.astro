@@ -6,17 +6,12 @@ type Direction = "left" | "right";
 
 interface Props {
 	companies: Company[];
-	label?: string;
+	label: string;
 	duration?: number;
 	direction?: Direction;
 }
 
-const {
-	companies,
-	label = "Companies I've worked with",
-	duration = 45,
-	direction = "left",
-} = Astro.props;
+const { companies, label, duration = 45, direction = "left" } = Astro.props;
 ---
 
 <div
@@ -30,7 +25,12 @@ const {
 		{
 			companies.map((company) => (
 				<li>
-					<a href={company.url} target="_blank" rel="noopener noreferrer">
+					<a
+						href={company.url}
+						target="_blank"
+						rel="noopener noreferrer"
+						referrerpolicy="strict-origin-when-cross-origin"
+					>
 						{company.name}
 					</a>
 				</li>
@@ -56,6 +56,7 @@ const {
 								href={company.url}
 								target="_blank"
 								rel="noopener noreferrer"
+								referrerpolicy="strict-origin-when-cross-origin"
 								tabindex="-1"
 								class="marquee-link"
 							>

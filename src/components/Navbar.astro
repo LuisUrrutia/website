@@ -12,6 +12,7 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
 import LanguageSwitcher from "@/components/LanguageSwitcher.astro";
 import Logo from "@/assets/logo.svg";
 import { getLocalizedPath } from "@/i18n";
+import { siteName } from "@/data/seo";
 
 const { lang, t } = Astro.locals;
 
@@ -32,7 +33,7 @@ const blogHref = getLocalizedPath("/blog", lang);
 					aria-label={t("a11y.home")}
 				>
 					<Logo class="size-6" aria-hidden="true" />
-					<span class="hidden sm:inline">Luis Urrutia</span>
+					<span class="hidden sm:inline">{siteName}</span>
 				</a>
 
 				<ul class="flex items-center gap-4">
