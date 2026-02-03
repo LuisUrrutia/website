@@ -8,11 +8,14 @@ interface Props {
 	status: WorkStatus;
 	/** Status text to display. */
 	statusText: string;
+	/** Accessible description for the status badge. */
+	description?: string;
 }
 
-const { status, statusText } = Astro.props;
+const { status, statusText, description } = Astro.props;
 
 const isOpen = status === "open";
+const descriptionId = description ? "work-status-description" : undefined;
 ---
 
 <div class="relative h-fit w-fit">
@@ -20,19 +23,28 @@ const isOpen = status === "open";
 
 	<div
 		class:list={[
-			"relative inline-flex w-fit cursor-pointer items-center justify-center gap-2.5 rounded-3xl px-3 py-1.5 text-center text-xs",
+			"relative inline-flex w-fit items-center justify-center gap-2.5 rounded-3xl px-3 py-1.5 text-center text-xs",
 			isOpen ? "bg-available text-available-foreground" : "bg-card text-title",
 		]}
+		role="status"
+		aria-describedby={descriptionId}
 	>
 		{
 			isOpen ? (
-				<IconCircle class="ripple size-1.5 rounded-full" />
+				<IconCircle class="ripple size-1.5 rounded-full" aria-hidden="true" />
 			) : (
-				<IconLaptop class="text-title size-3" />
+				<IconLaptop class="text-title size-3" aria-hidden="true" />
 			)
 		}
 		{statusText}
 	</div>
+	{
+		description && (
+			<span id={descriptionId} class="sr-only">
+				{description}
+			</span>
+		)
+	}
 </div>
 
 <style>

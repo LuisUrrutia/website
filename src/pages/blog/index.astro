@@ -1,19 +1,8 @@
 ---
-import { getCollection } from "astro:content";
 import BlogPage from "@/views/BlogPage.astro";
-import { matchesLocale } from "@/i18n";
+import { getPaginatedBlogPosts } from "@/data/blog";
 
-const POSTS_PER_PAGE = 10;
-
-// Get all non-draft posts for the current locale, sorted by date
-const allPosts = await getCollection("blog", ({ data }) =>
-	matchesLocale("en")(data),
-);
-
-allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
-
-const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
-const posts = allPosts.slice(0, POSTS_PER_PAGE);
+const { posts, currentPage, totalPages } = await getPaginatedBlogPosts("en");
 ---
 
-<BlogPage posts={posts} currentPage={1} totalPages={totalPages} />
+<BlogPage posts={posts} currentPage={currentPage} totalPages={totalPages} />

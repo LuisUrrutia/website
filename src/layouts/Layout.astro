@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from "astro:transitions";
 import { AstroFont } from "astro-font";
 import ThemeScript from "@/components/ThemeScript.astro";
 import LocaleScript from "@/components/LocaleScript.astro";
@@ -129,12 +128,12 @@ const {
 		<slot name="head" />
 	</head>
 	<body
-		class="bg-background text-foreground m-0 bg-[url('/patterns/dots.svg')] bg-size-[24px_auto] bg-repeat py-6"
+		class="bg-background text-foreground m-0 bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2296%22%20height%3D%2296%22%3E%3Cpath%20d%3D%22M24%2020a4%204%200%201%201%200%208%204%204%200%200%201%200-8Zm0%2048a4%204%200%201%201%200%208%204%204%200%200%201%200-8Zm48%200a4%204%200%201%201%200%208%204%204%200%200%201%200-8Zm0-48a4%204%200%201%201%200%208%204%204%200%200%201%200-8Z%22%20fill%3D%22rgba(0%2C0%2C0%2C0.05)%22%2F%3E%3C%2Fsvg%3E')] bg-size-[24px_auto] bg-repeat py-6"
 	>
 		<!-- Skip to main content link for accessibility -->
 		<a
 			href="#main-content"
-			class="bg-accent text-accent-foreground fixed top-0 left-1/2 z-50 -translate-x-1/2 -translate-y-full rounded-b-lg px-4 py-2 font-medium transition-transform focus:translate-y-0"
+			class="bg-accent text-button-foreground fixed top-0 left-1/2 z-50 -translate-x-1/2 -translate-y-full rounded-b-lg px-4 py-2 font-medium transition-transform focus:translate-y-0"
 		>
 			{t("a11y.skipToContent")}
 		</a>

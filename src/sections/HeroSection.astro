@@ -22,7 +22,6 @@ import IconRocket from "@/assets/icons/rocket.svg";
 import LocationBadge from "@/components/LocationBadge.astro";
 import ProfilePicture from "@/components/ProfilePicture.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
-import ThemeToggle from "@/components/ThemeToggle.astro";
 import WorkStatusBadge from "@/components/WorkStatusBadge.astro";
 import { companies as defaultCompanies } from "@/data/companies";
 
@@ -48,6 +47,8 @@ const {
 const { t } = Astro.locals;
 
 const statusTextKey = workStatus === "open" ? "status.open" : "status.busy";
+const statusDescriptionKey =
+	workStatus === "open" ? "status.open.description" : "status.busy.description";
 ---
 
 <Card
@@ -61,7 +62,11 @@ const statusTextKey = workStatus === "open" ? "status.open" : "status.busy";
 
 		<div class="flex flex-1 flex-col gap-4">
 			<div class="flex flex-row justify-between gap-5 py-2 lg:py-0">
-				<WorkStatusBadge status={workStatus} statusText={t(statusTextKey)} />
+				<WorkStatusBadge
+					status={workStatus}
+					statusText={t(statusTextKey)}
+					description={t(statusDescriptionKey)}
+				/>
 				<div class="flex items-center gap-3">
 					{
 						socials && (

@@ -65,6 +65,10 @@ export const ui = {
 		// Work Status
 		"status.open": "Open to work",
 		"status.busy": "Currently working",
+		"status.open.description":
+			"I am currently available for new opportunities and projects",
+		"status.busy.description":
+			"I am currently focused on existing projects but feel free to reach out",
 
 		// Accessibility
 		"a11y.opensEmailClient": "opens email client",
@@ -173,6 +177,10 @@ export const ui = {
 		// Work Status
 		"status.open": "Disponible para trabajar",
 		"status.busy": "Actualmente trabajando",
+		"status.open.description":
+			"Actualmente estoy disponible para nuevas oportunidades y proyectos",
+		"status.busy.description":
+			"Actualmente estoy enfocado en proyectos existentes pero no dudes en contactarme",
 
 		// Accessibility
 		"a11y.opensEmailClient": "abre el cliente de correo",

@@ -71,8 +71,6 @@
 	--oklch-primary: 54.6% 0.215 264;
 	/* #4F46E5 - Secondary (deeper indigo) */
 	--oklch-secondary: 49.6% 0.222 264;
-	/* #A5B4FC - Accent (light indigo) */
-	--oklch-accent: 76.5% 0.108 264;
 	/* highlight colors */
 	--oklch-highlight-sky: 93.27% 0.037 238.08;
 	--oklch-highlight-orange: 0.95 0.04 68.83;

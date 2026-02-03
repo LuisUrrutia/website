@@ -1,38 +1,13 @@
 ---
-import { getCollection } from "astro:content";
 import BlogPage from "@/views/BlogPage.astro";
-import { matchesLocale } from "@/i18n";
+import { getBlogPageStaticPaths, type BlogPost } from "@/data/blog";
 
 export async function getStaticPaths() {
-	const POSTS_PER_PAGE = 10;
-
-	const allPosts = await getCollection("blog", ({ data }) =>
-		matchesLocale("en")(data),
-	);
-
-	allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
-
-	const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
-
-	// Generate paths for pages 2 onwards (page 1 is /blog)
-	return Array.from({ length: totalPages - 1 }, (_, i) => {
-		const page = i + 2;
-		const start = (page - 1) * POSTS_PER_PAGE;
-		const end = start + POSTS_PER_PAGE;
-
-		return {
-			params: { page: String(page) },
-			props: {
-				posts: allPosts.slice(start, end),
-				currentPage: page,
-				totalPages,
-			},
-		};
-	});
+	return getBlogPageStaticPaths("en");
 }
 
 interface Props {
-	posts: Awaited<ReturnType<typeof getCollection<"blog">>>;
+	posts: BlogPost[];
 	currentPage: number;
 	totalPages: number;
 }
