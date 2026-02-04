@@ -14,10 +14,12 @@ interface Props extends astroHTML.JSX.AnchorHTMLAttributes {}
 const SITE_DOMAIN = "urrutia.me";
 
 const { href, class: className, ...rest } = Astro.props;
+const { t } = Astro.locals;
 
+const hrefString = typeof href === "string" ? href : href?.toString();
 const isExternal =
-	href?.startsWith("http://") ||
-	(href?.startsWith("https://") && !href?.includes(SITE_DOMAIN));
+	hrefString?.startsWith("http://") ||
+	(hrefString?.startsWith("https://") && !hrefString?.includes(SITE_DOMAIN));
 
 const externalProps = isExternal
 	? {
@@ -33,7 +35,7 @@ const externalProps = isExternal
 	{
 		isExternal && (
 			<>
-				<span class="sr-only">(opens in new tab)</span>
+				<span class="sr-only">{t("a11y.opensInNewTab")}</span>
 				<IconExternalLink
 					class="ml-0.5 inline-block size-3 align-baseline opacity-70"
 					aria-hidden="true"

@@ -26,11 +26,16 @@ interface Props {
 	url: string;
 	/** The title/text to share */
 	title: string;
+	/** Unique identifier for accessibility (e.g., post slug) */
+	id?: string;
 	/** Optional CSS class */
 	class?: string;
 }
 
-const { url, title, class: className } = Astro.props;
+const { url, title, id, class: className } = Astro.props;
+const labelId = id
+	? `share-label-${id}`
+	: `share-label-${Math.random().toString(36).slice(2, 9)}`;
 const { t } = Astro.locals;
 
 const shareLinks = [
@@ -80,10 +85,10 @@ const shareLinks = [
 ---
 
 <div class:list={["flex flex-wrap items-center gap-2", className]}>
-	<span id="share-label" class="text-subtitle text-sm">{t("share.label")}</span>
+	<span id={labelId} class="text-subtitle text-sm">{t("share.label")}</span>
 	<div
 		role="group"
-		aria-labelledby="share-label"
+		aria-labelledby={labelId}
 		class="flex flex-wrap items-center gap-1"
 	>
 		{

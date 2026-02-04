@@ -3,6 +3,9 @@ import type { APIRoute } from "astro";
 const getRobotsTxt = (sitemapURL: URL) => `User-agent: *
 Allow: /
 
+# Prevent crawling generated OG images
+Disallow: /og/
+
 Sitemap: ${sitemapURL.href}
 `;
 

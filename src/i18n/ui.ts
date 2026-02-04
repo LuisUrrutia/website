@@ -81,6 +81,7 @@ export const ui = {
 		"a11y.skipToContent": "Skip to main content",
 		"a11y.backToTop": "Back to top",
 		"a11y.onLinkedIn": "{name} on LinkedIn",
+		"a11y.opensInNewTab": "(opens in new tab)",
 
 		// Breadcrumbs
 		"breadcrumb.home": "Home",
@@ -205,6 +206,7 @@ export const ui = {
 		"a11y.skipToContent": "Ir al contenido principal",
 		"a11y.backToTop": "Volver arriba",
 		"a11y.onLinkedIn": "{name} en LinkedIn",
+		"a11y.opensInNewTab": "(abre en nueva pestaña)",
 
 		// Breadcrumbs
 		"breadcrumb.home": "Inicio",

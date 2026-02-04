@@ -57,9 +57,7 @@ const [horizontalAvif, horizontalWebp, verticalAvif, verticalWebp] =
 	]);
 ---
 
-<picture
-	class:list={[className, "lg:shrink-0", `lg:max-w-[${VERTICAL_WIDTH}px]`]}
->
+<picture class:list={[className, "lg:max-w-[205px] lg:shrink-0"]}>
 	{/* Mobile and md: horizontal photo */}
 	<source
 		type="image/avif"
@@ -93,11 +91,6 @@ const [horizontalAvif, horizontalWebp, verticalAvif, verticalWebp] =
 		height={HEIGHT}
 		loading="eager"
 		fetchpriority="high"
-		class:list={[
-			"w-full rounded-xl object-cover lg:shrink-0",
-			`h-[${HEIGHT}px]`,
-			`lg:w-[${VERTICAL_WIDTH}px]`,
-			`lg:max-w-[${VERTICAL_WIDTH}px]`,
-		]}
+		class="h-[252px] w-full rounded-xl object-cover lg:w-[205px] lg:max-w-[205px] lg:shrink-0"
 	/>
 </picture>

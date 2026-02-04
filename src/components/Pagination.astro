@@ -74,13 +74,14 @@ function getPageUrl(page: number): string {
 					<IconChevronLeft class="size-5" />
 				</a>
 			) : (
-				<span
+				<button
+					type="button"
+					disabled
 					class="text-subtitle/50 cursor-not-allowed px-3 py-2"
-					aria-disabled="true"
 					aria-label={t("pagination.previous")}
 				>
 					<IconChevronLeft class="size-5" aria-hidden="true" />
-				</span>
+				</button>
 			)}
 
 			{/* Page numbers */}
@@ -116,13 +117,14 @@ function getPageUrl(page: number): string {
 					<IconChevronRight class="size-5" />
 				</a>
 			) : (
-				<span
+				<button
+					type="button"
+					disabled
 					class="text-subtitle/50 cursor-not-allowed px-3 py-2"
-					aria-disabled="true"
 					aria-label={t("pagination.next")}
 				>
 					<IconChevronRight class="size-5" aria-hidden="true" />
-				</span>
+				</button>
 			)}
 		</nav>
 	)
