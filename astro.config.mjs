@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import mdx from "@astrojs/mdx";
 import compressor from "astro-compressor";
 import sitemap from "@astrojs/sitemap";
+import { sitemapHreflang } from "./src/integrations/sitemap-hreflang";
 
 // https://astro.build/config
 export default defineConfig({
@@ -51,6 +52,7 @@ export default defineConfig({
 				},
 			},
 		}),
+		sitemapHreflang(),
 		(await import("@playform/compress")).default({
 			CSS: true,
 			HTML: {

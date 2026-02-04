@@ -100,8 +100,13 @@ const translations = Object.fromEntries(
 		const main = document.querySelector("main[data-translations]");
 		if (!main) return;
 
-		const translations = JSON.parse(main.dataset.translations);
-		const locales = JSON.parse(main.dataset.locales);
+		let translations, locales;
+		try {
+			translations = JSON.parse(main.dataset.translations);
+			locales = JSON.parse(main.dataset.locales);
+		} catch {
+			return; // Keep server-rendered content on parse error
+		}
 		const defaultLocale = main.dataset.defaultLocale;
 
 		// Detect locale from current URL path
