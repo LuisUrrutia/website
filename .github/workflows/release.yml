@@ -7,7 +7,6 @@ on:
 
 env:
   CLOUDFLARE_PROJECT_NAME: personal-website
-  BUILD_DIR: dist/
 
 concurrency:
   group: release-${{ github.ref }}
@@ -72,8 +71,7 @@ jobs:
     needs: release
     if: needs.release.outputs.new-release-published == 'true'
     runs-on: ubicloud-standard-2
-    permissions:
-      contents: read
+    permissions: {}
     environment:
       name: production
       url: https://urrutia.me
