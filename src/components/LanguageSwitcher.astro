@@ -61,11 +61,14 @@ const { lang, t } = Astro.locals;
 	/**
 	 * Gets alternate language URLs from hreflang link tags in the document head.
 	 * These are the canonical source of truth for language-specific URLs.
+	 * Excludes feed links (RSS/Atom) by filtering out links with a type attribute.
 	 */
 	function getHreflangUrls(): Record<string, string> {
 		const urls: Record<string, string> = {};
 		document
-			.querySelectorAll<HTMLLinkElement>('link[rel="alternate"][hreflang]')
+			.querySelectorAll<HTMLLinkElement>(
+				'link[rel="alternate"][hreflang]:not([type])',
+			)
 			.forEach((link) => {
 				const hreflang = link.getAttribute("hreflang");
 				// Skip x-default as it's not a specific locale
