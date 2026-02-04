@@ -19,11 +19,17 @@ const { t } = Astro.locals;
 </button>
 
 <script>
+	let cleanupBackToTop: (() => void) | null = null;
+
 	function initBackToTop(): void {
+		// Clean up previous listeners before adding new ones
+		cleanupBackToTop?.();
+
 		const button = document.getElementById("back-to-top");
 		if (!button) return;
 
 		let isVisible = false;
+		const controller = new AbortController();
 
 		function toggleVisibility(): void {
 			const shouldShow = window.scrollY > 400;
@@ -35,6 +41,11 @@ const { t } = Astro.locals;
 					? "translateY(0)"
 					: "translateY(4rem)";
 				button!.style.pointerEvents = shouldShow ? "auto" : "none";
+
+				// Blur button when hiding to prevent focus issues
+				if (!shouldShow && document.activeElement === button) {
+					button!.blur();
+				}
 			}
 		}
 
@@ -45,11 +56,17 @@ const { t } = Astro.locals;
 		// Initial check
 		toggleVisibility();
 
-		// Listen for scroll
-		window.addEventListener("scroll", toggleVisibility, { passive: true });
+		// Listen for scroll and click with AbortController for cleanup
+		window.addEventListener("scroll", toggleVisibility, {
+			passive: true,
+			signal: controller.signal,
+		});
+		button.addEventListener("click", scrollToTop, {
+			signal: controller.signal,
+		});
 
-		// Handle click
-		button.addEventListener("click", scrollToTop);
+		// Store cleanup function
+		cleanupBackToTop = () => controller.abort();
 	}
 
 	initBackToTop();

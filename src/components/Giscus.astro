@@ -22,6 +22,10 @@ const { lang = "en" } = Astro.props;
 </div>
 
 <script is:inline data-lang={lang}>
+	// Store observers for cleanup
+	let giscusIntersectionObserver = null;
+	let giscusThemeObserver = null;
+
 	function loadGiscus() {
 		const wrapper = document.querySelector(".giscus-wrapper");
 		if (!wrapper || wrapper.dataset.loaded) return;
@@ -68,24 +72,33 @@ const { lang = "en" } = Astro.props;
 		);
 	}
 
+	function cleanupGiscus() {
+		giscusIntersectionObserver?.disconnect();
+		giscusIntersectionObserver = null;
+		// Note: Theme observer persists across navigations since theme state is global
+	}
+
 	function initGiscus() {
+		// Clean up previous intersection observer
+		cleanupGiscus();
+
 		const wrapper = document.querySelector(".giscus-wrapper");
 		if (!wrapper) return;
 
 		// Use Intersection Observer to lazy load when visible
-		const observer = new IntersectionObserver(
+		giscusIntersectionObserver = new IntersectionObserver(
 			(entries) => {
 				entries.forEach((entry) => {
 					if (entry.isIntersecting) {
 						loadGiscus();
-						observer.disconnect();
+						giscusIntersectionObserver?.disconnect();
 					}
 				});
 			},
 			{ rootMargin: "400px" },
 		);
 
-		observer.observe(wrapper);
+		giscusIntersectionObserver.observe(wrapper);
 	}
 
 	// Initialize on page load
@@ -94,17 +107,19 @@ const { lang = "en" } = Astro.props;
 	// Reinitialize after Astro page transitions
 	document.addEventListener("astro:after-swap", initGiscus);
 
-	// Listen for theme changes
-	const themeObserver = new MutationObserver((mutations) => {
-		for (const mutation of mutations) {
-			if (mutation.attributeName === "data-theme") {
-				updateGiscusTheme();
+	// Listen for theme changes (only create once, persists across navigations)
+	if (!giscusThemeObserver) {
+		giscusThemeObserver = new MutationObserver((mutations) => {
+			for (const mutation of mutations) {
+				if (mutation.attributeName === "data-theme") {
+					updateGiscusTheme();
+				}
 			}
-		}
-	});
+		});
 
-	themeObserver.observe(document.documentElement, {
-		attributes: true,
-		attributeFilter: ["data-theme"],
-	});
+		giscusThemeObserver.observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: ["data-theme"],
+		});
+	}
 </script>

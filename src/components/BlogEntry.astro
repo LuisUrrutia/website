@@ -67,7 +67,11 @@ const linkProps = href
 
 <Tag
 	{...linkProps}
-	class="group relative -mx-3 flex flex-col gap-4 overflow-hidden rounded-lg px-3 transition-colors hover:bg-black/[0.02] md:flex-row md:pt-8 dark:hover:bg-white/[0.03]"
+	class:list={[
+		"group relative -mx-3 flex flex-col gap-4 overflow-hidden rounded-lg px-3 transition-colors hover:bg-black/[0.02] md:flex-row md:pt-8 dark:hover:bg-white/[0.03]",
+		lazyTransition && "blog-entry",
+	]}
+	data-transition-name={lazyTransition ? slug : undefined}
 >
 	<div class="text-muted flex w-24 flex-col pt-8 text-sm md:pt-0">
 		<time datetime={isoDate}>{formattedDate}</time>
@@ -106,21 +110,27 @@ const linkProps = href
 
 <script>
 	function initLazyTransitions(): void {
-		document.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => {
-			const elements = link.querySelectorAll<HTMLElement>(
-				"[data-transition-name]",
-			);
-			if (elements.length === 0) return;
+		// Scope to blog entry links only, not all links on the page
+		document
+			.querySelectorAll<HTMLAnchorElement>(".blog-entry[data-transition-name]")
+			.forEach((link) => {
+				if (link.dataset.transitionInit) return;
+				link.dataset.transitionInit = "true";
 
-			link.addEventListener("click", () => {
-				elements.forEach((el) => {
-					const name = el.dataset.transitionName;
-					if (name) {
-						el.style.viewTransitionName = name;
-					}
+				const elements = link.querySelectorAll<HTMLElement>(
+					"[data-transition-name]",
+				);
+				if (elements.length === 0) return;
+
+				link.addEventListener("click", () => {
+					elements.forEach((el) => {
+						const name = el.dataset.transitionName;
+						if (name) {
+							el.style.viewTransitionName = name;
+						}
+					});
 				});
 			});
-		});
 	}
 
 	initLazyTransitions();

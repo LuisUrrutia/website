@@ -81,19 +81,42 @@ const {
 		<!-- Sitemap -->
 		<link rel="sitemap" href="/sitemap-index.xml" />
 
-		<!-- RSS Feed -->
-		<link
-			rel="alternate"
-			type="application/rss+xml"
-			title="Luis Urrutia - Engineering Notes (EN)"
-			href="/rss.xml"
-		/>
-		<link
-			rel="alternate"
-			type="application/rss+xml"
-			title="Luis Urrutia - Notas de Ingeniería (ES)"
-			href="/es/rss.xml"
-		/>
+		<!-- RSS Feed - prioritize current locale -->
+		{
+			lang === "en" ? (
+				<>
+					<link
+						rel="alternate"
+						type="application/rss+xml"
+						title={t("rss.title")}
+						href="/rss.xml"
+					/>
+					<link
+						rel="alternate"
+						type="application/rss+xml"
+						title="Luis Urrutia - Notas de Ingeniería (ES)"
+						href="/es/rss.xml"
+						hreflang="es"
+					/>
+				</>
+			) : (
+				<>
+					<link
+						rel="alternate"
+						type="application/rss+xml"
+						title={t("rss.title")}
+						href="/es/rss.xml"
+					/>
+					<link
+						rel="alternate"
+						type="application/rss+xml"
+						title="Luis Urrutia - Engineering Notes (EN)"
+						href="/rss.xml"
+						hreflang="en"
+					/>
+				</>
+			)
+		}
 
 		<!-- DNS Prefetch for external domains -->
 		<link rel="dns-prefetch" href="https://giscus.app" />

@@ -32,6 +32,7 @@ const isAutoColor = !isThemedIcon && colorMode === "auto";
 		{
 			isThemedIcon ? (
 				<>
+					{/* Light theme icon - has alt text */}
 					<img
 						src={lightIcon}
 						alt={`${name} logo`}
@@ -41,14 +42,16 @@ const isAutoColor = !isThemedIcon && colorMode === "auto";
 						loading={loading}
 						decoding="async"
 					/>
+					{/* Dark theme icon - decorative duplicate, empty alt */}
 					<img
 						src={darkIcon}
-						alt={`${name} logo`}
+						alt=""
 						class="tech-icon tech-icon-dark absolute inset-0 size-12 object-contain"
 						width="48"
 						height="48"
 						loading={loading}
 						decoding="async"
+						aria-hidden="true"
 					/>
 				</>
 			) : (

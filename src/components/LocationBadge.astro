@@ -8,11 +8,7 @@ interface Props {
 const { location } = Astro.props;
 ---
 
-<div
-	class="flex items-center gap-2.5 text-sm font-light"
-	role="group"
-	aria-label={`Location: ${location}`}
->
+<div class="flex items-center gap-2.5 text-sm font-light">
 	<IconLocation class="size-4" aria-hidden="true" />
 	<span>{location}</span>
 </div>
