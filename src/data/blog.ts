@@ -1,5 +1,10 @@
 import { getCollection, type CollectionEntry } from "astro:content";
-import { matchesLocale, type Locale } from "@/i18n";
+import {
+	matchesLocale,
+	getAlternateLocale,
+	getSlugWithoutLocale,
+	type Locale,
+} from "@/i18n";
 
 /** Number of blog posts to display per page */
 export const POSTS_PER_PAGE = 10;
@@ -55,6 +60,37 @@ export async function getBlogPageStaticPaths(locale: Locale) {
 				currentPage: page,
 				totalPages,
 			},
+		};
+	});
+}
+
+/**
+ * Generate static paths for individual blog posts.
+ * Finds translated versions and returns them in props.
+ */
+export async function getBlogPostStaticPaths(locale: Locale) {
+	const alternateLocale = getAlternateLocale(locale);
+
+	const posts = await getCollection("blog", ({ data }) =>
+		matchesLocale(locale)(data),
+	);
+
+	const allPosts = await getCollection("blog");
+
+	return posts.map((post) => {
+		const slug = getSlugWithoutLocale(post.id);
+
+		// Find the translated version
+		const translatedPost = allPosts.find(
+			(p) =>
+				p.data.lang === alternateLocale &&
+				p.data.translationSlug === post.data.translationSlug &&
+				p.id !== post.id,
+		);
+
+		return {
+			params: { slug },
+			props: { post, translatedPost },
 		};
 	});
 }

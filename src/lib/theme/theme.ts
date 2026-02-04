@@ -16,9 +16,13 @@ function getSystemTheme(): Theme {
 }
 
 export function getStoredMode(): ThemeMode {
-	const stored = localStorage.getItem(THEME_KEY);
-	if (stored === "light" || stored === "dark") {
-		return stored;
+	try {
+		const stored = localStorage.getItem(THEME_KEY);
+		if (stored === "light" || stored === "dark") {
+			return stored;
+		}
+	} catch {
+		// localStorage unavailable (private browsing, etc.)
 	}
 	return "auto";
 }
@@ -32,10 +36,14 @@ export function applyTheme(theme: Theme): void {
 }
 
 export function setMode(mode: ThemeMode): void {
-	if (mode === "auto") {
-		localStorage.removeItem(THEME_KEY);
-	} else {
-		localStorage.setItem(THEME_KEY, mode);
+	try {
+		if (mode === "auto") {
+			localStorage.removeItem(THEME_KEY);
+		} else {
+			localStorage.setItem(THEME_KEY, mode);
+		}
+	} catch {
+		// localStorage unavailable (private browsing, etc.)
 	}
 	applyTheme(getActiveTheme(mode));
 }

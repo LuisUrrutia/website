@@ -22,7 +22,7 @@ import CanonicalMeta from "./CanonicalMeta.astro";
 import OpenGraphMeta, { type ArticleMeta } from "./OpenGraphMeta.astro";
 import TwitterCardMeta from "./TwitterCardMeta.astro";
 import { locales, getLocalizedPath } from "@/i18n";
-import { defaultOgImage } from "@/data/seo";
+import { defaultOgImage, siteOwner } from "@/data/seo";
 import { getSiteUrl } from "@/lib/formatters";
 
 export type { ArticleMeta };
@@ -82,6 +82,7 @@ const robotsContent = noindex ? "noindex, nofollow" : "index, follow";
 <!-- Basic Meta -->
 <title>{title}</title>
 <meta name="description" content={description} />
+<meta name="author" content={siteOwner.name} />
 <meta name="robots" content={robotsContent} />
 
 <!-- Canonical and hreflang -->

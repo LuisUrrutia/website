@@ -18,6 +18,12 @@ const { lang, t } = Astro.locals;
 
 const homeHref = getLocalizedPath("/", lang);
 const blogHref = getLocalizedPath("/blog", lang);
+
+// Determine current page for aria-current
+const currentPath = Astro.url.pathname;
+const isHomeCurrent =
+	currentPath === homeHref || currentPath === `${homeHref}/`;
+const isBlogCurrent = currentPath.startsWith(blogHref);
 ---
 
 <header class="mb-6">
@@ -31,6 +37,7 @@ const blogHref = getLocalizedPath("/blog", lang);
 					href={homeHref}
 					class="text-title flex items-center gap-2 font-semibold transition-opacity hover:opacity-80"
 					aria-label={t("a11y.home")}
+					aria-current={isHomeCurrent ? "page" : undefined}
 				>
 					<Logo class="size-6" aria-hidden="true" />
 					<span class="hidden sm:inline">{siteName}</span>
@@ -41,6 +48,7 @@ const blogHref = getLocalizedPath("/blog", lang);
 						<a
 							href={blogHref}
 							class="text-subtitle hover:text-title text-sm transition-colors"
+							aria-current={isBlogCurrent ? "page" : undefined}
 						>
 							{t("blog.heading")}
 						</a>

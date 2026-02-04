@@ -46,8 +46,15 @@ const localesJson = JSON.stringify(locales);
 		}
 
 		function setCookie(name, value, maxAge) {
+			var secure = window.location.protocol === "https:" ? ";Secure" : "";
 			document.cookie =
-				name + "=" + value + ";path=/;max-age=" + maxAge + ";SameSite=Lax";
+				name +
+				"=" +
+				value +
+				";path=/;max-age=" +
+				maxAge +
+				";SameSite=Lax" +
+				secure;
 		}
 
 		function hasVisited() {

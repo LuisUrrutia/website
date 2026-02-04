@@ -1,0 +1,158 @@
+---
+/**
+ * SocialShare - Social media share buttons for blog posts.
+ *
+ * Uses the existing social-share library for URL generation.
+ * Opens share dialogs in new windows for better UX.
+ * Copy Link button copies URL to clipboard with feedback.
+ *
+ * @example
+ * ```astro
+ * <SocialShare url="https://example.com/post" title="My Post" />
+ * ```
+ */
+import IconX from "@/assets/icons/x.svg";
+import IconLinkedIn from "@/assets/icons/linkedin.svg";
+import IconFacebook from "@/assets/icons/facebook.svg";
+import IconWhatsApp from "@/assets/icons/whatsapp.svg";
+import IconTelegram from "@/assets/icons/telegram.svg";
+import IconReddit from "@/assets/icons/reddit.svg";
+import IconMail from "@/assets/icons/mail.svg";
+import IconLink from "@/assets/icons/link.svg";
+import { createShareUrl, SocialProvider } from "@/lib/social-share";
+
+interface Props {
+	/** The URL to share */
+	url: string;
+	/** The title/text to share */
+	title: string;
+	/** Optional CSS class */
+	class?: string;
+}
+
+const { url, title, class: className } = Astro.props;
+const { t } = Astro.locals;
+
+const shareLinks = [
+	{
+		provider: SocialProvider.Twitter,
+		url: createShareUrl(SocialProvider.Twitter, { url, text: title }),
+		label: t("share.twitter"),
+		Icon: IconX,
+	},
+	{
+		provider: SocialProvider.LinkedIn,
+		url: createShareUrl(SocialProvider.LinkedIn, { url, text: title }),
+		label: t("share.linkedin"),
+		Icon: IconLinkedIn,
+	},
+	{
+		provider: SocialProvider.Facebook,
+		url: createShareUrl(SocialProvider.Facebook, { url, text: title }),
+		label: t("share.facebook"),
+		Icon: IconFacebook,
+	},
+	{
+		provider: SocialProvider.Reddit,
+		url: createShareUrl(SocialProvider.Reddit, { url, text: title }),
+		label: t("share.reddit"),
+		Icon: IconReddit,
+	},
+	{
+		provider: SocialProvider.WhatsApp,
+		url: createShareUrl(SocialProvider.WhatsApp, { url, text: title }),
+		label: t("share.whatsapp"),
+		Icon: IconWhatsApp,
+	},
+	{
+		provider: SocialProvider.Telegram,
+		url: createShareUrl(SocialProvider.Telegram, { url, text: title }),
+		label: t("share.telegram"),
+		Icon: IconTelegram,
+	},
+	{
+		provider: SocialProvider.Email,
+		url: createShareUrl(SocialProvider.Email, { url, text: title }),
+		label: t("share.email"),
+		Icon: IconMail,
+	},
+];
+---
+
+<div class:list={["flex flex-wrap items-center gap-2", className]}>
+	<span id="share-label" class="text-subtitle text-sm">{t("share.label")}</span>
+	<div
+		role="group"
+		aria-labelledby="share-label"
+		class="flex flex-wrap items-center gap-1"
+	>
+		{
+			shareLinks.map(({ url, label, Icon }) => (
+				<a
+					href={url}
+					target="_blank"
+					rel="noopener noreferrer"
+					referrerpolicy="strict-origin-when-cross-origin"
+					aria-label={label}
+					class="text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+				>
+					<Icon class="size-4" aria-hidden="true" />
+				</a>
+			))
+		}
+		<button
+			type="button"
+			class="copy-link text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background flex size-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+			aria-label={t("share.copyLink")}
+			data-url={url}
+		>
+			<IconLink class="size-4" aria-hidden="true" />
+		</button>
+	</div>
+	<span
+		class="copy-feedback text-accent text-sm opacity-0 transition-opacity"
+		aria-live="polite"
+	>
+		{t("share.copied")}
+	</span>
+</div>
+
+<script>
+	function initCopyLink(): void {
+		document
+			.querySelectorAll<HTMLButtonElement>(".copy-link")
+			.forEach((btn) => {
+				if (btn.dataset.init) return;
+				btn.dataset.init = "true";
+
+				btn.addEventListener("click", async () => {
+					const url = btn.dataset.url;
+					if (!url) return;
+
+					try {
+						await navigator.clipboard.writeText(url);
+						const feedback = btn
+							.closest("div")
+							?.parentElement?.querySelector(".copy-feedback");
+						if (feedback) {
+							feedback.classList.remove("opacity-0");
+							setTimeout(() => {
+								feedback.classList.add("opacity-0");
+							}, 2000);
+						}
+					} catch {
+						// Fallback for older browsers
+						const input = document.createElement("input");
+						input.value = url;
+						document.body.appendChild(input);
+						input.select();
+						document.execCommand("copy");
+						document.body.removeChild(input);
+					}
+				});
+			});
+	}
+
+	initCopyLink();
+	document.addEventListener("astro:after-swap", initCopyLink);
+</script>

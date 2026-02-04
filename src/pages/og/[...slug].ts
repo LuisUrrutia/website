@@ -25,10 +25,7 @@ export const { getStaticPaths, GET } = await OGImageRoute({
 			side: "inline-start",
 		},
 		padding: 60,
-		fonts: [
-			"https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.woff2",
-			"https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.woff2",
-		],
+		fonts: ["./public/fonts/Inter-400.woff2", "./public/fonts/Inter-700.woff2"],
 		font: {
 			title: {
 				size: 64,

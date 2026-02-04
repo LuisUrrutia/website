@@ -44,13 +44,34 @@ export const providers: Record<SocialProviderType, ProviderConfig> = {
 		},
 	},
 
+	[SocialProvider.Telegram]: {
+		buildShareUrl: ({ url, text }) => {
+			const params = new URLSearchParams({ url });
+			if (text) params.set("text", text);
+			return `https://t.me/share/url?${params}`;
+		},
+	},
+
+	[SocialProvider.Reddit]: {
+		buildShareUrl: ({ url, text }) => {
+			const params = new URLSearchParams({ url });
+			if (text) params.set("title", text);
+			return `https://www.reddit.com/submit?${params}`;
+		},
+	},
+
 	[SocialProvider.Email]: {
 		buildShareUrl: ({ url, text }) => {
 			const params = new URLSearchParams({
 				subject: text ?? "",
-				body: text ? `${text} ${url}` : url,
+				body: text ? `${text}\n\n${url}` : url,
 			});
 			return `mailto:?${params}`;
 		},
+	},
+
+	[SocialProvider.CopyLink]: {
+		// This returns the URL itself - actual copy logic is handled in the component
+		buildShareUrl: ({ url }) => url,
 	},
 };

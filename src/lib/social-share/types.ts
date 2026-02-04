@@ -11,7 +11,10 @@ export const SocialProvider = {
 	Twitter: "twitter",
 	LinkedIn: "linkedin",
 	WhatsApp: "whatsapp",
+	Telegram: "telegram",
+	Reddit: "reddit",
 	Email: "email",
+	CopyLink: "copylink",
 } as const;
 
 export type SocialProviderType =

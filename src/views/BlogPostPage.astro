@@ -21,6 +21,8 @@ import {
 } from "@/lib/formatters";
 import Giscus from "@/components/Giscus.astro";
 import BackToTop from "@/components/BackToTop.astro";
+import SocialShare from "@/components/SocialShare.astro";
+import A from "@/components/mdx/A.astro";
 
 interface Props {
 	post: CollectionEntry<"blog">;
@@ -105,6 +107,7 @@ const breadcrumbItems = [
 	article={{
 		publishedTime: post.data.date.toISOString(),
 		modifiedTime: post.data.updatedDate?.toISOString(),
+		author: "Luis Urrutia",
 		section: post.data.category,
 		tags: post.data.tags,
 	}}
@@ -179,8 +182,12 @@ const breadcrumbItems = [
 			</header>
 
 			<div class="blog-content">
-				<Content />
+				<Content components={{ a: A }} />
 			</div>
+
+			<footer class="not-prose border-border mt-8 border-t pt-6">
+				<SocialShare url={postUrl} title={post.data.title} />
+			</footer>
 
 			<Giscus lang={lang} />
 		</Card>

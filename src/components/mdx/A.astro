@@ -1,0 +1,44 @@
+---
+/**
+ * Custom anchor component for MDX content.
+ *
+ * Automatically detects external links and adds:
+ * - Security attributes (rel="noopener noreferrer", target="_blank")
+ * - Visual indicator icon
+ * - Screen reader accessible text "(opens in new tab)"
+ */
+import IconExternalLink from "@/assets/icons/external-link.svg";
+
+interface Props extends astroHTML.JSX.AnchorHTMLAttributes {}
+
+const SITE_DOMAIN = "urrutia.me";
+
+const { href, class: className, ...rest } = Astro.props;
+
+const isExternal =
+	href?.startsWith("http://") ||
+	(href?.startsWith("https://") && !href?.includes(SITE_DOMAIN));
+
+const externalProps = isExternal
+	? {
+			target: "_blank",
+			rel: "noopener noreferrer",
+			referrerpolicy: "strict-origin-when-cross-origin" as const,
+		}
+	: {};
+---
+
+<a href={href} class={className} {...externalProps} {...rest}>
+	<slot />
+	{
+		isExternal && (
+			<>
+				<span class="sr-only">(opens in new tab)</span>
+				<IconExternalLink
+					class="ml-0.5 inline-block size-3 align-baseline opacity-70"
+					aria-hidden="true"
+				/>
+			</>
+		)
+	}
+</a>

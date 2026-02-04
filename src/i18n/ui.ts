@@ -109,6 +109,18 @@ export const ui = {
 		"rss.title": "Luis Urrutia - Engineering Notes",
 		"rss.description":
 			"Engineering notes on system design, reliability, and building production software at scale.",
+
+		// Social Share
+		"share.label": "Share",
+		"share.twitter": "Share on X (Twitter)",
+		"share.linkedin": "Share on LinkedIn",
+		"share.facebook": "Share on Facebook",
+		"share.whatsapp": "Share on WhatsApp",
+		"share.telegram": "Share on Telegram",
+		"share.reddit": "Share on Reddit",
+		"share.email": "Share via Email",
+		"share.copyLink": "Copy link",
+		"share.copied": "Copied!",
 	},
 	es: {
 		// Meta
@@ -220,6 +232,18 @@ export const ui = {
 		"rss.title": "Luis Urrutia - Notas de Ingeniería",
 		"rss.description":
 			"Notas de ingeniería sobre diseño de sistemas, confiabilidad y construcción de software de producción a escala.",
+
+		// Social Share
+		"share.label": "Compartir",
+		"share.twitter": "Compartir en X (Twitter)",
+		"share.linkedin": "Compartir en LinkedIn",
+		"share.facebook": "Compartir en Facebook",
+		"share.whatsapp": "Compartir en WhatsApp",
+		"share.telegram": "Compartir en Telegram",
+		"share.reddit": "Compartir en Reddit",
+		"share.email": "Compartir por correo",
+		"share.copyLink": "Copiar enlace",
+		"share.copied": "¡Copiado!",
 	},
 } as const;
 

@@ -104,8 +104,17 @@ const {
 		<meta name="msapplication-TileColor" content="#FBFBF9" />
 		<meta name="msapplication-config" content="/browserconfig.xml" />
 
-		<!-- Theme Color -->
-		<meta name="theme-color" content="#FBFBF9" />
+		<!-- Theme Color - adapts to light/dark mode -->
+		<meta
+			name="theme-color"
+			media="(prefers-color-scheme: light)"
+			content="#F9F8FA"
+		/>
+		<meta
+			name="theme-color"
+			media="(prefers-color-scheme: dark)"
+			content="#1C1B29"
+		/>
 
 		<!-- Prefetch hidden themed icons -->
 		<link rel="prefetch" href="/tech/rust.svg" as="image" />

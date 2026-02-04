@@ -1,38 +1,9 @@
 ---
-import { getCollection } from "astro:content";
 import BlogPostPage from "@/views/BlogPostPage.astro";
-import {
-	getAlternateLocale,
-	getSlugWithoutLocale,
-	matchesLocale,
-} from "@/i18n";
+import { getBlogPostStaticPaths } from "@/data/blog";
 
 export async function getStaticPaths() {
-	const currentLocale = "en";
-	const alternateLocale = getAlternateLocale(currentLocale);
-
-	const posts = await getCollection("blog", ({ data }) =>
-		matchesLocale(currentLocale)(data),
-	);
-
-	const allPosts = await getCollection("blog");
-
-	return posts.map((post) => {
-		const slug = getSlugWithoutLocale(post.id);
-
-		// Find the translated version
-		const translatedPost = allPosts.find(
-			(p) =>
-				p.data.lang === alternateLocale &&
-				p.data.translationSlug === post.data.translationSlug &&
-				p.id !== post.id,
-		);
-
-		return {
-			params: { slug },
-			props: { post, translatedPost },
-		};
-	});
+	return getBlogPostStaticPaths("en");
 }
 
 const { post, translatedPost } = Astro.props;
