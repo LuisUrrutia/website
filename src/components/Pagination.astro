@@ -68,10 +68,10 @@ function getPageUrl(page: number): string {
 			{currentPage > 1 ? (
 				<a
 					href={getPageUrl(currentPage - 1)}
-					class="text-subtitle hover:text-title rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
+					class="text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background rounded-lg px-3 py-2 transition-colors hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
 					aria-label={t("pagination.previous")}
 				>
-					<IconChevronLeft class="size-5" />
+					<IconChevronLeft class="size-5" aria-hidden="true" />
 				</a>
 			) : (
 				<button
@@ -100,7 +100,7 @@ function getPageUrl(page: number): string {
 				) : (
 					<a
 						href={getPageUrl(page)}
-						class="text-subtitle hover:text-title min-w-[2.5rem] rounded-lg px-3 py-2 text-center transition-colors hover:bg-white/5"
+						class="text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background min-w-[2.5rem] rounded-lg px-3 py-2 text-center transition-colors hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
 					>
 						{page}
 					</a>
@@ -111,10 +111,10 @@ function getPageUrl(page: number): string {
 			{currentPage < totalPages ? (
 				<a
 					href={getPageUrl(currentPage + 1)}
-					class="text-subtitle hover:text-title rounded-lg px-3 py-2 transition-colors hover:bg-white/5"
+					class="text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background rounded-lg px-3 py-2 transition-colors hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
 					aria-label={t("pagination.next")}
 				>
-					<IconChevronRight class="size-5" />
+					<IconChevronRight class="size-5" aria-hidden="true" />
 				</a>
 			) : (
 				<button

@@ -35,7 +35,7 @@ const isBlogCurrent = currentPath.startsWith(blogHref);
 			<div class="flex items-center gap-6">
 				<a
 					href={homeHref}
-					class="text-title flex items-center gap-2 font-semibold transition-opacity hover:opacity-80"
+					class="text-title focus-visible:ring-accent focus-visible:ring-offset-card flex items-center gap-2 rounded-lg font-semibold transition-opacity hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
 					aria-label={t("a11y.home")}
 					aria-current={isHomeCurrent ? "page" : undefined}
 				>
@@ -47,7 +47,7 @@ const isBlogCurrent = currentPath.startsWith(blogHref);
 					<li>
 						<a
 							href={blogHref}
-							class="text-subtitle hover:text-title text-sm transition-colors"
+							class="text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-card rounded-lg px-1 py-0.5 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
 							aria-current={isBlogCurrent ? "page" : undefined}
 						>
 							{t("blog.heading")}

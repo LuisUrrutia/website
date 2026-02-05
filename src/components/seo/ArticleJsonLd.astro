@@ -25,6 +25,8 @@ interface Props {
 	image: string;
 	/** Article tags/keywords */
 	tags?: string[];
+	/** Language of the article (e.g., "en", "es") */
+	lang?: string;
 }
 
 const {
@@ -36,6 +38,7 @@ const {
 	modifiedTime,
 	image,
 	tags,
+	lang,
 } = Astro.props;
 
 const formattedPublishedTime = toISOWithTimezone(publishedTime);
@@ -56,6 +59,11 @@ const jsonLd = {
 	datePublished: formattedPublishedTime,
 	...(formattedModifiedTime && { dateModified: formattedModifiedTime }),
 	...(tags && tags.length > 0 && { keywords: tags.join(", ") }),
+	...(lang && { inLanguage: lang }),
+	mainEntityOfPage: {
+		"@type": "WebPage",
+		"@id": url,
+	},
 	author: personEntity,
 	publisher: personEntity,
 };

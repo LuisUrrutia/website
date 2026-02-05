@@ -9,8 +9,21 @@
  *
  * @see https://developers.google.com/search/docs/appearance/structured-data/profile-page
  */
+import { execSync } from "node:child_process";
 import { siteOwner, siteName, buildPersonEntity } from "@/data/seo";
 import { toISOWithTimezone } from "@/lib/formatters";
+
+/** Get the last git commit date as a stable dateModified value */
+function getLastCommitDate(): Date {
+	try {
+		const timestamp = execSync("git log -1 --format=%cI", {
+			encoding: "utf-8",
+		}).trim();
+		return new Date(timestamp);
+	} catch {
+		return new Date();
+	}
+}
 
 interface Props {
 	siteUrl: string;
@@ -54,7 +67,7 @@ const profilePageEntity = {
 		"@id": `${siteUrl}/#person`,
 	},
 	dateCreated: toISOWithTimezone(new Date("2024-01-01T00:00:00")),
-	dateModified: toISOWithTimezone(new Date()),
+	dateModified: toISOWithTimezone(getLastCommitDate()),
 };
 
 const jsonLd = {

@@ -6,7 +6,6 @@ export type { Props as SEOProps, ArticleMeta } from "./SEO.astro";
 export { default as ArticleJsonLd } from "./ArticleJsonLd.astro";
 export { default as BreadcrumbJsonLd } from "./BreadcrumbJsonLd.astro";
 export { default as HomePageJsonLd } from "./HomePageJsonLd.astro";
-// Note: PersonJsonLd and WebSiteJsonLd exist but are unused - HomePageJsonLd combines them
 
 // Meta components
 export { default as CanonicalMeta } from "./CanonicalMeta.astro";

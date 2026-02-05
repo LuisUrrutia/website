@@ -68,7 +68,7 @@ const linkProps = href
 <Tag
 	{...linkProps}
 	class:list={[
-		"group relative -mx-3 flex flex-col gap-4 overflow-hidden rounded-lg px-3 transition-colors hover:bg-black/[0.02] md:flex-row md:pt-8 dark:hover:bg-white/[0.03]",
+		"group focus-visible:ring-accent focus-visible:ring-offset-card relative -mx-3 flex flex-col gap-4 overflow-hidden rounded-lg px-3 transition-colors hover:bg-black/[0.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:flex-row md:pt-8 dark:hover:bg-white/[0.03]",
 		lazyTransition && "blog-entry",
 	]}
 	data-transition-name={lazyTransition ? slug : undefined}

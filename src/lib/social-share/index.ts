@@ -31,21 +31,3 @@ export function createShareUrl(
 
 	return providers[provider].buildShareUrl(params);
 }
-
-/**
- * Returns all available social providers.
- * Useful for rendering share buttons dynamically.
- *
- * @example
- * ```ts
- * import { getAvailableProviders, createShareUrl } from "@/lib/services/social-share";
- *
- * const shareButtons = getAvailableProviders().map((provider) => ({
- *   provider,
- *   url: createShareUrl(provider, { url: "https://example.com" }),
- * }));
- * ```
- */
-export function getAvailableProviders(): SocialProviderType[] {
-	return Object.keys(providers) as SocialProviderType[];
-}

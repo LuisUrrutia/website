@@ -27,7 +27,7 @@ export default defineConfig({
 	vite: {
 		plugins: [tailwindcss()],
 		build: {
-			// Inline assets up to 7KB (default is 4KB)
+			// Inline assets up to 10KB (default is 4KB)
 			assetsInlineLimit: 10 * 1024,
 		},
 	},
@@ -68,7 +68,7 @@ export default defineConfig({
 		}),
 		compressor({
 			brotli: true,
-			gzip: false,
+			gzip: true,
 		}),
 	],
 });

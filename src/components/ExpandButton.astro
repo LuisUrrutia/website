@@ -69,7 +69,9 @@ const {
 	<span class="expand-btn-text"
 		>{ariaExpanded ? expandedText : collapsedText}</span
 	>
-	<span class="size-4 transition-transform group-aria-expanded:rotate-180">
+	<span
+		class="size-4 transition-transform group-aria-expanded:rotate-180 motion-reduce:transition-none"
+	>
 		<IconChevronDown class="size-full" />
 	</span>
 </button>

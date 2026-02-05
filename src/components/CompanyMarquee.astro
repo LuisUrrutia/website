@@ -12,11 +12,11 @@ interface Props {
 }
 
 const { companies, label, duration = 45, direction = "left" } = Astro.props;
+const { t } = Astro.locals;
 ---
 
 <div
 	class="marquee-container"
-	aria-roledescription="carousel"
 	aria-label={label}
 	style={`--marquee-duration: ${duration}s`}
 >
@@ -32,6 +32,7 @@ const { companies, label, duration = 45, direction = "left" } = Astro.props;
 						referrerpolicy="strict-origin-when-cross-origin"
 					>
 						{company.name}
+						<span class="sr-only">{t("a11y.opensInNewTab")}</span>
 					</a>
 				</li>
 			))
@@ -63,7 +64,7 @@ const { companies, label, duration = 45, direction = "left" } = Astro.props;
 								<img
 									src={company.logo}
 									alt={`${company.name} logo`}
-									class="marquee-logo block [[data-theme=dark]_&]:hidden"
+									class="marquee-logo marquee-logo--light"
 									width={company.width}
 									height="28"
 									loading={iteration === 0 ? "eager" : "lazy"}
@@ -72,10 +73,10 @@ const { companies, label, duration = 45, direction = "left" } = Astro.props;
 								<img
 									src={company.logoDark}
 									alt=""
-									class="marquee-logo hidden [[data-theme=dark]_&]:block"
+									class="marquee-logo marquee-logo--dark"
 									width={company.width}
 									height="28"
-									loading={iteration === 0 ? "eager" : "lazy"}
+									loading="lazy"
 									decoding="async"
 								/>
 							</a>
@@ -146,6 +147,22 @@ const { companies, label, duration = 45, direction = "left" } = Astro.props;
 		width: auto;
 	}
 
+	.marquee-logo--light {
+		display: block;
+	}
+
+	.marquee-logo--dark {
+		display: none;
+	}
+
+	:global([data-theme="dark"]) .marquee-logo--light {
+		display: none;
+	}
+
+	:global([data-theme="dark"]) .marquee-logo--dark {
+		display: block;
+	}
+
 	.marquee-separator {
 		color: oklch(78% 0.06 270);
 		flex-shrink: 0;
@@ -160,9 +177,97 @@ const { companies, label, duration = 45, direction = "left" } = Astro.props;
 		}
 	}
 
+	.marquee-track.is-dragging {
+		animation-play-state: paused;
+		cursor: grabbing;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.marquee-track {
 			animation: none;
 		}
 	}
 </style>
+
+<script>
+	function initMarqueeDrag(): void {
+		document
+			.querySelectorAll<HTMLElement>(".marquee-container")
+			.forEach((container) => {
+				if (container.dataset.dragInit) return;
+				container.dataset.dragInit = "true";
+
+				const track = container.querySelector<HTMLElement>(".marquee-track");
+				if (!track) return;
+
+				const isReverse = track.classList.contains("marquee-track--reverse");
+				let isDragging = false;
+				let startX = 0;
+				let currentOffset = 0;
+
+				function getTranslateX(): number {
+					const matrix = new DOMMatrix(getComputedStyle(track!).transform);
+					return matrix.m41;
+				}
+
+				function onStart(x: number): void {
+					isDragging = true;
+					startX = x;
+					currentOffset = getTranslateX();
+					track!.classList.add("is-dragging");
+					track!.style.transform = `translateX(${currentOffset}px)`;
+				}
+
+				function onMove(x: number): void {
+					if (!isDragging) return;
+					const delta = x - startX;
+					const contentWidth = track!.scrollWidth / 2;
+					let newOffset = currentOffset + delta;
+
+					// Wrap around seamlessly
+					if (newOffset > 0) newOffset -= contentWidth;
+					if (newOffset < -contentWidth) newOffset += contentWidth;
+
+					track!.style.transform = `translateX(${newOffset}px)`;
+				}
+
+				function onEnd(): void {
+					if (!isDragging) return;
+					isDragging = false;
+
+					// Calculate where we are as a fraction of the animation cycle.
+					// The animation goes from 0 to -50% (half the total scrollWidth).
+					const contentWidth = track!.scrollWidth / 2;
+					const finalX = getTranslateX();
+
+					// Normalize to 0..1 progress through the animation
+					let progress = -finalX / contentWidth;
+					if (isReverse) progress = 1 - progress;
+					progress = ((progress % 1) + 1) % 1;
+
+					// Resume animation from the drag position using negative delay
+					const duration = parseFloat(
+						getComputedStyle(container).getPropertyValue("--marquee-duration"),
+					);
+					track!.style.transform = "";
+					track!.style.animationDelay = `-${progress * duration}s`;
+					track!.classList.remove("is-dragging");
+				}
+
+				container.addEventListener(
+					"touchstart",
+					(e) => onStart(e.touches[0].clientX),
+					{ passive: true },
+				);
+				container.addEventListener(
+					"touchmove",
+					(e) => onMove(e.touches[0].clientX),
+					{ passive: true },
+				);
+				container.addEventListener("touchend", onEnd);
+			});
+	}
+
+	initMarqueeDrag();
+	document.addEventListener("astro:after-swap", initMarqueeDrag);
+</script>

@@ -14,6 +14,8 @@ type Props = SocialLinksProps & {
 	vertical?: boolean;
 };
 
+const { t } = Astro.locals;
+
 const {
 	github,
 	linkedin,
@@ -72,7 +74,8 @@ const links = socialConfig
 					class:list={["social-link", `social-link--${key}`]}
 					aria-label={label}
 				>
-					<Icon class={iconClass} />
+					<Icon class={iconClass} aria-hidden="true" />
+					<span class="sr-only">{t("a11y.opensInNewTab")}</span>
 				</a>
 			))}
 		</nav>
@@ -84,6 +87,13 @@ const links = socialConfig
 		position: relative;
 		isolation: isolate;
 		color: var(--color-title);
+		border-radius: 0.5rem;
+		outline: none;
+	}
+
+	.social-link:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 2px;
 	}
 
 	/*
