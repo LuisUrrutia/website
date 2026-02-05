@@ -1,7 +1,7 @@
 # urrutia.me
 
 <p align="center">
-  <strong>My personal portfolio website built with Astro and Tailwind CSS v4.</strong>
+  <strong>Personal portfolio and blog built with Astro v5 and Tailwind CSS v4.</strong>
 </p>
 
 <p align="center">
@@ -11,13 +11,24 @@
 </p>
 
 <p align="center">
-  <a href="https://urrutia.me">View Live Site</a> •
-  <a href="#tech-stack">Tech Stack</a> •
-  <a href="#getting-started">Getting Started</a> •
+  <a href="https://urrutia.me">View Live Site</a> &bull;
+  <a href="#features">Features</a> &bull;
+  <a href="#tech-stack">Tech Stack</a> &bull;
+  <a href="#getting-started">Getting Started</a> &bull;
   <a href="#project-structure">Project Structure</a>
 </p>
 
 ---
+
+## Features
+
+- **Multilingual** -- English (default) and Spanish with full i18n support, per-locale RSS feeds, and hreflang tags
+- **Blog** -- MDX-powered blog with pagination, reading time, social sharing, and Giscus comments
+- **SEO** -- Canonical URLs, Open Graph, Twitter Cards, JSON-LD structured data (Person, WebSite, ProfilePage, BlogPosting, BreadcrumbList), auto-generated OG images, sitemap with hreflang
+- **Dark mode** -- Three-state theme toggle (auto/light/dark) with blocking script to prevent flash of wrong theme
+- **Accessibility** -- Skip links, ARIA labels, focus-visible indicators, prefers-reduced-motion support, screen reader announcements
+- **Performance** -- Zero JS by default, inlined CSS, subsetted variable font, Brotli + gzip compression, lazy-loaded images with AVIF/WebP and responsive srcset
+- **View Transitions** -- Native CSS view transitions with lazy transition-name assignment for smooth page navigation
 
 ## Tech Stack
 
@@ -25,31 +36,42 @@
 
 | Technology                                    | Description                                   |
 | --------------------------------------------- | --------------------------------------------- |
-| [Astro](https://astro.build/)                 | Static site generator with zero JS by default |
+| [Astro v5](https://astro.build/)              | Static site generator with zero JS by default |
 | [Tailwind CSS v4](https://tailwindcss.com/)   | Utility-first CSS framework                   |
 | [TypeScript](https://www.typescriptlang.org/) | Type-safe JavaScript                          |
+| [MDX](https://mdxjs.com/)                     | Markdown with components for blog posts       |
 
 ### Development
 
-| Tool                                                                 | Description                                 |
-| -------------------------------------------------------------------- | ------------------------------------------- |
-| [Bun](https://bun.sh/)                                               | Fast JavaScript runtime and package manager |
-| [OxLint](https://oxc-project.github.io/docs/guide/usage/linter.html) | High-performance linter                     |
-| [Prettier](https://prettier.io/)                                     | Code formatter                              |
-| [Husky](https://typicode.github.io/husky/)                           | Git hooks                                   |
-| [Commitlint](https://commitlint.js.org/)                             | Conventional commit linting                 |
-| [lint-staged](https://github.com/lint-staged/lint-staged)            | Run linters on staged files                 |
+| Tool                                                                 | Description                                    |
+| -------------------------------------------------------------------- | ---------------------------------------------- |
+| [Bun](https://bun.sh/)                                               | Fast JavaScript runtime and package manager    |
+| [OxLint](https://oxc-project.github.io/docs/guide/usage/linter.html) | High-performance linter with type-aware rules  |
+| [Prettier](https://prettier.io/)                                     | Code formatter with Astro and Tailwind plugins |
+| [Husky](https://typicode.github.io/husky/)                           | Git hooks                                      |
+| [Commitlint](https://commitlint.js.org/)                             | Conventional commit linting                    |
+| [lint-staged](https://github.com/lint-staged/lint-staged)            | Run linters on staged files                    |
+
+### Build Pipeline
+
+| Step                                                           | Description                                      |
+| -------------------------------------------------------------- | ------------------------------------------------ |
+| [Astro](https://astro.build/)                                  | Static page generation with inlined CSS          |
+| [astro-og-canvas](https://github.com/delucis/astro-og-canvas)  | Build-time OG image generation per blog post     |
+| [@playform/compress](https://github.com/PlayForm/Compress)     | HTML, CSS, JS, JSON, SVG, and image minification |
+| [astro-compressor](https://github.com/sondr3/astro-compressor) | Brotli and gzip pre-compression                  |
+| [SVGO](https://svgo.dev/)                                      | SVG optimization via Astro experimental flag     |
 
 ### CI/CD
 
-| Workflow   | Description                               |
-| ---------- | ----------------------------------------- |
-| Verify     | Runs lint, format check, and build on PRs |
-| Release    | Automated releases with semantic-release  |
-| CodeQL     | Security vulnerability scanning           |
-| Lighthouse | Performance and accessibility audits      |
-| Commitlint | Validates commit message format           |
-| Dependabot | Automated dependency updates              |
+| Workflow   | Description                                       |
+| ---------- | ------------------------------------------------- |
+| Verify     | Lint, format check, and build on PRs              |
+| Release    | Semantic-release with Cloudflare Pages deployment |
+| CodeQL     | Security vulnerability scanning                   |
+| Lighthouse | Performance and accessibility audits (>= 90%)     |
+| Commitlint | Validates conventional commit format              |
+| Dependabot | Weekly automated dependency updates               |
 
 ## Getting Started
 
@@ -60,36 +82,18 @@
 ### Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/LuisUrrutia/website.git
-cd web
-
-# Install dependencies
+cd website
 bun install
 ```
 
 ### Development
 
-Start the development server to begin working on the site. The server includes hot module replacement, so changes are reflected immediately in the browser:
-
 ```bash
 bun run dev
 ```
 
-The site will be available at `http://localhost:4321`.
-
-Before committing, ensure your code passes linting and formatting checks:
-
-```bash
-bun run lint    # Check for code issues
-bun run fmt     # Verify formatting
-```
-
-To build the production version:
-
-```bash
-bun run build
-```
+The site will be available at `http://localhost:4321` with hot module replacement.
 
 ### Commands
 
@@ -105,60 +109,80 @@ bun run build
 
 ### Testing with Docker
 
-A `docker-compose.yml` is provided to test the production build with a lightweight server ([Static Web Server](https://static-web-server.net/)) that supports Brotli compression and proper cache headers. This allows you to run Lighthouse or other performance tools against a realistic production environment:
+A `docker-compose.yml` is provided to test the production build with [Static Web Server](https://static-web-server.net/), which supports Brotli compression and proper cache headers:
 
 ```bash
-# Build the site first
 bun run build
-
-# Start the container
 docker compose up -d
-
 # Site available at http://localhost:8080
 ```
-
-Run Lighthouse against the Docker server to get accurate performance metrics that reflect production behavior, including compression and caching benefits.
 
 ## Project Structure
 
 ```
-.
-├── .github/
-│   ├── workflows/            # GitHub Actions
-├── public/
-│   ├── companies/            # Company logo SVGs
-│   ├── favicons/             # Favicon files
-│   ├── patterns/             # Background patterns
-│   └── tech/                 # Technology icon SVGs
-├── src/
-│   ├── assets/
-│   │   ├── icons/            # Icon components (Astro)
-│   │   └── images/           # Images (processed by Astro)
-│   ├── components/           # Reusable components
-│   ├── layouts/              # Page layouts
-│   ├── pages/                # Pages
-│   ├── sections/             # Page sections
-│   └── styles/               # Global styles
+src/
+├── assets/
+│   ├── blog/              # Blog post images
+│   ├── icons/             # SVG icons (optimized via SVGO)
+│   ├── images/            # Site images (processed by Astro)
+│   └── testimonials/      # Testimonial photos
+├── components/            # Reusable UI components (.astro)
+│   ├── mdx/               # Custom MDX components
+│   └── seo/               # JSON-LD, meta tags, Open Graph
+├── content/
+│   └── blog/              # MDX blog posts (en/ and es/)
+├── data/                  # Static data (blog, seo, technologies, companies)
+├── i18n/                  # Translations and i18n utilities
+├── integrations/          # Custom Astro integrations (sitemap hreflang)
+├── layouts/               # Layout.astro
+├── lib/                   # Utilities (formatters, theme, social-share)
+├── pages/                 # File-based routes
+│   ├── blog/              # Blog listing, pagination, and post pages
+│   ├── es/                # Spanish locale routes
+│   ├── og/                # Auto-generated OG images
+│   ├── robots.txt.ts      # Dynamic robots.txt
+│   └── rss.xml.ts         # RSS feed
+├── sections/              # Page sections (Hero, Stack, Testimonials, Contact)
+├── styles/                # Theme tokens (oklch), global CSS, utilities
+├── types/                 # TypeScript definitions
+└── views/                 # Page compositions (HomePage, BlogPage, BlogPostPage)
+public/
+├── companies/             # Company logo SVGs (light + dark variants)
+├── favicons/              # Favicon files (SVG, PNG at multiple sizes)
+├── fonts/                 # Self-hosted Inter Variable (subsetted woff2)
+├── images/                # Static images
+└── tech/                  # Technology icon SVGs
+```
+
+### Architecture
+
+Pages are thin routing files that delegate to **Views**, which compose **Sections** and **Components**. This avoids duplication between English and Spanish routes:
+
+```
+Page (/pages/index.astro) → View (HomePage.astro) → Sections (HeroSection, StackSection, ...)
+Page (/pages/es/index.astro) → View (HomePage.astro) → same sections, different locale
 ```
 
 ## Configuration
 
-### Theme Colors
+### Theme
 
-The site uses oklch color space for better color manipulation. Theme colors are defined in `src/styles/theme.css`:
+Colors use oklch for perceptual uniformity and P3 gamut support. Semantic tokens reference primitives and are defined in `src/styles/theme.css`:
 
-```css
-:root {
-	--oklch-primary: 54.6% 0.215 264;
-	--oklch-secondary: 49.6% 0.222 264;
-	--oklch-accent: 76.5% 0.108 264;
-	/* ... */
-}
-```
+- Light theme on `:root`, dark theme on `[data-theme="dark"]`
+- Three-state toggle: auto (follows system), light, dark
+- Persisted in `localStorage`, applied via blocking `<head>` script
+
+### Internationalization
+
+- Locales: English (no URL prefix) and Spanish (`/es/`)
+- Translations: `src/i18n/ui.ts` with type-safe keys
+- Access: `Astro.locals.t("key")` and `Astro.locals.lang`
+- Blog translations linked via `translationSlug` frontmatter field
 
 ### Lighthouse Thresholds
 
-The CI enforces minimum Lighthouse scores (configurable in `lighthouserc.json`):
+CI enforces minimum Lighthouse scores (configurable in `lighthouserc.json`):
 
 - Performance: 90%
 - Accessibility: 90%
@@ -167,21 +191,20 @@ The CI enforces minimum Lighthouse scores (configurable in `lighthouserc.json`):
 
 ## Contributing
 
-While this is a personal portfolio, bug reports and suggestions are welcome! Please open an issue to discuss any changes.
+While this is a personal portfolio, bug reports and suggestions are welcome. Please open an issue to discuss any changes.
 
 ### Commit Convention
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
-feat: add new feature
+feat: new feature
 fix: bug fix
+refactor: code refactoring
 chore: maintenance tasks
+perf: performance improvements
 docs: documentation changes
 style: formatting changes
-refactor: code refactoring
-perf: performance improvements
-test: adding tests
 ```
 
 ## License
@@ -194,10 +217,10 @@ This project is licensed under the [Creative Commons Attribution-NonCommercial-N
 
 **You are free to:**
 
-- **Share** — copy and redistribute the material in any medium or format
+- **Share** -- copy and redistribute the material in any medium or format
 
 **Under the following terms:**
 
-- **Attribution** — You must give appropriate credit, provide a link to the license, and indicate if changes were made
-- **NonCommercial** — You may not use the material for commercial purposes
-- **NoDerivatives** — If you remix, transform, or build upon the material, you may not distribute the modified material
+- **Attribution** -- You must give appropriate credit, provide a link to the license, and indicate if changes were made
+- **NonCommercial** -- You may not use the material for commercial purposes
+- **NoDerivatives** -- If you remix, transform, or build upon the material, you may not distribute the modified material
