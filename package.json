@@ -24,12 +24,12 @@
     "tar": "7.5.7"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.3.13",
+    "@astrojs/mdx": "^4.3.14",
     "@astrojs/rss": "^4.0.15",
     "@astrojs/sitemap": "^3.7.0",
     "@playform/compress": "^0.2.1",
     "@tailwindcss/vite": "^4.1.18",
-    "astro": "^5.17.1",
+    "astro": "^5.18.1",
     "astro-font": "^1.1.0",
     "astro-og-canvas": "^0.10.0",
     "tailwindcss": "^4.1.18"
