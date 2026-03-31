@@ -1,6 +1,6 @@
-/// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
+import "../.astro/types.d.ts";
 import type { Locale, TranslationKey } from "@/i18n";
 
 declare global {

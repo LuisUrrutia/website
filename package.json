@@ -18,40 +18,43 @@
     "*.{js,ts,jsx,tsx,astro}": "oxlint --type-aware"
   },
   "overrides": {
-    "//lodash": "CVE-2025-13465 - remove when @astrojs/check updates yaml-language-server",
-    "//tar": "CVE-2024-28863 - remove when @semantic-release/npm updates npm dependency",
     "lodash": "4.17.23",
     "tar": "7.5.7"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.3.13",
-    "@astrojs/rss": "^4.0.15",
-    "@astrojs/sitemap": "^3.7.0",
-    "@playform/compress": "^0.2.1",
-    "@tailwindcss/vite": "^4.1.18",
-    "astro": "^5.17.1",
+    "@astrojs/mdx": "^5.0.3",
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.2",
+    "@playform/compress": "^0.2.2",
+    "@tailwindcss/vite": "^4.2.2",
+    "astro": "^6.1.1",
     "astro-font": "^1.1.0",
-    "astro-og-canvas": "^0.10.0",
-    "tailwindcss": "^4.1.18"
+    "astro-og-canvas": "^0.10.1",
+    "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.6",
-    "@commitlint/cli": "^20.3.1",
-    "@commitlint/config-conventional": "^20.3.1",
+    "@astrojs/check": "^0.9.8",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@prettier/plugin-oxc": "0.1.3",
     "@semantic-release/exec": "^7.1.0",
-    "astro-compressor": "^1.2.0",
+    "astro-compressor": "^1.3.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
-    "oxlint": "^1.42.0",
-    "oxlint-tsgolint": "^0.11.4",
+    "lint-staged": "^16.4.0",
+    "oxlint": "^1.57.0",
+    "oxlint-tsgolint": "^0.18.1",
     "prettier": "^3.8.1",
     "prettier-plugin-astro": "^0.14.1",
-    "prettier-plugin-packagejson": "^3.0.0",
+    "prettier-plugin-packagejson": "^3.0.2",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "typescript": "^5.9.3"
   },
   "engines": {
-    "bun": ">=1.3"
+    "bun": ">=1.3",
+    "node": ">=22.12.0"
+  },
+  "x-securityOverrideNotes": {
+    "lodash": "CVE-2025-13465 - remove when @astrojs/check updates yaml-language-server",
+    "tar": "CVE-2024-28863 - remove when @semantic-release/npm updates npm dependency"
   }
 }
