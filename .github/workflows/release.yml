@@ -57,7 +57,14 @@ jobs:
         id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: bunx semantic-release
+        run: >-
+          bunx
+          --package semantic-release@25.0.3
+          --package @semantic-release/commit-analyzer@13.0.1
+          --package @semantic-release/release-notes-generator@14.1.0
+          --package @semantic-release/github@12.0.6
+          --package @semantic-release/exec@7.1.0
+          semantic-release
 
       - name: Upload build artifact
         if: steps.release.outputs.new-release-published == 'true'
