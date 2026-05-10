@@ -37,10 +37,6 @@ export default defineConfig({
 		inlineStylesheets: "always",
 	},
 
-	experimental: {
-		svgo: true,
-	},
-
 	integrations: [
 		mdx(),
 		sitemap({
