@@ -1,0 +1,276 @@
+---
+title: "Tu repo debería hacerse cargo del setup"
+description: "Mise permite que un repositorio declare sus herramientas, variables de entorno y tasks de proyecto en un solo sitio para que el setup deje de vivir en memoria, historial de shell y docs dispersas."
+date: 2026-05-17
+category: "Developer Tools"
+tags: ["Mise", "Developer Tools", "Workflow", "Productivity"]
+lang: "es"
+translationSlug: "your-repo-should-own-the-setup"
+---
+
+Cada repo tiene su pequeño ritual.
+
+El problema empieza cuando vas saltando entre proyectos personales, código de empresa y algún repo open-source al que solo querías hacerle un arreglo rápido, y cada uno espera una versión distinta de Node, otra de Python o el package manager de turno.
+
+Siempre me ha dado bastante pereza configurar proyectos con versiones distintas de lenguajes, porque en mis proyectos personales suelo usar la última LTS, que es lo que me gusta, pero luego abro un repo del trabajo y necesita un Node más viejo, otro proyecto pide otro Python, y el repo open-source que parecía sencillo viene con su propio ritual.
+
+Así que acabas con `nvm`, intentando acordarte de cómo iba lo de `pyenv`, mirando si hay un `.tool-versions` escondido por ahí, y después de instalar medio internet lees el README y te suelta que en realidad deberías estar usando otra versión. Como si nada.
+
+Ha sido un lío siempre, porque cada lenguaje tiene su version manager "cómodo", y durante un tiempo funciona, hasta que trabajas en suficientes proyectos y te das cuenta de que ya no estás gestionando versiones, estás gestionando version managers.
+
+Ahí fue cuando mise empezó a tener sentido para mí, no como otro `nvm` o `fnm` más bonito, sino como un sitio donde el proyecto puede decir: estas son las herramientas, estas son las variables de entorno y estos son los comandos que usamos de verdad.
+
+```toml
+[tools]
+node = "22"
+pnpm = "9"
+python = "3.12"
+uv = "latest"
+```
+
+Ese archivito es todo el pitch para mí.
+
+No la implementación en Rust, no la charla de benchmarks, no el rollo de "reemplaza todas las herramientas de tu máquina" que hace que cualquier tool suene a secta. Solo una idea bastante aburrida: el repo debería saber lo que necesita.
+
+## El setup del proyecto no debería vivir en tu cabeza
+
+La mayoría del dolor de setup no viene de un problemón enorme, viene de los huecos entre herramientas, donde cada pieza tiene sentido por separado pero el conjunto solo funciona si te sabes la secuencia correcta.
+
+La primera vez acaba pareciéndose a esto:
+
+```sh
+nvm use
+corepack enable
+pnpm install
+pyenv local 3.12
+uv sync
+direnv allow
+pnpm run dev
+```
+
+Ninguno de esos comandos es absurdo por sí solo. Pero juntas unos cuantos y el setup empieza a parecer una búsqueda del tesoro.
+
+Mise te da un sitio donde poner ese ritual dentro del repo.
+
+```toml
+[tools]
+node = "22"
+pnpm = "9"
+python = "3.12"
+uv = "latest"
+```
+
+Entonces el primer paso no es "pregunta qué versión de Node usa la gente", es simplemente:
+
+```sh
+mise install
+```
+
+Y cuando quieres ser explícito, sobre todo en scripts o shells no interactivos, puedes pasar por mise en vez de confiar en que tu shell ya tenga activado lo correcto:
+
+```sh
+mise exec -- node -v
+mise exec -- pnpm -v
+mise exec -- python --version
+```
+
+No es espectacular, pero a mí me gustan las herramientas de setup aburridas, porque antes de tocar el código lo último que quiero es entretenimiento.
+
+## Usa tasks cuando el comando salta entre herramientas
+
+Un task runner no me dice nada si el ejemplo es este:
+
+```toml
+[tasks.test]
+run = "pnpm run test"
+```
+
+Eso es escribir peor un comando que ya conoce todo el mundo.
+
+El task runner de mise empieza a tener sentido cuando el comando pertenece al proyecto, no a un ecosistema concreto, porque los repos reales suelen tener checks de frontend, checks de backend, archivos generados, migraciones o servicios locales que no encajan bien en `package.json` sin convertirlo en un cajón de todo.
+
+```toml
+[tools]
+node = "22"
+pnpm = "9"
+python = "3.12"
+uv = "latest"
+
+[env]
+API_BASE_URL = "http://localhost:4000"
+
+[tasks.check]
+description = "Run the local verification before opening a PR"
+depends = ["check:frontend", "check:backend"]
+
+[tasks."check:frontend"]
+run = "pnpm lint && pnpm typecheck"
+
+[tasks."check:backend"]
+run = "uv run pytest"
+```
+
+Ahora `mise run check` no intenta hacerse pasar por `pnpm run test`, describe un check a nivel de proyecto, usando la versión de Node, la de pnpm, la de Python, la instalación de uv y el env del mismo archivo.
+
+Si un comando es solo de un paquete JavaScript, déjalo en `package.json`, no hace falta complicarlo. Pero si el comando explica cómo se trabaja en todo el repo, prefiero ponerlo en un sitio que no finja que el mundo termina en Node.
+
+## Las variables de entorno también son setup
+
+He usado `direnv` y entiendo perfectamente por qué mucha gente se lo instala por su cuenta, porque los archivos env empiezan muy inocentes y de repente tienes `.env`, `.env.local`, `.env.development`, `.env.staging`, una variable exportada en tu shell, y nadie sabe del todo cuál era la que hacía arrancar el dev server.
+
+Cada uno lo resuelve a su manera: `direnv`, `dotenv`, una función de shell llamada `loadenv`, o un script casero que llevas copiando de máquina en máquina desde hace años.
+
+Eso está bien si es tu solución personal, pero se vuelve raro cuando el proyecto depende en silencio de que todo el mundo tenga instalado el mismo truco.
+
+Mise le da un lugar bastante aburrido a ese problema con `[env]`, en el mismo archivo donde el proyecto ya declara herramientas y tasks.
+
+```toml
+[env]
+API_BASE_URL = "http://localhost:4000"
+DATABASE_URL = "postgres://localhost/app"
+```
+
+Y si el proyecto ya usa archivos dotenv, mise también puede cargarlos:
+
+```toml
+[env]
+_.file = [".env", ".env.local"]
+```
+
+Para desarrollo, yo probablemente pondría algo así:
+
+```toml
+[env]
+_.file = [".env", ".env.development", ".env.local"]
+```
+
+El orden importa, como siempre con los archivos env: defaults compartidos primero, valores del entorno después, overrides locales al final. Yo no metería secretos en `.env.local`, ni vendería esto como sustituto de un sistema serio de secrets, pero para el setup local normal hace que el env viva junto a las herramientas y las tasks, en vez de ser otro tema aparte.
+
+Con mise activado en tu shell, esas variables están disponibles cuando haces `cd` al proyecto, así que un comando normal puede funcionar como esperas:
+
+```sh
+pnpm dev
+```
+
+Y cuando quieres ser explícito, o estás en un script, CI, una tarea del editor o cualquier cosa no interactiva, puedes pasar por mise:
+
+```sh
+mise exec -- pnpm dev
+mise run check
+```
+
+Esta es la parte que no pillé al principio: `mise exec` y `mise run` no son la única forma de cargar el env, son la forma explícita. Si tu shell usa `mise activate`, mise actualiza el entorno del directorio actual y `pnpm dev` lo ve.
+
+Si te encanta direnv, perfecto, úsalo. Yo simplemente no montaría un repo nuevo donde todo el mundo tenga que instalarlo antes de que la app arranque, cuando mise puede cubrir el caso simple en la misma config que ya tiene herramientas y tasks.
+
+## Mise no es tu package manager, y está bien que no lo sea
+
+La diferencia es pequeña, pero importa: mise debería elegir las herramientas, no reemplazar los package managers que pertenecen a esas herramientas.
+
+Para un proyecto con Node y Python, quiero que mise diga "este repo usa Node 22, pnpm 9, Python 3.12 y uv", y luego quiero que `pnpm` siga ocupándose de las dependencias JavaScript y `uv` de las dependencias Python.
+
+```toml
+[tools]
+node = "22"
+pnpm = "9"
+python = "3.12"
+uv = "latest"
+```
+
+Luego los comandos normales del proyecto siguen siendo los normales:
+
+```sh
+pnpm install
+uv sync
+```
+
+Mise va una capa antes. Se asegura de que todo el mundo use las herramientas correctas antes de que esas herramientas hagan su trabajo.
+
+Suena aburrido porque lo es, pero evita esa clase de bugs tontos donde medio equipo está mirando dependencias cuando el problema real es que dos personas ni siquiera están usando el mismo runtime.
+
+## Lo de trust debería tomarse un poco en serio
+
+La primera vez que un proyecto te pide ejecutar esto, conviene entender qué estás aceptando:
+
+```sh
+mise trust
+```
+
+La config de mise puede definir env, tasks, hooks y comportamiento que afecta a cómo se ejecutan comandos, así que confiar en una config no es lo mismo que leer un JSON con un número de versión.
+
+No es solo aceptar un aviso. Estás diciendo que confías en ese archivo.
+
+Me gusta que mise lo haga explícito, porque los archivos de setup de un proyecto están bastante cerca de ser código, y fingir que son inofensivos es como los equipos acaban ejecutando scripts de shell de cualquier repo sin pensarlo demasiado.
+
+También viene bien en la práctica: si algo funciona en tu terminal pero falla en CI, en una tarea del editor, en cron o en cualquier shell no interactivo, puede que ese entorno no esté usando una config marcada como trusted.
+
+```sh
+mise doctor
+```
+
+`mise doctor` te muestra ese tipo de problema, así que antes de culpar a Node, Python o al comando que estás ejecutando, merece la pena mirar ahí.
+
+## Bloquea el resultado cuando el proyecto deja de ser un juguete
+
+Me parece bien usar versiones flexibles cuando estoy probando algo, pero para un proyecto real quiero que el resultado resuelto quede escrito.
+
+```toml
+[settings]
+lockfile = true
+minimum_release_age = "7d"
+
+[tools]
+node = "22"
+pnpm = "9"
+python = "3.12"
+uv = "latest"
+```
+
+Luego:
+
+```sh
+mise lock
+```
+
+Yo lo pienso así: `mise.toml` dice lo que el proyecto necesita, y `mise.lock` registra lo que mise terminó resolviendo.
+
+Eso no hace que las descargas sean seguras por arte de magia, y no lo vendería así, pero sí hace que el setup dependa menos de ir a ojo, sobre todo cuando usas versiones flexibles como `latest` o `node = "22"` y quieres versiones resueltas, checksums y metadatos de descarga donde mise lo soporte.
+
+`minimum_release_age` también es un poco de paranoia útil, porque no todos los proyectos necesitan instalar algo cinco minutos después de que se haya publicado.
+
+## La gracia es más pequeña que el hype, y más útil
+
+No necesito que mise reemplace todas las herramientas de mi máquina, solo quiero que el repo diga lo que necesita en vez de dejar el setup repartido entre memoria, historial de shell, docs viejas y lo que cada ecosistema decidió que era normal.
+
+Empieza por la parte que siempre se desordena.
+
+```toml
+[tools]
+node = "22"
+pnpm = "9"
+python = "3.12"
+uv = "latest"
+```
+
+Añade el comando a nivel de proyecto que la gente realmente ejecuta antes de abrir una PR.
+
+```toml
+[tasks.check]
+depends = ["check:frontend", "check:backend"]
+
+[tasks."check:frontend"]
+run = "pnpm lint && pnpm typecheck"
+
+[tasks."check:backend"]
+run = "uv run pytest"
+```
+
+Entonces el setup se vuelve aburrido de la forma en que el setup debería ser aburrido.
+
+```sh
+mise trust
+mise install
+mise run check
+```
+
+Ese es el movimiento para mí. No porque mise sea mejor que `nvm`, sino porque después de años haciendo malabares con version managers específicos de cada lenguaje, prefiero que el proyecto sea dueño del workflow y volver a escribir código.
