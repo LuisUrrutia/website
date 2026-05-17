@@ -78,7 +78,7 @@ const alternateUrls = translatedPost
 const titleTransitionName = `post-title-${slug}`;
 const pillTransitionName = `post-pill-${slug}`;
 
-const siteUrl = getSiteUrl(Astro);
+const siteUrl = getSiteUrl({ site: Astro.site, origin: Astro.url.origin });
 const postUrl = `${siteUrl}${getLocalizedPath(`/blog/${slug}`, lang)}`;
 
 // OG image URL - uses the generated image from the og endpoint

@@ -91,9 +91,12 @@ export function formatReadingTime(
  * Get the site URL from Astro context, removing trailing slash.
  * Falls back to request origin in development.
  */
-export function getSiteUrl(astro: {
+export function getSiteUrl({
+	site,
+	origin,
+}: {
 	site?: URL;
-	url: { origin: string };
+	origin: string;
 }): string {
-	return (astro.site ?? astro.url.origin).toString().replace(/\/$/, "");
+	return (site ?? origin).toString().replace(/\/$/, "");
 }
