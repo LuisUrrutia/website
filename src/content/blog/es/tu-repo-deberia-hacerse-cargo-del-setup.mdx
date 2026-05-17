@@ -1,6 +1,6 @@
 ---
 title: "Tu repo debería hacerse cargo del setup"
-description: "Mise permite que un repositorio declare sus herramientas, variables de entorno y tasks de proyecto en un solo sitio para que el setup deje de vivir en memoria, historial de shell y docs dispersas."
+description: "Mise permite que un repositorio declare sus herramientas, variables de entorno y tasks de proyecto en un solo sitio para que el setup deje de vivir en tu memoria, tu historial de shell y docs dispersas."
 date: 2026-05-17
 category: "Developer Tools"
 tags: ["Mise", "Developer Tools", "Workflow", "Productivity"]
@@ -14,9 +14,9 @@ El problema empieza cuando vas saltando entre proyectos personales, código de e
 
 Siempre me ha dado bastante pereza configurar proyectos con versiones distintas de lenguajes, porque en mis proyectos personales suelo usar la última LTS, que es lo que me gusta, pero luego abro un repo del trabajo y necesita un Node más viejo, otro proyecto pide otro Python, y el repo open-source que parecía sencillo viene con su propio ritual.
 
-Así que acabas con `nvm`, intentando acordarte de cómo iba lo de `pyenv`, mirando si hay un `.tool-versions` escondido por ahí, y después de instalar medio internet lees el README y te suelta que en realidad deberías estar usando otra versión. Como si nada.
+Así que acabas con `nvm`, intentando acordarte de cómo iba lo de `pyenv`, mirando si hay un `.tool-versions` escondido por ahí, y después de instalar medio internet lees el README y te suelta que en realidad deberías estar usando otra versión. Por la cara.
 
-Ha sido un lío siempre, porque cada lenguaje tiene su version manager "cómodo", y durante un tiempo funciona, hasta que trabajas en suficientes proyectos y te das cuenta de que ya no estás gestionando versiones, estás gestionando version managers.
+Ha sido un lío siempre, porque cada lenguaje tiene su version manager "cómodo" y popular, y durante un tiempo funciona, hasta que trabajas en suficientes proyectos y te das cuenta de que ya no solo estás gestionando versiones, también estás gestionando version managers.
 
 Ahí fue cuando mise empezó a tener sentido para mí, no como otro `nvm` o `fnm` más bonito, sino como un sitio donde el proyecto puede decir: estas son las herramientas, estas son las variables de entorno y estos son los comandos que usamos de verdad.
 
@@ -30,7 +30,7 @@ uv = "latest"
 
 Ese archivito es todo el pitch para mí.
 
-No la implementación en Rust, no la charla de benchmarks, no el rollo de "reemplaza todas las herramientas de tu máquina" que hace que cualquier tool suene a secta. Solo una idea bastante aburrida: el repo debería saber lo que necesita.
+No la implementación en Rust, no la charla de benchmarks, no el rollo de "reemplaza todas las herramientas de tu máquina" (para eso ya tengo Homebrew) que hace que cualquier tool suene a secta. Solo una idea bastante aburrida: el repo debería saber lo que necesita.
 
 ## El setup del proyecto no debería vivir en tu cabeza
 
@@ -60,7 +60,7 @@ python = "3.12"
 uv = "latest"
 ```
 
-Entonces el primer paso no es "pregunta qué versión de Node usa la gente", es simplemente:
+Entonces el primer paso no es "¿qué versión de Node usa el equipo?", es simplemente:
 
 ```sh
 mise install
@@ -76,7 +76,7 @@ mise exec -- python --version
 
 No es espectacular, pero a mí me gustan las herramientas de setup aburridas, porque antes de tocar el código lo último que quiero es entretenimiento.
 
-## Usa tasks cuando el comando salta entre herramientas
+## Usa tasks cuando el comando cruza ecosistemas
 
 Un task runner no me dice nada si el ejemplo es este:
 
@@ -85,9 +85,9 @@ Un task runner no me dice nada si el ejemplo es este:
 run = "pnpm run test"
 ```
 
-Eso es escribir peor un comando que ya conoce todo el mundo.
+Eso es peor que escribir un comando que ya todos conocemos.
 
-El task runner de mise empieza a tener sentido cuando el comando pertenece al proyecto, no a un ecosistema concreto, porque los repos reales suelen tener checks de frontend, checks de backend, archivos generados, migraciones o servicios locales que no encajan bien en `package.json` sin convertirlo en un cajón de todo.
+El task runner de mise empieza a tener sentido cuando el comando pertenece al proyecto, no a un ecosistema concreto, porque los repos reales suelen tener checks de frontend, checks de backend, archivos generados, migraciones o servicios locales que no encajan bien en `package.json` sin convertirlo en un cajón desastre.
 
 ```toml
 [tools]
@@ -122,7 +122,7 @@ Cada uno lo resuelve a su manera: `direnv`, `dotenv`, una función de shell llam
 
 Eso está bien si es tu solución personal, pero se vuelve raro cuando el proyecto depende en silencio de que todo el mundo tenga instalado el mismo truco.
 
-Mise le da un lugar bastante aburrido a ese problema con `[env]`, en el mismo archivo donde el proyecto ya declara herramientas y tasks.
+Mise le da un sitio bastante aburrido a ese problema con `[env]`, en el mismo archivo donde el proyecto ya declara herramientas y tasks.
 
 ```toml
 [env]
@@ -144,7 +144,7 @@ Para desarrollo, yo probablemente pondría algo así:
 _.file = [".env", ".env.development", ".env.local"]
 ```
 
-El orden importa, como siempre con los archivos env: defaults compartidos primero, valores del entorno después, overrides locales al final. Yo no metería secretos en `.env.local`, ni vendería esto como sustituto de un sistema serio de secrets, pero para el setup local normal hace que el env viva junto a las herramientas y las tasks, en vez de ser otro tema aparte.
+El orden importa, como siempre con los archivos env: defaults compartidos primero, valores del entorno después, overrides locales al final. Yo no metería secretos en `.env.local`, ni vendería esto como sustituto de un sistema serio de secrets. Pero para el setup local normal, hace que el env viva junto a las herramientas y las tasks, en vez de ser otro tema aparte.
 
 Con mise activado en tu shell, esas variables están disponibles cuando haces `cd` al proyecto, así que un comando normal puede funcionar como esperas:
 
@@ -240,7 +240,7 @@ Eso no hace que las descargas sean seguras por arte de magia, y no lo vendería 
 
 ## La gracia es más pequeña que el hype, y más útil
 
-No necesito que mise reemplace todas las herramientas de mi máquina, solo quiero que el repo diga lo que necesita en vez de dejar el setup repartido entre memoria, historial de shell, docs viejas y lo que cada ecosistema decidió que era normal.
+No necesito que mise reemplace todas las herramientas de mi máquina, solo quiero que el repo diga lo que necesita en vez de dejar el setup repartido entre tu memoria, historial de shell, docs viejas y lo que cada ecosistema decidió que era normal.
 
 Empieza por la parte que siempre se desordena.
 

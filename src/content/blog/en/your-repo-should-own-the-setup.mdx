@@ -1,6 +1,6 @@
 ---
 title: "Your Repo Should Own the Setup"
-description: "Mise lets a repository declare its tools, environment variables, and project-level tasks in one place so setup stops living in memory, shell history, and scattered docs."
+description: "Mise lets a repository declare its tools, environment variables, and project-level tasks in one place so setup stops living in your memory, shell history, and scattered docs."
 date: 2026-05-17
 category: "Developer Tools"
 tags: ["Mise", "Developer Tools", "Workflow", "Productivity"]
@@ -12,11 +12,11 @@ Every repo has its own little ritual.
 
 The problem starts when you jump between personal projects, company code, and open-source repos, and each one expects a different Node, Python, or package manager setup.
 
-I've always hated setting up projects with different language versions, because my personal projects are usually on the latest LTS, that's what I like using, but then I open a company repo and it needs an older Node version, another project needs a different Python, and some open-source repo I want to contribute to has its own setup.
+I've always hated setting up projects with different language versions. My personal projects are usually on the latest LTS, because that's what I like using. Then I open a company repo and it needs an older Node version, another project needs a different Python, and some open-source repo I want to contribute to has its own setup.
 
 So now I need `nvm`, I need to remember the `pyenv` thing, maybe there is a `.tool-versions` file somewhere, and after installing half the internet I read the README and it casually says I should be using another version, like, WTF.
 
-It's always been a mess, because every language has its own "nice" version manager, and for a while that feels fine, until you work across enough projects and realize you're not really managing versions anymore, you're managing version managers.
+It's always been a mess, because every language has its own popular "nice" version manager, and for a while that feels fine, until you work across enough projects and realize you're not just managing versions anymore, you're managing version managers.
 
 That's where mise started making sense to me, not as a nicer `nvm` or `fnm`, but as one place where a project can say: these are the tools, these are the env vars, and these are the commands we actually run.
 
@@ -30,7 +30,7 @@ uv = "latest"
 
 That small file is the whole pitch for me.
 
-Not the Rust implementation, not the benchmark conversation, not the "replace every tool on your machine" pitch that makes any tool sound like a cult. Just the boring idea that the repo should know what it needs.
+Not the Rust implementation, not the benchmark conversation, not the "replace every tool on your machine" pitch (I have Homebrew for that) that makes any tool sound like a cult. Just the boring idea that the repo should know what it needs.
 
 ## The project setup should not live in your memory
 
@@ -60,7 +60,7 @@ python = "3.12"
 uv = "latest"
 ```
 
-Then the first setup step is not "ask someone which Node they use", it is just:
+Then the first setup step is not "which Node version does the team use?", it is just:
 
 ```sh
 mise install
@@ -76,7 +76,7 @@ mise exec -- python --version
 
 That's not flashy, but I like boring setup tools, because boring is what I want before I've even started working on the code.
 
-## Use tasks when the command crosses tool boundaries
+## Use tasks when the command crosses ecosystems
 
 I don't care about a task runner if the example is this:
 
@@ -85,7 +85,7 @@ I don't care about a task runner if the example is this:
 run = "pnpm run test"
 ```
 
-That's just a worse way to type a command everyone already knows.
+That's worse than typing a command everyone already knows.
 
 The mise task runner starts making sense when the command belongs to the project, not to one language ecosystem, because real repos usually have frontend checks, backend checks, generated files, migrations, or local services that don't fit cleanly into `package.json` without turning it into a junk drawer.
 
@@ -144,7 +144,7 @@ For development, I'd probably reach for this:
 _.file = [".env", ".env.development", ".env.local"]
 ```
 
-The order matters, like it always does with env files: shared defaults first, environment-specific values after that, local machine overrides last. I wouldn't commit secrets in `.env.local`, and I wouldn't pretend this replaces a real secrets system, but for normal local setup the env story can live next to the tool and task story instead of becoming another little side quest.
+The order matters, like it always does with env files: shared defaults first, environment-specific values after that, local machine overrides last. I wouldn't commit secrets in `.env.local`, and I wouldn't pretend this replaces a real secrets system. But for normal local setup, the env story can live next to the tool and task story instead of becoming another little side quest.
 
 With mise activated in your shell, those variables are available when you `cd` into the project, so plain commands can work the way you'd expect:
 
@@ -198,7 +198,7 @@ mise trust
 
 Mise config can define env, tasks, hooks, and behavior that affects command execution, so trusting a config isn't the same as reading a JSON file with a version number in it.
 
-That is actual trust.
+That's actual trust.
 
 I like that mise makes this explicit, because project setup files are code-adjacent, and pretending they're harmless is how teams end up running random shell scripts from random repos without thinking.
 
@@ -240,7 +240,7 @@ That doesn't magically make downloads safe, and I wouldn't sell it like that, bu
 
 ## The win is smaller than the hype and more useful
 
-I don't need mise to replace every tool on my machine, I just want the repo to say what it needs instead of leaving the setup scattered across memory, shell history, old docs, and whatever each language ecosystem decided was normal.
+I don't need mise to replace every tool on my machine, I just want the repo to say what it needs instead of leaving the setup scattered across your memory, shell history, old docs, and whatever each language ecosystem decided was normal.
 
 Start with the part that always drifts.
 
