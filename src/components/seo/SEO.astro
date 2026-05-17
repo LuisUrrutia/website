@@ -61,7 +61,7 @@ const {
 	alternateUrls,
 } = Astro.props;
 
-const siteUrl = getSiteUrl(Astro);
+const siteUrl = getSiteUrl({ site: Astro.site, origin: Astro.url.origin });
 
 // Resolve OG image to absolute URL
 const ogImageUrl = ogImage.startsWith("http")

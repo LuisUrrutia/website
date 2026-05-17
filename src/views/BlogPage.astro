@@ -19,7 +19,7 @@ interface Props {
 const { posts, currentPage, totalPages } = Astro.props;
 const { t, lang } = Astro.locals;
 
-const siteUrl = getSiteUrl(Astro);
+const siteUrl = getSiteUrl({ site: Astro.site, origin: Astro.url.origin });
 
 // Breadcrumb items for blog listing page
 const breadcrumbItems = [

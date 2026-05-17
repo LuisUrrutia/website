@@ -17,7 +17,7 @@ import { getSiteUrl } from "@/lib/formatters";
 
 const { t, lang } = Astro.locals;
 
-const siteUrl = getSiteUrl(Astro);
+const siteUrl = getSiteUrl({ site: Astro.site, origin: Astro.url.origin });
 const description = t("meta.description");
 
 // Get latest posts for current locale
