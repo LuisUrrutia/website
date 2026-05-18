@@ -16,7 +16,7 @@
 import type { Post } from "@/types/post";
 import Card from "@/components/Card.astro";
 import BlogEntry from "@/components/BlogEntry.astro";
-import ViewMoreLink from "@/components/ViewMoreLink.astro";
+import IconArrowRight from "@/assets/icons/arrow-right.svg";
 
 interface Props {
 	/** Array of blog posts to display. */
@@ -65,11 +65,15 @@ const { t } = Astro.locals;
 
 	{
 		viewMoreHref && (
-			<ViewMoreLink
-				class="py-6"
+			<a
 				href={viewMoreHref}
-				text={t("blog.viewMore")}
-			/>
+				class="group text-subtitle hover:text-title mx-auto flex cursor-pointer items-center gap-2 px-4 py-6 text-sm transition-colors"
+			>
+				<span>{t("blog.viewMore")}</span>
+				<span class="size-4 transition-transform group-hover:translate-x-1">
+					<IconArrowRight class="size-full" />
+				</span>
+			</a>
 		)
 	}
 </Card>
