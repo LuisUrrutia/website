@@ -11,7 +11,8 @@
     "fmt:fix": "prettier . --write",
     "lint": "oxlint --type-aware",
     "prepare": "husky",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "vitest run"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown",
@@ -50,7 +51,8 @@
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-packagejson": "^3.0.2",
     "prettier-plugin-tailwindcss": "^0.8.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
   },
   "engines": {
     "bun": ">=1.3",
