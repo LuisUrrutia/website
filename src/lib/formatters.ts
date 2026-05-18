@@ -1,4 +1,5 @@
 import type { TranslationKey } from "@/i18n";
+export { getSiteUrl } from "@/i18n/url-paths";
 
 /**
  * Format a Date to ISO 8601 with timezone offset.
@@ -85,18 +86,4 @@ export function formatReadingTime(
 	t: (key: TranslationKey) => string,
 ): string {
 	return t("blog.readingTime").replace("{minutes}", String(minutes));
-}
-
-/**
- * Get the site URL from Astro context, removing trailing slash.
- * Falls back to request origin in development.
- */
-export function getSiteUrl({
-	site,
-	origin,
-}: {
-	site?: URL;
-	origin: string;
-}): string {
-	return (site ?? origin).toString().replace(/\/$/, "");
 }

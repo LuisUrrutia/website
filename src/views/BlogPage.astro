@@ -7,8 +7,12 @@ import Card from "@/components/Card.astro";
 import BlogEntry from "@/components/BlogEntry.astro";
 import Pagination from "@/components/Pagination.astro";
 import { BreadcrumbJsonLd } from "@/components/seo";
-import { getLocalizedPath, getSlugWithoutLocale } from "@/i18n";
-import { getSiteUrl } from "@/lib/formatters";
+import {
+	getLocalizedPath,
+	getLocalizedSiteUrl,
+	getSiteUrl,
+	getSlugWithoutLocale,
+} from "@/i18n";
 
 interface Props {
 	posts: CollectionEntry<"blog">[];
@@ -25,11 +29,11 @@ const siteUrl = getSiteUrl({ site: Astro.site, origin: Astro.url.origin });
 const breadcrumbItems = [
 	{
 		name: t("breadcrumb.home"),
-		url: `${siteUrl}${getLocalizedPath("/", lang)}`,
+		url: getLocalizedSiteUrl(siteUrl, "/", lang),
 	},
 	{
 		name: t("breadcrumb.blog"),
-		url: `${siteUrl}${getLocalizedPath("/blog", lang)}`,
+		url: getLocalizedSiteUrl(siteUrl, "/blog", lang),
 	},
 ];
 
