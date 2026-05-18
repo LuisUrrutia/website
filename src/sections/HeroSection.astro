@@ -17,13 +17,13 @@ import type { Company } from "@/types/company";
 import type { SocialLinksProps } from "@/types/social";
 import Card from "@/components/Card.astro";
 import CompanyMarquee from "@/components/CompanyMarquee.astro";
-import Highlight from "@/components/Highlight.astro";
+import IconLocation from "@/assets/icons/location.svg";
 import IconRocket from "@/assets/icons/rocket.svg";
-import LocationBadge from "@/components/LocationBadge.astro";
 import ProfilePicture from "@/components/ProfilePicture.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
 import WorkStatusBadge from "@/components/WorkStatusBadge.astro";
 import { companies as defaultCompanies } from "@/data/companies";
+import { getLinkPolicy } from "@/lib/link-policy";
 
 type WorkStatus = "open" | "busy";
 
@@ -45,6 +45,7 @@ const {
 	id = "hero",
 } = Astro.props;
 const { t } = Astro.locals;
+const openZeppelinLinkPolicy = getLinkPolicy("https://www.openzeppelin.com/");
 
 const statusTextKey = workStatus === "open" ? "status.open" : "status.busy";
 const statusDescriptionKey =
@@ -88,24 +89,27 @@ const statusDescriptionKey =
 					<p class="text-muted my-1 text-sm font-light text-pretty">
 						{t("hero.tagline.prefix")}<a
 							href="https://www.openzeppelin.com/"
-							target="_blank"
-							rel="noopener noreferrer"
-							referrerpolicy="strict-origin-when-cross-origin"
+							{...openZeppelinLinkPolicy.newTabAttributes}
 							class="text-accent font-medium underline-offset-2 hover:underline"
 							>OpenZeppelin</a
 						> · {t("hero.tagline.tech")}
 					</p>
 				</div>
 				<p class="relative text-base font-light text-pretty">
-					<Highlight color="sky">{t("hero.bio.role")}</Highlight>{
-						t("hero.bio.middle")
-					}<Highlight color="orange">{t("hero.bio.experience")}</Highlight>{
-						t("hero.bio.suffix")
-					}
+					<strong
+						class="highlight highlight--sky text-title relative z-0 inline-block font-semibold whitespace-nowrap"
+						>{t("hero.bio.role")}</strong
+					>{t("hero.bio.middle")}<strong
+						class="highlight highlight--orange text-title relative z-0 inline-block font-semibold whitespace-nowrap"
+						>{t("hero.bio.experience")}</strong
+					>{t("hero.bio.suffix")}
 				</p>
 			</div>
 
-			<LocationBadge location={t("hero.location")} />
+			<div class="flex items-center gap-2.5 text-sm font-light">
+				<IconLocation class="size-4" aria-hidden="true" />
+				<span>{t("hero.location")}</span>
+			</div>
 		</div>
 	</div>
 
@@ -117,3 +121,47 @@ const statusDescriptionKey =
 		<CompanyMarquee companies={companies} label={t("hero.companies")} />
 	</div>
 </Card>
+
+<style>
+	.highlight::before {
+		content: "";
+		position: absolute;
+		inset: -0.375rem -0.25rem;
+		z-index: -1;
+		background-color: var(--highlight-color);
+		mask-image: url("/images/brush-1.svg");
+		mask-size: 100% 100%;
+		clip-path: inset(0 100% 0 0);
+		rotate: var(--highlight-rotation);
+		animation: draw-in 0.6s ease-out forwards;
+		animation-delay: var(--highlight-delay, 0s);
+	}
+
+	.highlight--sky {
+		--highlight-color: var(--color-highlight-sky);
+		--highlight-rotation: -3deg;
+		--highlight-delay: 0.2s;
+	}
+
+	.highlight--orange {
+		--highlight-color: var(--color-highlight-orange);
+		--highlight-rotation: 3deg;
+		--highlight-delay: 0.4s;
+	}
+
+	@keyframes draw-in {
+		from {
+			clip-path: inset(0 100% 0 0);
+		}
+		to {
+			clip-path: inset(0 0 0 0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.highlight::before {
+			animation: none;
+			clip-path: none;
+		}
+	}
+</style>
