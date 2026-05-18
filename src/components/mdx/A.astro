@@ -8,32 +8,20 @@
  * - Screen reader accessible text "(opens in new tab)"
  */
 import IconExternalLink from "@/assets/icons/external-link.svg";
+import { getLinkPolicy } from "@/lib/link-policy";
 
 interface Props extends astroHTML.JSX.AnchorHTMLAttributes {}
-
-const SITE_DOMAIN = "urrutia.me";
 
 const { href, class: className, ...rest } = Astro.props;
 const { t } = Astro.locals;
 
-const hrefString = typeof href === "string" ? href : href?.toString();
-const isExternal =
-	hrefString?.startsWith("http://") ||
-	(hrefString?.startsWith("https://") && !hrefString?.includes(SITE_DOMAIN));
-
-const externalProps = isExternal
-	? {
-			target: "_blank",
-			rel: "noopener noreferrer",
-			referrerpolicy: "strict-origin-when-cross-origin" as const,
-		}
-	: {};
+const linkPolicy = getLinkPolicy(href);
 ---
 
-<a href={href} class={className} {...externalProps} {...rest}>
+<a href={href} class={className} {...linkPolicy.newTabAttributes} {...rest}>
 	<slot />
 	{
-		isExternal && (
+		linkPolicy.isExternal && (
 			<>
 				<span class="sr-only">{t("a11y.opensInNewTab")}</span>
 				<IconExternalLink

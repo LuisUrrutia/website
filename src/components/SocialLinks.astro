@@ -4,6 +4,7 @@ import IconGitHub from "@/assets/icons/github.svg";
 import IconInstagram from "@/assets/icons/instagram.svg";
 import IconLinkedIn from "@/assets/icons/linkedin.svg";
 import IconX from "@/assets/icons/x.svg";
+import { getNewTabLinkAttributes } from "@/lib/link-policy";
 
 type Props = SocialLinksProps & {
 	/** Icon size classes. Defaults to "size-6 sm:size-4". */
@@ -15,6 +16,7 @@ type Props = SocialLinksProps & {
 };
 
 const { t } = Astro.locals;
+const newTabAttributes = getNewTabLinkAttributes();
 
 const {
 	github,
@@ -68,9 +70,7 @@ const links = socialConfig
 			{links.map(({ key, icon: Icon, url, label }) => (
 				<a
 					href={url}
-					target="_blank"
-					rel="noopener noreferrer"
-					referrerpolicy="strict-origin-when-cross-origin"
+					{...newTabAttributes}
 					class:list={["social-link", `social-link--${key}`]}
 					aria-label={label}
 				>

@@ -19,6 +19,7 @@ import IconTelegram from "@/assets/icons/telegram.svg";
 import IconReddit from "@/assets/icons/reddit.svg";
 import IconMail from "@/assets/icons/mail.svg";
 import IconLink from "@/assets/icons/link.svg";
+import { getNewTabLinkAttributes } from "@/lib/link-policy";
 import { createShareUrl, SocialProvider } from "@/lib/social-share";
 
 interface Props {
@@ -33,6 +34,7 @@ interface Props {
 }
 
 const { url, title, id, class: className } = Astro.props;
+const newTabAttributes = getNewTabLinkAttributes();
 const labelId = id
 	? `share-label-${id}`
 	: `share-label-${Math.random().toString(36).slice(2, 9)}`;
@@ -95,9 +97,7 @@ const shareLinks = [
 			shareLinks.map(({ url, label, Icon }) => (
 				<a
 					href={url}
-					target="_blank"
-					rel="noopener noreferrer"
-					referrerpolicy="strict-origin-when-cross-origin"
+					{...newTabAttributes}
 					aria-label={label}
 					class="text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
 				>

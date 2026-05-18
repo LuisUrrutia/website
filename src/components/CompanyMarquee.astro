@@ -1,6 +1,7 @@
 ---
 import type { Company } from "@/types/company";
 import IconGitCommit from "@/assets/icons/git-commit.svg";
+import { getNewTabLinkAttributes } from "@/lib/link-policy";
 
 type Direction = "left" | "right";
 
@@ -13,6 +14,7 @@ interface Props {
 
 const { companies, label, duration = 45, direction = "left" } = Astro.props;
 const { t } = Astro.locals;
+const newTabAttributes = getNewTabLinkAttributes();
 ---
 
 <div
@@ -25,12 +27,7 @@ const { t } = Astro.locals;
 		{
 			companies.map((company) => (
 				<li>
-					<a
-						href={company.url}
-						target="_blank"
-						rel="noopener noreferrer"
-						referrerpolicy="strict-origin-when-cross-origin"
-					>
+					<a href={company.url} {...newTabAttributes}>
 						{company.name}
 						<span class="sr-only">{t("a11y.opensInNewTab")}</span>
 					</a>
@@ -55,9 +52,7 @@ const { t } = Astro.locals;
 							{index > 0 && <IconGitCommit class="marquee-separator" />}
 							<a
 								href={company.url}
-								target="_blank"
-								rel="noopener noreferrer"
-								referrerpolicy="strict-origin-when-cross-origin"
+								{...newTabAttributes}
 								tabindex="-1"
 								class="marquee-link"
 							>
