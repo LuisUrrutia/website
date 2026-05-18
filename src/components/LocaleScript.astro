@@ -17,19 +17,27 @@ interface Props {
 
 const { currentLocale } = Astro.props;
 const localesJson = JSON.stringify(locales);
+const localePrefixesJson = JSON.stringify(
+	Object.fromEntries(
+		locales.map((locale) => [
+			locale,
+			locale === defaultLocale ? "" : `/${locale}`,
+		]),
+	),
+);
 ---
 
 <script
 	is:inline
 	data-current-locale={currentLocale}
-	data-default-locale={defaultLocale}
 	data-locales={localesJson}
+	data-locale-prefixes={localePrefixesJson}
 >
 	(function () {
 		const script = document.currentScript;
 		const currentLocale = script.dataset.currentLocale;
-		const defaultLocale = script.dataset.defaultLocale;
 		const locales = JSON.parse(script.dataset.locales);
+		const localePrefixes = JSON.parse(script.dataset.localePrefixes);
 
 		const HAS_VISITED_KEY = "has-visited";
 		const COOKIE_NAME = "has-visited";
@@ -85,8 +93,7 @@ const localesJson = JSON.stringify(locales);
 		}
 
 		function getLocalizedPath(path, locale) {
-			if (locale === defaultLocale) return path;
-			return "/" + locale + path;
+			return (localePrefixes[locale] || "") + path;
 		}
 
 		function getPathWithoutLocale(pathname) {

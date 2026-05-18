@@ -21,9 +21,8 @@
 import CanonicalMeta from "./CanonicalMeta.astro";
 import OpenGraphMeta, { type ArticleMeta } from "./OpenGraphMeta.astro";
 import TwitterCardMeta from "./TwitterCardMeta.astro";
-import { locales, getLocalizedPath } from "@/i18n";
+import { locales, getCanonicalUrl, getSiteUrl, joinSiteUrl } from "@/i18n";
 import { defaultOgImage, siteOwner } from "@/data/seo";
-import { getSiteUrl } from "@/lib/formatters";
 
 export type { ArticleMeta };
 
@@ -63,14 +62,13 @@ const {
 
 const siteUrl = getSiteUrl({ site: Astro.site, origin: Astro.url.origin });
 
-// Resolve OG image to absolute URL
-const ogImageUrl = ogImage.startsWith("http")
-	? ogImage
-	: `${siteUrl}${ogImage.startsWith("/") ? "" : "/"}${ogImage}`;
-
-// Canonical URL
-const canonicalPath = getLocalizedPath(pathWithoutLocale, lang);
-const canonicalUrl = `${siteUrl}${canonicalPath}`;
+const ogImageUrl = joinSiteUrl(siteUrl, ogImage);
+const canonicalUrl = getCanonicalUrl({
+	siteUrl,
+	pathWithoutLocale,
+	locale: lang,
+	alternateUrls,
+});
 
 // Get alternate locale for og:locale:alternate
 const alternateLocale = locales.find((l) => l !== lang) ?? lang;

@@ -11,7 +11,7 @@
  *
  * @see https://developers.google.com/search/docs/specialty/international/localized-versions
  */
-import { locales, getLocalizedPath, type Locale } from "@/i18n";
+import { getLocalizedUrls, locales, type Locale } from "@/i18n";
 
 export interface Props {
 	/** Base site URL (without trailing slash) */
@@ -26,27 +26,22 @@ export interface Props {
 
 const { siteUrl, pathWithoutLocale, locale, alternateUrls } = Astro.props;
 
-// Compute URL for a locale, using custom alternateUrls if provided
-const getUrlForLocale = (loc: Locale): string => {
-	if (alternateUrls?.[loc]) {
-		const path = alternateUrls[loc];
-		return path.startsWith("http") ? path : `${siteUrl}${path}`;
-	}
-	return `${siteUrl}${getLocalizedPath(pathWithoutLocale, loc)}`;
-};
-
-const canonicalUrl = getUrlForLocale(locale);
-
-// x-default should point to the default (non-prefixed) path
-const xDefaultUrl = alternateUrls?.en
-	? `${siteUrl}${alternateUrls.en}`
-	: `${siteUrl}${pathWithoutLocale}`;
+const localizedUrls = getLocalizedUrls({
+	siteUrl,
+	pathWithoutLocale,
+	locale,
+	alternateUrls,
+});
 ---
 
-<link rel="canonical" href={canonicalUrl} />
+<link rel="canonical" href={localizedUrls.canonicalUrl} />
 {
 	locales.map((loc) => (
-		<link rel="alternate" hreflang={loc} href={getUrlForLocale(loc)} />
+		<link
+			rel="alternate"
+			hreflang={loc}
+			href={localizedUrls.alternateUrls[loc]}
+		/>
 	))
 }
-<link rel="alternate" hreflang="x-default" href={xDefaultUrl} />
+<link rel="alternate" hreflang="x-default" href={localizedUrls.xDefaultUrl} />
