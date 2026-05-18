@@ -1,0 +1,29 @@
+---
+import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo";
+import type {
+	BlogPostLike,
+	BlogPostPageMetadata,
+} from "@/views/blog-post/blog-post-metadata";
+import type { Locale } from "@/i18n";
+
+interface Props {
+	post: BlogPostLike;
+	metadata: BlogPostPageMetadata;
+	lang: Locale;
+}
+
+const { post, metadata, lang } = Astro.props;
+---
+
+<BreadcrumbJsonLd items={metadata.breadcrumbItems} />
+<ArticleJsonLd
+	title={post.data.title}
+	description={post.data.description}
+	url={metadata.postUrl}
+	siteUrl={metadata.siteUrl}
+	image={metadata.absoluteOgImage}
+	publishedTime={post.data.date}
+	modifiedTime={post.data.updatedDate}
+	tags={post.data.tags}
+	lang={lang}
+/>

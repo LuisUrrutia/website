@@ -1,0 +1,61 @@
+---
+import Pill from "@/components/Pill.astro";
+import { localeNames, type TranslationKey } from "@/i18n";
+import type {
+	BlogPostLike,
+	BlogPostPageMetadata,
+} from "@/views/blog-post/blog-post-metadata";
+
+interface Props {
+	post: BlogPostLike;
+	metadata: BlogPostPageMetadata;
+	t: (key: TranslationKey) => string;
+}
+
+const { post, metadata, t } = Astro.props;
+---
+
+<header class="not-prose mb-8">
+	<div class="flex flex-wrap items-center gap-3">
+		<Pill style={`view-transition-name: ${metadata.pillTransitionName}`}
+			>{post.data.category}</Pill
+		>
+		<span class="text-subtitle text-sm">
+			<time datetime={metadata.isoDate}
+				>{t("blog.publishedOn")} {metadata.formattedDate}</time
+			>
+		</span>
+		<span class="text-subtitle text-sm"
+			>&middot; {metadata.formattedReadingTime}</span
+		>
+		{
+			metadata.formattedUpdatedDate && (
+				<span class="text-subtitle text-sm">
+					&middot; {t("blog.updatedOn")} {metadata.formattedUpdatedDate}
+				</span>
+			)
+		}
+	</div>
+
+	<h1
+		class="text-title mt-4 text-3xl font-bold md:text-4xl"
+		style={`view-transition-name: ${metadata.titleTransitionName}`}
+	>
+		{post.data.title}
+	</h1>
+
+	<p class="text-subtitle mt-4 text-lg">
+		{post.data.description}
+	</p>
+
+	{
+		metadata.alternateUrl && (
+			<p class="text-subtitle mt-4 text-sm">
+				{t("blog.alsoAvailable")}{" "}
+				<a href={metadata.alternateUrl} class="text-accent hover:underline">
+					{localeNames[metadata.alternateLang]}
+				</a>
+			</p>
+		)
+	}
+</header>

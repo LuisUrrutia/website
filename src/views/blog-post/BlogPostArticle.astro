@@ -1,0 +1,40 @@
+---
+import BackToTop from "@/components/BackToTop.astro";
+import Card from "@/components/Card.astro";
+import Giscus from "@/components/Giscus.astro";
+import SocialShare from "@/components/SocialShare.astro";
+import type { Locale, TranslationKey } from "@/i18n";
+import BlogPostHeader from "@/views/blog-post/BlogPostHeader.astro";
+import type {
+	BlogPostLike,
+	BlogPostPageMetadata,
+} from "@/views/blog-post/blog-post-metadata";
+
+interface Props {
+	post: BlogPostLike;
+	metadata: BlogPostPageMetadata;
+	lang: Locale;
+	t: (key: TranslationKey) => string;
+}
+
+const { post, metadata, lang, t } = Astro.props;
+---
+
+<Card
+	as="article"
+	class="prose prose-neutral dark:prose-invert max-w-none"
+	style="view-transition-name: post-card"
+>
+	<BlogPostHeader post={post} metadata={metadata} t={t} />
+
+	<div class="blog-content">
+		<slot />
+	</div>
+
+	<footer class="not-prose border-border mt-8 border-t pt-6">
+		<SocialShare url={metadata.postUrl} title={post.data.title} id={post.id} />
+	</footer>
+
+	<Giscus lang={lang} />
+</Card>
+<BackToTop />

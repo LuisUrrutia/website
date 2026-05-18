@@ -4,25 +4,12 @@ import { render } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Navbar from "@/components/Navbar.astro";
 import Container from "@/components/Container.astro";
-import Card from "@/components/Card.astro";
-import Pill from "@/components/Pill.astro";
-import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo";
-import {
-	getAlternateLocale,
-	getLocalizedPath,
-	getSlugWithoutLocale,
-	intlLocales,
-	localeNames,
-} from "@/i18n";
-import {
-	calculateReadingTime,
-	formatReadingTime,
-	getSiteUrl,
-} from "@/lib/formatters";
-import Giscus from "@/components/Giscus.astro";
-import BackToTop from "@/components/BackToTop.astro";
-import SocialShare from "@/components/SocialShare.astro";
 import A from "@/components/mdx/A.astro";
+import { getSiteUrl } from "@/i18n";
+import BlogPostArticle from "@/views/blog-post/BlogPostArticle.astro";
+import BlogPostHead from "@/views/blog-post/BlogPostHead.astro";
+import BlogPostProseStyles from "@/views/blog-post/BlogPostProseStyles.astro";
+import { prepareBlogPostPageMetadata } from "@/views/blog-post/blog-post-metadata";
 
 interface Props {
 	post: CollectionEntry<"blog">;
@@ -31,79 +18,24 @@ interface Props {
 
 const { post, translatedPost } = Astro.props;
 const { t, lang } = Astro.locals;
-
-// Calculate reading time from raw content
-const readingTime = calculateReadingTime(post.body ?? "");
-const formattedReadingTime = formatReadingTime(readingTime, t);
 const { Content } = await render(post);
 
-const dateFormat: Intl.DateTimeFormatOptions = {
-	day: "numeric",
-	month: "long",
-	year: "numeric",
-};
-
-const formattedDate = post.data.date.toLocaleDateString(
-	intlLocales[lang],
-	dateFormat,
-);
-const isoDate = post.data.date.toISOString().split("T")[0];
-
-const formattedUpdatedDate = post.data.updatedDate
-	? post.data.updatedDate.toLocaleDateString(intlLocales[lang], dateFormat)
-	: null;
-
-// Generate transition names from post slug
-const slug = getSlugWithoutLocale(post.id);
-
-// Get the alternate language URL
-const alternateLang = getAlternateLocale(lang);
-const alternateUrl = translatedPost
-	? getLocalizedPath(
-			`/blog/${getSlugWithoutLocale(translatedPost.id)}`,
-			alternateLang,
-		)
-	: null;
-
-// Build alternate URLs for hreflang tags (used by SEO and language switcher)
-// Only include alternate URL if a translation actually exists
-const currentPostUrl = getLocalizedPath(`/blog/${slug}`, lang);
-const alternateUrls = translatedPost
-	? {
-			[lang]: currentPostUrl,
-			[alternateLang]: alternateUrl!,
-		}
-	: undefined;
-
-const titleTransitionName = `post-title-${slug}`;
-const pillTransitionName = `post-pill-${slug}`;
-
 const siteUrl = getSiteUrl({ site: Astro.site, origin: Astro.url.origin });
-const postUrl = `${siteUrl}${getLocalizedPath(`/blog/${slug}`, lang)}`;
-
-// OG image URL - uses the generated image from the og endpoint
-const ogImage = `/og/${post.id}.png`;
-
-// Breadcrumb items for blog post page
-const breadcrumbItems = [
-	{
-		name: t("breadcrumb.home"),
-		url: `${siteUrl}${getLocalizedPath("/", lang)}`,
-	},
-	{
-		name: t("breadcrumb.blog"),
-		url: `${siteUrl}${getLocalizedPath("/blog", lang)}`,
-	},
-	{ name: post.data.title, url: postUrl },
-];
+const metadata = prepareBlogPostPageMetadata({
+	post,
+	translatedPost,
+	lang,
+	t,
+	siteUrl,
+});
 ---
 
 <Layout
 	title={post.data.title}
 	description={post.data.description}
-	ogImage={ogImage}
+	ogImage={metadata.ogImage}
 	ogType="article"
-	alternateUrls={alternateUrls}
+	alternateUrls={metadata.alternateUrls}
 	article={{
 		publishedTime: post.data.date.toISOString(),
 		modifiedTime: post.data.updatedDate?.toISOString(),
@@ -112,19 +44,7 @@ const breadcrumbItems = [
 		tags: post.data.tags,
 	}}
 >
-	<BreadcrumbJsonLd slot="head" items={breadcrumbItems} />
-	<ArticleJsonLd
-		slot="head"
-		title={post.data.title}
-		description={post.data.description}
-		url={postUrl}
-		siteUrl={siteUrl}
-		image={`${siteUrl}${ogImage}`}
-		publishedTime={post.data.date}
-		modifiedTime={post.data.updatedDate}
-		tags={post.data.tags}
-		lang={lang}
-	/>
+	<BlogPostHead slot="head" post={post} metadata={metadata} lang={lang} />
 	<Navbar />
 	<Container
 		as="main"
@@ -132,196 +52,10 @@ const breadcrumbItems = [
 		class="flex flex-col gap-8"
 		transition:animate="slide"
 	>
-		<Card
-			as="article"
-			class="prose prose-neutral dark:prose-invert max-w-none"
-			style="view-transition-name: post-card"
-		>
-			<header class="not-prose mb-8">
-				<div class="flex flex-wrap items-center gap-3">
-					<Pill style={`view-transition-name: ${pillTransitionName}`}
-						>{post.data.category}</Pill
-					>
-					<span class="text-subtitle text-sm">
-						<time datetime={isoDate}
-							>{t("blog.publishedOn")} {formattedDate}</time
-						>
-					</span>
-					<span class="text-subtitle text-sm"
-						>&middot; {formattedReadingTime}</span
-					>
-					{
-						formattedUpdatedDate && (
-							<span class="text-subtitle text-sm">
-								&middot; {t("blog.updatedOn")} {formattedUpdatedDate}
-							</span>
-						)
-					}
-				</div>
-
-				<h1
-					class="text-title mt-4 text-3xl font-bold md:text-4xl"
-					style={`view-transition-name: ${titleTransitionName}`}
-				>
-					{post.data.title}
-				</h1>
-
-				<p class="text-subtitle mt-4 text-lg">
-					{post.data.description}
-				</p>
-
-				{
-					alternateUrl && (
-						<p class="text-subtitle mt-4 text-sm">
-							{t("blog.alsoAvailable")}{" "}
-							<a href={alternateUrl} class="text-accent hover:underline">
-								{localeNames[alternateLang]}
-							</a>
-						</p>
-					)
-				}
-			</header>
-
-			<div class="blog-content">
-				<Content components={{ a: A }} />
-			</div>
-
-			<footer class="not-prose border-border mt-8 border-t pt-6">
-				<SocialShare url={postUrl} title={post.data.title} id={post.id} />
-			</footer>
-
-			<Giscus lang={lang} />
-		</Card>
-		<BackToTop />
+		<BlogPostArticle post={post} metadata={metadata} lang={lang} t={t}>
+			<Content components={{ a: A }} />
+		</BlogPostArticle>
 	</Container>
 </Layout>
 
-<style is:global>
-	.blog-content {
-		font-size: 1rem;
-		text-wrap: pretty;
-	}
-
-	.blog-content > *:first-child {
-		margin-top: 0;
-	}
-
-	.blog-content h2 {
-		color: var(--color-title);
-		margin-top: 3rem;
-		margin-bottom: 1.25rem;
-		padding-top: 1.5rem;
-		border-top: 1px solid var(--color-border);
-		font-size: 1.5rem;
-		line-height: 2rem;
-		font-weight: 600;
-	}
-
-	.blog-content h2:first-child {
-		border-top: none;
-		padding-top: 0;
-		margin-top: 0;
-	}
-
-	.blog-content h3 {
-		color: var(--color-title);
-		margin-top: 2rem;
-		margin-bottom: 1rem;
-		font-size: 1.25rem;
-		line-height: 1.75rem;
-		font-weight: 600;
-	}
-
-	.blog-content p {
-		color: var(--color-foreground);
-		margin-bottom: 1.5rem;
-		line-height: 1.8;
-	}
-
-	.blog-content > p:first-child {
-		font-size: 1.125rem;
-		line-height: 1.75;
-		color: var(--color-subtitle);
-	}
-
-	.blog-content ul,
-	.blog-content ol {
-		color: var(--color-foreground);
-		margin-bottom: 1.5rem;
-		margin-left: 1.5rem;
-		line-height: 1.8;
-		list-style-position: outside;
-	}
-
-	.blog-content ul {
-		list-style-type: disc;
-	}
-
-	.blog-content ol {
-		list-style-type: decimal;
-	}
-
-	.blog-content li {
-		margin-bottom: 0.75rem;
-	}
-
-	.blog-content li:last-child {
-		margin-bottom: 0;
-	}
-
-	.blog-content pre {
-		margin-top: 2rem;
-		margin-bottom: 2rem;
-		overflow-x: auto;
-		border-radius: 0.75rem;
-		padding: 1.25rem;
-	}
-
-	.blog-content figure {
-		margin-top: 2rem;
-		margin-bottom: 2rem;
-	}
-
-	.blog-content code {
-		font-size: 0.875rem;
-		line-height: 1.25rem;
-	}
-
-	.blog-content :not(pre) > code {
-		background-color: var(--color-code-background);
-		color: var(--color-code-foreground);
-		padding: 0.125rem 0.375rem;
-		border-radius: 0.25rem;
-	}
-
-	.blog-content strong {
-		color: var(--color-title);
-		font-weight: 600;
-	}
-
-	.blog-content a {
-		color: var(--color-accent);
-	}
-
-	.blog-content a:hover {
-		text-decoration: underline;
-	}
-
-	.blog-content blockquote {
-		border-left: 4px solid var(--color-accent);
-		color: var(--color-subtitle);
-		margin-top: 2rem;
-		margin-bottom: 2rem;
-		padding-left: 1.5rem;
-		font-size: 1.125rem;
-		line-height: 1.75;
-		font-style: italic;
-	}
-
-	.blog-content hr {
-		border: none;
-		border-top: 1px solid var(--color-border);
-		margin-top: 3rem;
-		margin-bottom: 3rem;
-	}
-</style>
+<BlogPostProseStyles />
