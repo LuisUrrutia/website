@@ -371,3 +371,4 @@ Pre-commit hooks run Prettier and OxLint automatically via lint-staged.
 13. **Native navigation** -- Initialize scripts directly; `astro:after-swap` is only valid if `<ClientRouter />` is introduced
 14. **Guard double init** -- Use `dataset.init` when an initializer can encounter the same element more than once
 15. **External link attributes** -- Always include `target="_blank"`, `rel="noopener noreferrer"`, and `referrerpolicy="strict-origin-when-cross-origin"`
+16. **README voice** -- Use the `humanize` skill for README edits. Avoid em dashes and narrative double-hyphen separators

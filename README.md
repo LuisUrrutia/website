@@ -26,13 +26,13 @@
 
 ## Features
 
-- **Multilingual** -- English (default) and Spanish with full i18n support, per-locale RSS feeds, and hreflang tags
-- **Blog** -- MDX-powered blog with pagination, reading time, social sharing, and Giscus comments
-- **SEO** -- Canonical URLs, Open Graph, Twitter Cards, JSON-LD structured data (Person, WebSite, ProfilePage, BlogPosting, BreadcrumbList), auto-generated OG images, sitemap with hreflang
-- **Dark mode** -- Three-state theme toggle (auto/light/dark) with blocking script to prevent flash of wrong theme
-- **Accessibility** -- Skip links, ARIA labels, focus-visible indicators, prefers-reduced-motion support, screen reader announcements
-- **Performance** -- Zero JS by default, inlined CSS, subsetted variable font, Brotli + gzip compression, lazy-loaded images with AVIF/WebP and responsive srcset
-- **View Transitions** -- Native CSS view transitions with lazy transition-name assignment for smooth page navigation
+- **Multilingual:** English is the default language, with Spanish available under `/es/`. Each locale has its own RSS feed and hreflang tags.
+- **Blog:** MDX posts with pagination, reading time, social sharing, and Giscus comments.
+- **SEO:** Canonical URLs, Open Graph, Twitter Cards, generated OG images, and a sitemap with hreflang support. JSON-LD covers Person, WebSite, ProfilePage, BlogPosting, and BreadcrumbList schemas.
+- **Dark mode:** A three-state theme toggle for auto, light, and dark modes. A blocking script prevents the wrong theme from flashing during page load.
+- **Accessibility:** Skip links, ARIA labels, visible focus indicators, `prefers-reduced-motion` support, and screen reader announcements.
+- **Performance:** Zero JavaScript by default, inlined CSS, a subsetted variable font, Brotli and gzip compression, and lazy-loaded AVIF/WebP images with responsive `srcset` values.
+- **View Transitions:** Native CSS transitions with lazy `view-transition-name` assignment for smooth page navigation.
 
 ## Tech Stack
 
@@ -114,7 +114,7 @@ The site will be available at `http://localhost:4321` with hot module replacemen
 
 ### Testing with Docker
 
-A `docker-compose.yml` is provided to test the production build with [Static Web Server](https://static-web-server.net/), which supports Brotli compression and proper cache headers:
+Use the included `docker-compose.yml` to test the production build with [Static Web Server](https://static-web-server.net/). It supports Brotli compression and appropriate cache headers:
 
 ```bash
 bun run build
@@ -164,7 +164,7 @@ scripts/
 
 ### Architecture
 
-Pages are thin routing files that delegate to **Views**, which compose **Sections** and **Components**. This avoids duplication between English and Spanish routes:
+Routing files stay small by delegating page composition to **Views**. Those views reuse the same **Sections** and **Components** across the English and Spanish routes:
 
 ```
 Page (/pages/index.astro) → View (HomePage.astro) → Sections (HeroSection, StackSection, ...)
@@ -175,7 +175,7 @@ Page (/pages/es/index.astro) → View (HomePage.astro) → same sections, differ
 
 ### Theme
 
-Colors use oklch for perceptual uniformity and P3 gamut support. Semantic tokens reference primitives and are defined in `src/styles/theme.css`:
+The color palette uses oklch for perceptual uniformity and P3 gamut support. Semantic tokens reference the primitives defined in `src/styles/theme.css`:
 
 - Light theme on `:root`, dark theme on `[data-theme="dark"]`
 - Three-state toggle: auto (follows system), light, dark
@@ -190,18 +190,18 @@ Colors use oklch for perceptual uniformity and P3 gamut support. Semantic tokens
 
 ### Lighthouse Thresholds
 
-CI enforces minimum Lighthouse scores (configurable in `lighthouserc.json`):
+CI reads the Lighthouse thresholds from `lighthouserc.json` and requires these minimum scores:
 
 - Performance: 90%
 - Accessibility: 90%
 - Best Practices: 90%
 - SEO: 90%
 
-Each audit runs three times per page and evaluates the median. After a release is deployed, CI audits every locale, publishes the lowest per-page score for each category to the release assets, and updates the Lighthouse badge at the top of this README.
+Each page is audited three times, and CI evaluates the median result. After a release is deployed, it audits both locales, adds the lowest page score for each category to the release assets, and updates the four Lighthouse badges at the top of this README.
 
 ## Contributing
 
-While this is a personal portfolio, bug reports and suggestions are welcome. Please open an issue to discuss any changes.
+This is a personal portfolio, but bug reports and suggestions are welcome. Open an issue if you would like to discuss a change.
 
 ### Commit Convention
 
@@ -227,10 +227,10 @@ This project is licensed under the [Creative Commons Attribution-NonCommercial-N
 
 **You are free to:**
 
-- **Share** -- copy and redistribute the material in any medium or format
+- **Share:** Copy and redistribute the material in any medium or format.
 
 **Under the following terms:**
 
-- **Attribution** -- You must give appropriate credit, provide a link to the license, and indicate if changes were made
-- **NonCommercial** -- You may not use the material for commercial purposes
-- **NoDerivatives** -- If you remix, transform, or build upon the material, you may not distribute the modified material
+- **Attribution:** Give appropriate credit, link to the license, and indicate whether you made changes.
+- **NonCommercial:** You may not use the material for commercial purposes.
+- **NoDerivatives:** If you remix, transform, or build upon the material, you may not distribute the modified material.
