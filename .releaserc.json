@@ -22,7 +22,8 @@
     [
       "@semantic-release/exec",
       {
-        "successCmd": "echo \"new-release-published=true\" >> $GITHUB_OUTPUT && echo \"new-release-version=${nextRelease.version}\" >> $GITHUB_OUTPUT"
+        "prepareCmd": "bun run build",
+        "successCmd": "printf '%s\\n' 'new-release-published=true' 'new-release-version=${nextRelease.version}' 'new-release-tag=${nextRelease.gitTag}' >> \"$GITHUB_OUTPUT\""
       }
     ]
   ]

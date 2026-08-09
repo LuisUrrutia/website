@@ -63,6 +63,8 @@ public/
 ├── fonts/               # Inter 400/700 files used for OG image generation
 ├── images/              # Static images (brush SVG, profile photo)
 └── tech/                # Technology icon SVGs (some with light/dark variants)
+scripts/
+└── lighthouse-badge.ts  # Release score aggregation and SVG badge generation
 ```
 
 ## Architecture
@@ -315,6 +317,7 @@ New blog posts automatically get:
 | Content schema         | `src/content.config.ts`                |
 | Sitemap hreflang       | `src/integrations/sitemap-hreflang.ts` |
 | Social sharing         | `src/lib/social-share/index.ts`        |
+| Lighthouse badge       | `scripts/lighthouse-badge.ts`          |
 | Technologies data      | `src/data/technologies.ts`             |
 | Companies data         | `src/data/companies.ts`                |
 | Testimonials data      | `src/data/testimonials.ts`             |

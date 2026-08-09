@@ -1,10 +1,5 @@
 {
   "ci": {
-    "collect": {
-      "staticDistDir": "./dist",
-      "url": ["http://localhost/", "http://localhost/blog/"],
-      "numberOfRuns": 3
-    },
     "assert": {
       "aggregationMethod": "median",
       "assertions": {

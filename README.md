@@ -6,6 +6,7 @@
 
 <p align="center">
 	<a href="https://github.com/LuisUrrutia/website/releases"><img alt="GitHub Release" src="https://img.shields.io/github/v/release/LuisUrrutia/website"></a>
+	<a href="https://github.com/LuisUrrutia/website/releases/latest"><img alt="Latest release Lighthouse scores: performance, accessibility, best practices, and SEO" src="https://raw.githubusercontent.com/LuisUrrutia/website/badges/lighthouse-scores.svg"></a>
 	<a href="https://twitter.com/luisurrutia_dev"><img alt="Twitter" src="https://badgen.net/badge/twitter/@luisurrutia_dev/1DA1F2?icon&label" /></a>
 	<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="License CC BY-NC-ND 4.0" src="https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey" /></a>
 </p>
@@ -66,7 +67,7 @@
 
 | Workflow   | Description                                       |
 | ---------- | ------------------------------------------------- |
-| Verify     | Lint, format check, and build on PRs              |
+| Verify     | Lint, format check, tests, and build on PRs       |
 | Release    | Semantic-release with Cloudflare Pages deployment |
 | CodeQL     | Security vulnerability scanning                   |
 | Lighthouse | Performance and accessibility audits (>= 90%)     |
@@ -154,6 +155,8 @@ public/
 ├── fonts/                 # Inter 400/700 files used for OG image generation
 ├── images/                # Static images
 └── tech/                  # Technology icon SVGs
+scripts/
+└── lighthouse-badge.ts    # Release score aggregation and SVG badge generation
 ```
 
 ### Architecture
@@ -190,6 +193,8 @@ CI enforces minimum Lighthouse scores (configurable in `lighthouserc.json`):
 - Accessibility: 90%
 - Best Practices: 90%
 - SEO: 90%
+
+Each audit runs three times per page and evaluates the median. After a release is deployed, CI audits every locale, publishes the lowest per-page score for each category to the release assets, and updates the Lighthouse badge at the top of this README.
 
 ## Contributing
 
