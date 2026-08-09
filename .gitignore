@@ -22,3 +22,11 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# local agent artifacts
+.omo/
+.sisyphus/
+.playwright-mcp/
+
+# alternate package manager lockfile
+pnpm-lock.yaml
