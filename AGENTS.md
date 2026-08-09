@@ -7,7 +7,7 @@ Guidelines for AI coding agents working in this repository.
 | Item            | Value                                  |
 | --------------- | -------------------------------------- |
 | Site            | https://urrutia.me                     |
-| Framework       | Astro v5 (static output)               |
+| Framework       | Astro v7 (static output)               |
 | Package Manager | Bun (>= 1.3)                           |
 | Languages       | English (default), Spanish (`/es/`)    |
 | Styling         | Tailwind CSS v4 (Vite plugin)          |
@@ -21,6 +21,7 @@ bun install          # Install dependencies
 bun run dev          # Dev server at localhost:4321
 bun run build        # Production build to dist/
 bun run lint         # OxLint with type-aware rules
+bun run test         # Vitest test suite
 bun run fmt:fix      # Auto-fix formatting
 bun run fmt          # Check formatting (CI)
 ```
@@ -349,7 +350,7 @@ Pre-commit hooks run Prettier and OxLint automatically via lint-staged.
 
 ## Important Rules
 
-1. **No tests** -- No test suite configured
+1. **Tests** -- Run the existing Vitest suite with `bun run test`
 2. **Static site** -- All pages pre-rendered at build time, no SSR
 3. **Zero JS default** -- Astro only ships JS when explicitly needed via `<script>` tags
 4. **Always add translations** -- Both `en` and `es` in `src/i18n/ui.ts`

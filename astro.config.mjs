@@ -9,6 +9,8 @@ import { sitemapHreflang } from "./src/integrations/sitemap-hreflang";
 // https://astro.build/config
 export default defineConfig({
 	site: "https://urrutia.me",
+	// Keep Astro 6's whitespace behavior; Astro 7 defaults to JSX-style compression.
+	compressHTML: true,
 
 	markdown: {
 		shikiConfig: {

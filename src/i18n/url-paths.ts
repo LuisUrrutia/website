@@ -1,4 +1,4 @@
-import { defaultLocale, locales, type Locale } from "./locales";
+import { defaultLocale, isValidLocale, locales, type Locale } from "./locales";
 
 export interface SiteUrlContext {
 	site?: URL;
@@ -107,9 +107,10 @@ export function getXDefaultUrl({
 export function getLocalizedUrls(input: LocalizedUrlsInput): LocalizedUrls {
 	return {
 		canonicalUrl: getCanonicalUrl(input),
-		alternateUrls: Object.fromEntries(
-			locales.map((locale) => [locale, getUrlForLocale(input, locale)]),
-		) as Record<Locale, string>,
+		alternateUrls: {
+			en: getUrlForLocale(input, "en"),
+			es: getUrlForLocale(input, "es"),
+		},
 		xDefaultUrl: getXDefaultUrl(input),
 	};
 }
@@ -120,9 +121,9 @@ export function getLocaleRedirectPath({
 	currentLocale,
 	browserLocale,
 }: LocaleRedirectInput): string | null {
-	if (!browserLocale || !locales.includes(browserLocale as Locale)) return null;
+	if (!browserLocale || !isValidLocale(browserLocale)) return null;
 	if (browserLocale === currentLocale) return null;
 
 	const pathWithoutLocale = getPathWithoutLocale(pathname);
-	return `${getLocalizedPath(pathWithoutLocale, browserLocale as Locale)}${search}`;
+	return `${getLocalizedPath(pathWithoutLocale, browserLocale)}${search}`;
 }

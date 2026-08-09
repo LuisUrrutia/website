@@ -91,10 +91,10 @@ export function prepareBlogPostPageMetadata({
 			)
 		: null;
 	const currentPostUrl = getLocalizedPath(`/blog/${slug}`, lang);
-	const alternateUrls = translatedPost
+	const alternateUrls = alternateUrl
 		? {
 				[lang]: currentPostUrl,
-				[alternateLang]: alternateUrl!,
+				[alternateLang]: alternateUrl,
 			}
 		: undefined;
 	const postUrl = getLocalizedSiteUrl(siteUrl, `/blog/${slug}`, lang);

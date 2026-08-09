@@ -4,6 +4,10 @@ import "../.astro/types.d.ts";
 import type { Locale, TranslationKey } from "@/i18n";
 
 declare global {
+	interface HTMLElementEventMap {
+		"expand-toggle": CustomEvent<{ expanded: boolean }>;
+	}
+
 	namespace App {
 		interface Locals {
 			lang: Locale;

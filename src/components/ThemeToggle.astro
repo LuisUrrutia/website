@@ -115,12 +115,13 @@ const {
 
 		// Event delegation on document - handles all current and future buttons
 		document.addEventListener("click", (e) => {
-			const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(
-				"[data-theme-toggle]",
-			);
+			if (!(e.target instanceof Element)) return;
+			const btn = e.target.closest<HTMLButtonElement>("[data-theme-toggle]");
 			if (!btn) return;
 
-			const currentMode = (btn.dataset.mode as ThemeMode) || "auto";
+			const mode = btn.dataset.mode;
+			const currentMode: ThemeMode =
+				mode === "light" || mode === "dark" ? mode : "auto";
 			const newMode = cycleMode(currentMode);
 			updateAllButtons(newMode);
 		});

@@ -26,8 +26,9 @@ const { t } = Astro.locals;
 		// Clean up previous listeners before adding new ones
 		cleanupBackToTop?.();
 
-		const button = document.getElementById("back-to-top");
-		if (!button) return;
+		const buttonElement = document.getElementById("back-to-top");
+		if (!buttonElement) return;
+		const button: HTMLElement = buttonElement;
 
 		let isVisible = false;
 		const controller = new AbortController();
@@ -37,16 +38,16 @@ const { t } = Astro.locals;
 
 			if (shouldShow !== isVisible) {
 				isVisible = shouldShow;
-				button!.style.opacity = shouldShow ? "1" : "0";
-				button!.style.transform = shouldShow
+				button.style.opacity = shouldShow ? "1" : "0";
+				button.style.transform = shouldShow
 					? "translateY(0)"
 					: "translateY(4rem)";
-				button!.style.pointerEvents = shouldShow ? "auto" : "none";
-				button!.setAttribute("aria-hidden", String(!shouldShow));
+				button.style.pointerEvents = shouldShow ? "auto" : "none";
+				button.setAttribute("aria-hidden", String(!shouldShow));
 
 				// Blur button when hiding to prevent focus issues
 				if (!shouldShow && document.activeElement === button) {
-					button!.blur();
+					button.blur();
 				}
 			}
 		}

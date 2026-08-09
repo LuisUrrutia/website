@@ -192,8 +192,10 @@ const newTabAttributes = getNewTabLinkAttributes();
 				if (container.dataset.dragInit) return;
 				container.dataset.dragInit = "true";
 
-				const track = container.querySelector<HTMLElement>(".marquee-track");
-				if (!track) return;
+				const trackElement =
+					container.querySelector<HTMLElement>(".marquee-track");
+				if (!trackElement) return;
+				const track: HTMLElement = trackElement;
 
 				const isReverse = track.classList.contains("marquee-track--reverse");
 				let isDragging = false;
@@ -201,7 +203,7 @@ const newTabAttributes = getNewTabLinkAttributes();
 				let currentOffset = 0;
 
 				function getTranslateX(): number {
-					const matrix = new DOMMatrix(getComputedStyle(track!).transform);
+					const matrix = new DOMMatrix(getComputedStyle(track).transform);
 					return matrix.m41;
 				}
 
@@ -209,21 +211,21 @@ const newTabAttributes = getNewTabLinkAttributes();
 					isDragging = true;
 					startX = x;
 					currentOffset = getTranslateX();
-					track!.classList.add("is-dragging");
-					track!.style.transform = `translateX(${currentOffset}px)`;
+					track.classList.add("is-dragging");
+					track.style.transform = `translateX(${currentOffset}px)`;
 				}
 
 				function onMove(x: number): void {
 					if (!isDragging) return;
 					const delta = x - startX;
-					const contentWidth = track!.scrollWidth / 2;
+					const contentWidth = track.scrollWidth / 2;
 					let newOffset = currentOffset + delta;
 
 					// Wrap around seamlessly
 					if (newOffset > 0) newOffset -= contentWidth;
 					if (newOffset < -contentWidth) newOffset += contentWidth;
 
-					track!.style.transform = `translateX(${newOffset}px)`;
+					track.style.transform = `translateX(${newOffset}px)`;
 				}
 
 				function onEnd(): void {
@@ -232,7 +234,7 @@ const newTabAttributes = getNewTabLinkAttributes();
 
 					// Calculate where we are as a fraction of the animation cycle.
 					// The animation goes from 0 to -50% (half the total scrollWidth).
-					const contentWidth = track!.scrollWidth / 2;
+					const contentWidth = track.scrollWidth / 2;
 					const finalX = getTranslateX();
 
 					// Normalize to 0..1 progress through the animation
@@ -244,9 +246,9 @@ const newTabAttributes = getNewTabLinkAttributes();
 					const duration = parseFloat(
 						getComputedStyle(container).getPropertyValue("--marquee-duration"),
 					);
-					track!.style.transform = "";
-					track!.style.animationDelay = `-${progress * duration}s`;
-					track!.classList.remove("is-dragging");
+					track.style.transform = "";
+					track.style.animationDelay = `-${progress * duration}s`;
+					track.classList.remove("is-dragging");
 				}
 
 				container.addEventListener(

@@ -1,6 +1,7 @@
 import type { AstroIntegration } from "astro";
 import { readFile, writeFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
+import { isValidLocale, type Locale } from "@/i18n";
 
 /**
  * Recursively get all files matching an extension in a directory.
@@ -42,7 +43,7 @@ export function sitemapHreflang(): AstroIntegration {
 				// Parse frontmatter and build translation groups
 				const postsBySlug = new Map<
 					string,
-					Array<{ lang: "en" | "es"; fileSlug: string }>
+					Array<{ lang: Locale; fileSlug: string }>
 				>();
 
 				for (const filePath of mdxFiles) {
@@ -58,14 +59,14 @@ export function sitemapHreflang(): AstroIntegration {
 
 					if (!langMatch || !translationSlugMatch) continue;
 
-					const lang = langMatch[1] as "en" | "es";
+					const lang = langMatch[1];
+					if (!isValidLocale(lang)) continue;
 					const translationSlug = translationSlugMatch[1].trim();
 					// Extract just the filename without the lang directory prefix
 					// e.g., /en/git-worktree.mdx -> git-worktree
-					const fileSlug = filePath
-						.split("/")
-						.pop()!
-						.replace(/\.mdx$/, "");
+					const fileName = filePath.split("/").pop();
+					if (!fileName) continue;
+					const fileSlug = fileName.replace(/\.mdx$/, "");
 
 					const group = postsBySlug.get(translationSlug) || [];
 					group.push({ lang, fileSlug });

@@ -146,9 +146,9 @@ export function initStackSections(): void {
 			}
 
 			filtersContainer?.addEventListener("click", (event) => {
-				const filterBtn = (
-					event.target as HTMLElement
-				).closest<HTMLButtonElement>(".stack-filter");
+				if (!(event.target instanceof Element)) return;
+				const filterBtn =
+					event.target.closest<HTMLButtonElement>(".stack-filter");
 				if (!filterBtn) return;
 
 				const category = filterBtn.dataset.category;
@@ -174,11 +174,9 @@ export function initStackSections(): void {
 				update();
 			});
 
-			expandBtn?.addEventListener("expand-toggle", ((
-				event: CustomEvent<{ expanded: boolean }>,
-			) => {
+			expandBtn?.addEventListener("expand-toggle", (event) => {
 				isExpanded = event.detail.expanded;
 				update();
-			}) as EventListener);
+			});
 		});
 }

@@ -5,6 +5,7 @@ import { matchesLocale, getSlugWithoutLocale, useTranslations } from "@/i18n";
 
 export async function GET(context: APIContext) {
 	const t = useTranslations("en");
+	if (!context.site) throw new Error("The RSS feed requires Astro's site URL");
 
 	const posts = await getCollection("blog", ({ data }) =>
 		matchesLocale("en")(data),
@@ -15,7 +16,7 @@ export async function GET(context: APIContext) {
 	return rss({
 		title: t("rss.title"),
 		description: t("rss.description"),
-		site: context.site!,
+		site: context.site,
 		items: posts.map((post) => ({
 			title: post.data.title,
 			pubDate: post.data.date,

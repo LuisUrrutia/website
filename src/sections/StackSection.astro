@@ -43,14 +43,15 @@ const categories: { id: TechnologyCategory; label: string }[] = [
 ];
 
 // Pre-compute indices by category at build time
-const indicesByCategory = technologies.reduce(
-	(acc, tech, index) => {
-		acc[tech.category] = acc[tech.category] || [];
-		acc[tech.category].push(index);
-		return acc;
-	},
-	{} as Record<TechnologyCategory, number[]>,
-);
+const indicesByCategory: Record<TechnologyCategory, number[]> = {
+	frameworks: [],
+	languages: [],
+	tools: [],
+};
+
+technologies.forEach((technology, index) => {
+	indicesByCategory[technology.category].push(index);
+});
 ---
 
 <Card as="section" id={id} aria-labelledby={`${id}-heading`}>

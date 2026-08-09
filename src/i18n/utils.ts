@@ -1,5 +1,6 @@
 import { ui, type TranslationKey } from "./ui";
-import { locales, defaultLocale, type Locale } from "./locales";
+import { defaultLocale, isValidLocale, type Locale } from "./locales";
+export { isValidLocale } from "./locales";
 export {
 	getCanonicalPath,
 	getCanonicalUrl,
@@ -37,13 +38,6 @@ export function getAlternateLocale(locale: Locale): Locale {
 export function matchesLocale(locale: Locale) {
 	return (data: { lang: Locale; draft?: boolean }): boolean =>
 		data.lang === locale && !data.draft;
-}
-
-/**
- * Type guard to check if a string is a valid locale.
- */
-export function isValidLocale(value: string): value is Locale {
-	return locales.includes(value as Locale);
 }
 
 /**
