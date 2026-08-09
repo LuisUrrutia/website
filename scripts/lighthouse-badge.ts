@@ -1,12 +1,39 @@
-import { appendFile, readdir, readFile, writeFile } from "node:fs/promises";
+import {
+	appendFile,
+	mkdir,
+	readdir,
+	readFile,
+	writeFile,
+} from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { makeBadge } from "badge-maker";
 
 const categoryDefinitions = [
-	{ key: "performance", output: "performance", label: "P" },
-	{ key: "accessibility", output: "accessibility", label: "A11y" },
-	{ key: "best-practices", output: "best_practices", label: "BP" },
-	{ key: "seo", output: "seo", label: "SEO" },
+	{
+		key: "performance",
+		output: "performance",
+		label: "lighthouse performance",
+		filename: "lighthouse-performance.svg",
+	},
+	{
+		key: "accessibility",
+		output: "accessibility",
+		label: "lighthouse accessibility",
+		filename: "lighthouse-accessibility.svg",
+	},
+	{
+		key: "best-practices",
+		output: "best_practices",
+		label: "lighthouse best practices",
+		filename: "lighthouse-best-practices.svg",
+	},
+	{
+		key: "seo",
+		output: "seo",
+		label: "lighthouse seo",
+		filename: "lighthouse-seo.svg",
+	},
 ] as const;
 
 type CategoryKey = (typeof categoryDefinitions)[number]["key"];
@@ -117,13 +144,12 @@ export async function extractLighthouseScores(
 }
 
 function scoreColor(score: number): string {
-	if (score >= 90) return "#0cce6b";
-	if (score >= 50) return "#ffa400";
-	return "#ff4e42";
-}
-
-function scoreTextColor(score: number): string {
-	return score >= 50 ? "#172117" : "#ffffff";
+	if (score >= 95) return "brightgreen";
+	if (score >= 90) return "green";
+	if (score >= 75) return "yellowgreen";
+	if (score >= 60) return "yellow";
+	if (score >= 40) return "orange";
+	return "red";
 }
 
 function validatePercentage(value: string | undefined, name: string): number {
@@ -136,38 +162,20 @@ function validatePercentage(value: string | undefined, name: string): number {
 	return score;
 }
 
-export function renderLighthouseBadge(scores: LighthouseScores): string {
-	const labelWidth = 132;
-	const segmentWidths = [55, 65, 62, 65];
-	const width =
-		labelWidth + segmentWidths.reduce((total, segment) => total + segment, 0);
-	let offset = labelWidth;
-	const segments = categoryDefinitions
-		.map(({ key, label }, index) => {
-			const segmentWidth = segmentWidths[index];
-			const center = offset + segmentWidth / 2;
-			const score = scores[key];
-			const segment = `<rect x="${offset}" width="${segmentWidth}" height="28" fill="${scoreColor(score)}"/><text x="${center}" y="18" fill="${scoreTextColor(score)}" text-anchor="middle" font-family="Verdana,DejaVu Sans,sans-serif" font-size="11" font-weight="600">${label} ${score}</text>`;
-			offset += segmentWidth;
-			return segment;
-		})
-		.join("");
-	const description = categoryDefinitions
-		.map(({ key, label }) => `${label} ${scores[key]}`)
-		.join(", ");
-
-	return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="28" role="img" aria-label="Lighthouse latest release: ${description}">
-	<title>Lighthouse latest release: ${description}</title>
-	<clipPath id="badge"><rect width="${width}" height="28" rx="5"/></clipPath>
-	<g clip-path="url(#badge)">
-		<rect width="${labelWidth}" height="28" fill="#3c4043"/>
-		${segments}
-	</g>
-	<g fill="#ffffff" text-anchor="middle" font-family="Verdana,DejaVu Sans,sans-serif" font-size="11" font-weight="600">
-		<text x="${labelWidth / 2}" y="18">Lighthouse · release</text>
-	</g>
-</svg>
-`;
+export function renderLighthouseBadges(
+	scores: LighthouseScores,
+): Record<string, string> {
+	return Object.fromEntries(
+		categoryDefinitions.map(({ key, label, filename }) => [
+			filename,
+			makeBadge({
+				label,
+				message: `${scores[key]}%`,
+				color: scoreColor(scores[key]),
+				style: "flat",
+			}),
+		]),
+	);
 }
 
 async function extractCommand(): Promise<void> {
@@ -184,8 +192,9 @@ async function extractCommand(): Promise<void> {
 }
 
 async function renderCommand(): Promise<void> {
-	const outputPath = process.env.LIGHTHOUSE_BADGE_OUTPUT;
-	if (!outputPath) throw new Error("LIGHTHOUSE_BADGE_OUTPUT is required");
+	const outputDirectory = process.env.LIGHTHOUSE_BADGE_OUTPUT_DIR;
+	if (!outputDirectory)
+		throw new Error("LIGHTHOUSE_BADGE_OUTPUT_DIR is required");
 
 	const scores: LighthouseScores = {
 		performance: validatePercentage(
@@ -202,7 +211,12 @@ async function renderCommand(): Promise<void> {
 		),
 		seo: validatePercentage(process.env.LIGHTHOUSE_SEO, "SEO"),
 	};
-	await writeFile(outputPath, renderLighthouseBadge(scores), "utf8");
+	await mkdir(outputDirectory, { recursive: true });
+	await Promise.all(
+		Object.entries(renderLighthouseBadges(scores)).map(([filename, svg]) =>
+			writeFile(resolve(outputDirectory, filename), svg, "utf8"),
+		),
+	);
 }
 
 async function main(): Promise<void> {

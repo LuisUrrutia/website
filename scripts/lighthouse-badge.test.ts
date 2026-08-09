@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	aggregateLighthouseScores,
-	renderLighthouseBadge,
+	renderLighthouseBadges,
 } from "./lighthouse-badge";
 
 function report(
@@ -50,20 +50,26 @@ describe("aggregateLighthouseScores", () => {
 	});
 });
 
-describe("renderLighthouseBadge", () => {
-	it("renders every category into an accessible SVG", () => {
-		const svg = renderLighthouseBadge({
+describe("renderLighthouseBadges", () => {
+	it("renders an accessible Shields-style badge for every category", () => {
+		const badges = renderLighthouseBadges({
 			performance: 93,
 			accessibility: 96,
 			"best-practices": 100,
 			seo: 92,
 		});
 
-		expect(svg).toContain("<svg");
-		expect(svg).toContain("P 93");
-		expect(svg).toContain("A11y 96");
-		expect(svg).toContain("BP 100");
-		expect(svg).toContain("SEO 92");
-		expect(svg).toContain("aria-label");
+		expect(Object.keys(badges)).toEqual([
+			"lighthouse-performance.svg",
+			"lighthouse-accessibility.svg",
+			"lighthouse-best-practices.svg",
+			"lighthouse-seo.svg",
+		]);
+		expect(badges["lighthouse-performance.svg"]).toContain(
+			'aria-label="lighthouse performance: 93%"',
+		);
+		expect(badges["lighthouse-accessibility.svg"]).toContain("96%");
+		expect(badges["lighthouse-best-practices.svg"]).toContain("100%");
+		expect(badges["lighthouse-seo.svg"]).toContain("92%");
 	});
 });

@@ -6,7 +6,10 @@
 
 <p align="center">
 	<a href="https://github.com/LuisUrrutia/website/releases"><img alt="GitHub Release" src="https://img.shields.io/github/v/release/LuisUrrutia/website"></a>
-	<a href="https://github.com/LuisUrrutia/website/releases/latest"><img alt="Latest release Lighthouse scores: performance, accessibility, best practices, and SEO" src="https://raw.githubusercontent.com/LuisUrrutia/website/badges/lighthouse-scores.svg"></a>
+	<a href="https://github.com/LuisUrrutia/website/releases/latest"><img alt="Latest release Lighthouse performance score" src="https://raw.githubusercontent.com/LuisUrrutia/website/badges/lighthouse-performance.svg"></a>
+	<a href="https://github.com/LuisUrrutia/website/releases/latest"><img alt="Latest release Lighthouse accessibility score" src="https://raw.githubusercontent.com/LuisUrrutia/website/badges/lighthouse-accessibility.svg"></a>
+	<a href="https://github.com/LuisUrrutia/website/releases/latest"><img alt="Latest release Lighthouse best practices score" src="https://raw.githubusercontent.com/LuisUrrutia/website/badges/lighthouse-best-practices.svg"></a>
+	<a href="https://github.com/LuisUrrutia/website/releases/latest"><img alt="Latest release Lighthouse SEO score" src="https://raw.githubusercontent.com/LuisUrrutia/website/badges/lighthouse-seo.svg"></a>
 	<a href="https://twitter.com/luisurrutia_dev"><img alt="Twitter" src="https://badgen.net/badge/twitter/@luisurrutia_dev/1DA1F2?icon&label" /></a>
 	<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="License CC BY-NC-ND 4.0" src="https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey" /></a>
 </p>
