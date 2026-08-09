@@ -28,7 +28,6 @@
     "@playform/compress": "^0.2.4",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "7.1.6",
-    "astro-font": "^1.1.0",
     "astro-og-canvas": "^0.13.0",
     "canvaskit-wasm": "^0.41.1",
     "sharp": "^0.35.3",

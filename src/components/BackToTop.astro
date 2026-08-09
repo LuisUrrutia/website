@@ -20,18 +20,14 @@ const { t } = Astro.locals;
 </button>
 
 <script>
-	let cleanupBackToTop: (() => void) | null = null;
-
 	function initBackToTop(): void {
-		// Clean up previous listeners before adding new ones
-		cleanupBackToTop?.();
-
 		const buttonElement = document.getElementById("back-to-top");
-		if (!buttonElement) return;
-		const button: HTMLElement = buttonElement;
+		if (!(buttonElement instanceof HTMLButtonElement)) return;
+		if (buttonElement.dataset.init) return;
+		buttonElement.dataset.init = "true";
+		const button = buttonElement;
 
 		let isVisible = false;
-		const controller = new AbortController();
 
 		function toggleVisibility(): void {
 			const shouldShow = window.scrollY > 400;
@@ -65,19 +61,11 @@ const { t } = Astro.locals;
 		// Initial check
 		toggleVisibility();
 
-		// Listen for scroll and click with AbortController for cleanup
 		window.addEventListener("scroll", toggleVisibility, {
 			passive: true,
-			signal: controller.signal,
 		});
-		button.addEventListener("click", scrollToTop, {
-			signal: controller.signal,
-		});
-
-		// Store cleanup function
-		cleanupBackToTop = () => controller.abort();
+		button.addEventListener("click", scrollToTop);
 	}
 
 	initBackToTop();
-	document.addEventListener("astro:after-swap", initBackToTop);
 </script>

@@ -9,3 +9,61 @@
 @view-transition {
 	navigation: auto;
 }
+
+[data-page-transition="fade"] {
+	view-transition-name: page-fade;
+}
+
+[data-page-transition="slide"] {
+	view-transition-name: page-slide;
+}
+
+@keyframes page-fade-out {
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes page-fade-in {
+	from {
+		opacity: 0;
+	}
+}
+
+@keyframes page-slide-out {
+	to {
+		opacity: 0;
+		transform: translateY(-0.5rem);
+	}
+}
+
+@keyframes page-slide-in {
+	from {
+		opacity: 0;
+		transform: translateY(0.5rem);
+	}
+}
+
+::view-transition-old(page-fade) {
+	animation: 160ms ease-out both page-fade-out;
+}
+
+::view-transition-new(page-fade) {
+	animation: 200ms ease-in both page-fade-in;
+}
+
+::view-transition-old(page-slide) {
+	animation: 180ms ease-out both page-slide-out;
+}
+
+::view-transition-new(page-slide) {
+	animation: 220ms ease-out both page-slide-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-group(*),
+	::view-transition-old(*),
+	::view-transition-new(*) {
+		animation: none !important;
+	}
+}

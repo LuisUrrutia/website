@@ -1,16 +1,48 @@
 // @ts-check
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import mdx from "@astrojs/mdx";
 import compressor from "astro-compressor";
 import sitemap from "@astrojs/sitemap";
-import { sitemapHreflang } from "./src/integrations/sitemap-hreflang";
+import { createSitemapSerializer } from "./src/integrations/sitemap-hreflang";
+
+const SITE_URL = "https://urrutia.me";
+const serializeSitemapItem = createSitemapSerializer({
+	blogDirectory: new URL("./src/content/blog/", import.meta.url),
+	site: new URL(SITE_URL),
+});
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://urrutia.me",
+	site: SITE_URL,
 	// Keep Astro 6's whitespace behavior; Astro 7 defaults to JSX-style compression.
 	compressHTML: true,
+	fonts: [
+		{
+			provider: fontProviders.local(),
+			name: "Inter Variable",
+			cssVariable: "--font-inter",
+			fallbacks: [
+				"ui-sans-serif",
+				"system-ui",
+				"Apple Color Emoji",
+				"Segoe UI Emoji",
+				"Segoe UI Symbol",
+				"Noto Color Emoji",
+				"sans-serif",
+			],
+			options: {
+				variants: [
+					{
+						src: ["./src/assets/fonts/InterVariable.woff2"],
+						weight: "100 900",
+						style: "normal",
+						display: "swap",
+					},
+				],
+			},
+		},
+	],
 
 	markdown: {
 		shikiConfig: {
@@ -35,7 +67,7 @@ export default defineConfig({
 	},
 
 	build: {
-		// Auto-inline CSS based on assetsInlineLimit threshold
+		// Inline every generated stylesheet into the page HTML.
 		inlineStylesheets: "always",
 	},
 
@@ -49,8 +81,8 @@ export default defineConfig({
 					es: "es",
 				},
 			},
+			serialize: serializeSitemapItem,
 		}),
-		sitemapHreflang(),
 		(await import("@playform/compress")).default({
 			CSS: true,
 			HTML: {

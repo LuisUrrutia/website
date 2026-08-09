@@ -86,7 +86,7 @@ const {
 		type ThemeMode,
 	} from "@/lib/theme";
 
-	// Cache buttons - refreshed on navigation
+	// Cache every rendered toggle so all instances stay synchronized.
 	let cachedButtons: HTMLButtonElement[] = [];
 
 	function refreshButtonCache(): void {
@@ -130,8 +130,4 @@ const {
 	}
 
 	initThemeToggle();
-	document.addEventListener("astro:after-swap", () => {
-		refreshButtonCache();
-		updateAllButtons(getStoredMode());
-	});
 </script>

@@ -1,6 +1,6 @@
 ---
 // Inline blocking script to prevent theme flash
-// This runs before any rendering occurs and on view transitions
+// Native MPA navigation reloads this script before every page render.
 ---
 
 <script is:inline>
@@ -25,9 +25,5 @@
 		document.documentElement.dataset.themeMode = mode;
 	}
 
-	// Apply on initial load
 	applyTheme();
-
-	// Apply after view transitions swap to prevent flash
-	document.addEventListener("astro:after-swap", applyTheme);
 </script>

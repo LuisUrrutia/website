@@ -50,7 +50,7 @@ const metadata = prepareBlogPostPageMetadata({
 		as="main"
 		id="main-content"
 		class="flex flex-col gap-8"
-		transition:animate="slide"
+		data-page-transition="slide"
 	>
 		<BlogPostArticle post={post} metadata={metadata} lang={lang} t={t}>
 			<Content components={{ a: A }} />

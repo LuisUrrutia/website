@@ -1,7 +1,7 @@
 # urrutia.me
 
 <p align="center">
-  <strong>Personal portfolio and blog built with Astro v5 and Tailwind CSS v4.</strong>
+  <strong>Personal portfolio and blog built with Astro v7 and Tailwind CSS v4.</strong>
 </p>
 
 <p align="center">
@@ -36,7 +36,7 @@
 
 | Technology                                    | Description                                   |
 | --------------------------------------------- | --------------------------------------------- |
-| [Astro v5](https://astro.build/)              | Static site generator with zero JS by default |
+| [Astro v7](https://astro.build/)              | Static site generator with zero JS by default |
 | [Tailwind CSS v4](https://tailwindcss.com/)   | Utility-first CSS framework                   |
 | [TypeScript](https://www.typescriptlang.org/) | Type-safe JavaScript                          |
 | [MDX](https://mdxjs.com/)                     | Markdown with components for blog posts       |
@@ -60,7 +60,7 @@
 | [astro-og-canvas](https://github.com/delucis/astro-og-canvas)  | Build-time OG image generation per blog post     |
 | [@playform/compress](https://github.com/PlayForm/Compress)     | HTML, CSS, JS, JSON, SVG, and image minification |
 | [astro-compressor](https://github.com/sondr3/astro-compressor) | Brotli and gzip pre-compression                  |
-| [SVGO](https://svgo.dev/)                                      | SVG optimization via Astro experimental flag     |
+| [SVGO](https://svgo.dev/)                                      | SVG optimization through `@playform/compress`    |
 
 ### CI/CD
 
@@ -106,6 +106,7 @@ The site will be available at `http://localhost:4321` with hot module replacemen
 | `bun run lint`          | Run OxLint with type-aware rules                      |
 | `bun run fmt`           | Check code formatting with Prettier                   |
 | `bun run fmt:fix`       | Auto-fix formatting issues                            |
+| `bun run test`          | Run the Vitest suite                                  |
 
 ### Testing with Docker
 
@@ -123,7 +124,8 @@ docker compose up -d
 src/
 ├── assets/
 │   ├── blog/              # Blog post images
-│   ├── icons/             # SVG icons (optimized via SVGO)
+│   ├── fonts/             # Fonts processed by Astro's native Fonts API
+│   ├── icons/             # SVG icons optimized during production builds
 │   ├── images/            # Site images (processed by Astro)
 │   └── testimonials/      # Testimonial photos
 ├── components/            # Reusable UI components (.astro)
@@ -149,7 +151,7 @@ src/
 public/
 ├── companies/             # Company logo SVGs (light + dark variants)
 ├── favicons/              # Favicon files (SVG, PNG at multiple sizes)
-├── fonts/                 # Self-hosted Inter Variable (subsetted woff2)
+├── fonts/                 # Inter 400/700 files used for OG image generation
 ├── images/                # Static images
 └── tech/                  # Technology icon SVGs
 ```

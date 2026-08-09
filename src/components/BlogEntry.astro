@@ -23,7 +23,7 @@ interface Props {
 	headingLevel?: HeadingLevel;
 	/** Hide the bottom border. Useful for last item in a list. */
 	hideBorder?: boolean;
-	/** Apply view-transition-name only on click (one-directional transition). */
+	/** Apply the native view-transition-name only to the selected post. */
 	lazyTransition?: boolean;
 }
 
@@ -134,5 +134,4 @@ const linkProps = href
 	}
 
 	initLazyTransitions();
-	document.addEventListener("astro:after-swap", initLazyTransitions);
 </script>

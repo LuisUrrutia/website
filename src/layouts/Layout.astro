@@ -1,5 +1,5 @@
 ---
-import { AstroFont } from "astro-font";
+import { Font } from "astro:assets";
 import ThemeScript from "@/components/ThemeScript.astro";
 import LocaleScript from "@/components/LocaleScript.astro";
 import ViewportIndicator from "@/components/ViewportIndicator.astro";
@@ -32,29 +32,13 @@ const {
 		{!skipLocaleRedirect && <LocaleScript currentLocale={lang} />}
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content="Astro" />
+		<meta name="generator" content={Astro.generator} />
 
 		<!-- SEO Meta Tags -->
 		<SEO title={title} description={description} {...seoProps} />
 
 		<!-- Fonts -->
-		<AstroFont
-			config={[
-				{
-					name: "Inter Variable",
-					src: [
-						{
-							style: "normal",
-							weight: "100 900",
-							path: "/fonts/InterVariable.woff2",
-						},
-					],
-					preload: true,
-					display: "swap",
-					fallback: "sans-serif",
-				},
-			]}
-		/>
+		<Font cssVariable="--font-inter" preload />
 
 		<!-- Favicons -->
 		<link rel="icon" type="image/svg+xml" href="/favicons/favicon.svg" />

@@ -32,7 +32,8 @@ bun run fmt          # Check formatting (CI)
 src/
 ├── assets/
 │   ├── blog/            # Blog post images (processed by Astro)
-│   ├── icons/           # SVG icons (optimized via experimental SVGO)
+│   ├── fonts/           # Fonts processed by Astro's native Fonts API
+│   ├── icons/           # SVG icons optimized by @playform/compress
 │   ├── images/          # Site images (profile photos, OG background)
 │   └── testimonials/    # Testimonial photos
 ├── components/          # UI components (.astro)
@@ -59,7 +60,7 @@ src/
 public/
 ├── companies/           # Company logo SVGs (light + dark variants)
 ├── favicons/            # Favicon files (SVG, PNG at 16/32/180/512)
-├── fonts/               # Self-hosted Inter Variable (subsetted woff2)
+├── fonts/               # Inter 400/700 files used for OG image generation
 ├── images/              # Static images (brush SVG, profile photo)
 └── tech/                # Technology icon SVGs (some with light/dark variants)
 ```
@@ -222,9 +223,10 @@ Three script patterns used in this project:
 		});
 	}
 	init();
-	document.addEventListener("astro:after-swap", init); // Re-init after view transition
 </script>
 ```
+
+Native cross-document transitions preserve normal MPA navigation, so every page load executes its scripts in a fresh document. Do not subscribe to Astro router lifecycle events unless the project adopts `<ClientRouter />`.
 
 **2. Blocking inline scripts** (for critical path, e.g., theme, locale):
 
@@ -249,10 +251,11 @@ container.addEventListener("click", (e) => {
 ### View Transitions
 
 - Native CSS: `@view-transition { navigation: auto }` in `global.css`
-- Astro directive: `transition:animate="fade"` (homepage) or `"slide"` (blog pages)
+- Page animation: `data-page-transition="fade"` (homepage) or `"slide"` (blog pages), styled with native View Transition pseudo-elements
 - Named transitions: `view-transition-name: post-card`, `post-title-${slug}`, `post-pill-${slug}`
 - **Lazy transition pattern**: BlogEntry sets `view-transition-name` via JS on click only (avoids tracking all names in the list)
-- All component scripts must reinitialize on `astro:after-swap`
+- Navigation remains MPA; no `<ClientRouter />` or Astro router lifecycle events are used
+- Native transition animations must include an explicit `prefers-reduced-motion` rule
 - `interpolate-size: allow-keywords` on `:root` for smooth CSS size transitions
 
 ### Accessibility
@@ -362,6 +365,6 @@ Pre-commit hooks run Prettier and OxLint automatically via lint-staged.
 10. **Focus indicators required** -- All interactive elements need visible `focus-visible` styles
 11. **Screen reader text for new tabs** -- All `target="_blank"` links must include `(opens in new tab)` sr-only text
 12. **Respect reduced motion** -- Use `motion-reduce:` Tailwind variants and check `prefers-reduced-motion` in JS
-13. **Reinit on view transitions** -- All client scripts must handle `astro:after-swap` event
-14. **Guard double init** -- Use `dataset.init` flag in component scripts to prevent duplicate setup
+13. **Native navigation** -- Initialize scripts directly; `astro:after-swap` is only valid if `<ClientRouter />` is introduced
+14. **Guard double init** -- Use `dataset.init` when an initializer can encounter the same element more than once
 15. **External link attributes** -- Always include `target="_blank"`, `rel="noopener noreferrer"`, and `referrerpolicy="strict-origin-when-cross-origin"`

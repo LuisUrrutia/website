@@ -1,147 +1,89 @@
-import type { AstroIntegration } from "astro";
-import { readFile, writeFile, readdir } from "node:fs/promises";
-import { join } from "node:path";
+import type { LinkItem, SitemapItem } from "@astrojs/sitemap";
+import { readFile, readdir } from "node:fs/promises";
+import { basename, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { isValidLocale, type Locale } from "@/i18n";
 
-/**
- * Recursively get all files matching an extension in a directory.
- */
-async function getFiles(dir: string, ext: string): Promise<string[]> {
-	const entries = await readdir(dir, { withFileTypes: true });
+interface SitemapSerializerOptions {
+	blogDirectory: URL;
+	site: URL;
+}
+
+type TranslationUrls = Partial<Record<Locale, string>>;
+
+async function getMdxFiles(directory: string): Promise<string[]> {
+	const entries = await readdir(directory, { withFileTypes: true });
 	const files: string[] = [];
 
 	for (const entry of entries) {
-		const fullPath = join(dir, entry.name);
+		const path = join(directory, entry.name);
 		if (entry.isDirectory()) {
-			files.push(...(await getFiles(fullPath, ext)));
-		} else if (entry.name.endsWith(ext)) {
-			files.push(fullPath);
+			files.push(...(await getMdxFiles(path)));
+		} else if (entry.name.endsWith(".mdx")) {
+			files.push(path);
 		}
 	}
 
 	return files;
 }
 
-/**
- * Custom Astro integration to add hreflang links to blog posts in the sitemap.
- * Runs after the sitemap is generated and patches it with translation links.
- */
-export function sitemapHreflang(): AstroIntegration {
-	return {
-		name: "sitemap-hreflang",
-		hooks: {
-			"astro:build:done": async ({ dir, logger }) => {
-				const distPath = dir.pathname;
+function getPostUrl(site: URL, locale: Locale, slug: string): string {
+	const path = locale === "en" ? `/blog/${slug}/` : `/es/blog/${slug}/`;
+	return new URL(path, site).href;
+}
 
-				// Find all blog MDX files and extract translation mappings
-				const blogDir = join(process.cwd(), "src/content/blog");
-				const translationMap = new Map<string, { en?: string; es?: string }>();
+async function getTranslationLinksByUrl({
+	blogDirectory,
+	site,
+}: SitemapSerializerOptions): Promise<Map<string, LinkItem[]>> {
+	const postsByTranslationSlug = new Map<string, TranslationUrls>();
+	const files = await getMdxFiles(fileURLToPath(blogDirectory));
 
-				// Read all MDX files
-				const mdxFiles = await getFiles(blogDir, ".mdx");
+	for (const file of files) {
+		const content = await readFile(file, "utf-8");
+		const frontmatterMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+		if (!frontmatterMatch) continue;
 
-				// Parse frontmatter and build translation groups
-				const postsBySlug = new Map<
-					string,
-					Array<{ lang: Locale; fileSlug: string }>
-				>();
+		const frontmatter = frontmatterMatch[1];
+		const langMatch = frontmatter.match(/lang:\s*["']?(en|es)["']?/);
+		const translationSlugMatch = frontmatter.match(
+			/translationSlug:\s*["']?([^"'\n]+)["']?/,
+		);
+		if (!langMatch || !translationSlugMatch) continue;
 
-				for (const filePath of mdxFiles) {
-					const content = await readFile(filePath, "utf-8");
-					const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
-					if (!frontmatterMatch) continue;
+		const locale = langMatch[1];
+		if (!isValidLocale(locale)) continue;
 
-					const frontmatter = frontmatterMatch[1];
-					const langMatch = frontmatter.match(/lang:\s*["']?(en|es)["']?/);
-					const translationSlugMatch = frontmatter.match(
-						/translationSlug:\s*["']?([^"'\n]+)["']?/,
-					);
+		const translationSlug = translationSlugMatch[1].trim();
+		const fileSlug = basename(file, ".mdx");
+		const translations = postsByTranslationSlug.get(translationSlug) ?? {};
+		translations[locale] = getPostUrl(site, locale, fileSlug);
+		postsByTranslationSlug.set(translationSlug, translations);
+	}
 
-					if (!langMatch || !translationSlugMatch) continue;
+	const linksByUrl = new Map<string, LinkItem[]>();
+	for (const translations of postsByTranslationSlug.values()) {
+		const links: LinkItem[] = [];
+		for (const locale of ["en", "es"] as const) {
+			const url = translations[locale];
+			if (url) links.push({ lang: locale, url });
+		}
 
-					const lang = langMatch[1];
-					if (!isValidLocale(lang)) continue;
-					const translationSlug = translationSlugMatch[1].trim();
-					// Extract just the filename without the lang directory prefix
-					// e.g., /en/git-worktree.mdx -> git-worktree
-					const fileName = filePath.split("/").pop();
-					if (!fileName) continue;
-					const fileSlug = fileName.replace(/\.mdx$/, "");
+		if (links.length < 2) continue;
+		for (const { url } of links) linksByUrl.set(url, links);
+	}
 
-					const group = postsBySlug.get(translationSlug) || [];
-					group.push({ lang, fileSlug });
-					postsBySlug.set(translationSlug, group);
-				}
+	return linksByUrl;
+}
 
-				// Build URL translation map
-				for (const group of postsBySlug.values()) {
-					if (group.length < 2) continue;
+export function createSitemapSerializer(
+	options: SitemapSerializerOptions,
+): (item: SitemapItem) => Promise<SitemapItem> {
+	let linksByUrlPromise: Promise<Map<string, LinkItem[]>> | undefined;
 
-					const urls: { en?: string; es?: string } = {};
-					for (const { lang, fileSlug } of group) {
-						urls[lang] =
-							lang === "en"
-								? `https://urrutia.me/blog/${fileSlug}/`
-								: `https://urrutia.me/es/blog/${fileSlug}/`;
-					}
-
-					for (const { lang, fileSlug } of group) {
-						const url =
-							lang === "en"
-								? `https://urrutia.me/blog/${fileSlug}/`
-								: `https://urrutia.me/es/blog/${fileSlug}/`;
-						translationMap.set(url, urls);
-					}
-				}
-
-				if (translationMap.size === 0) {
-					logger.info("No blog translations found for hreflang");
-					return;
-				}
-
-				// Find and patch sitemap files
-				const files = await readdir(distPath);
-				const sitemapFiles = files.filter(
-					(f) => f.startsWith("sitemap") && f.endsWith(".xml"),
-				);
-
-				for (const filename of sitemapFiles) {
-					const filepath = join(distPath, filename);
-					let content = await readFile(filepath, "utf-8");
-					let modified = false;
-
-					for (const [url, translations] of translationMap) {
-						// Find the URL entry without hreflang links
-						const urlPattern = new RegExp(
-							`<url><loc>${url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}</loc></url>`,
-						);
-
-						if (urlPattern.test(content)) {
-							const hreflangLinks = [
-								translations.en
-									? `<xhtml:link rel="alternate" hreflang="en" href="${translations.en}"/>`
-									: "",
-								translations.es
-									? `<xhtml:link rel="alternate" hreflang="es" href="${translations.es}"/>`
-									: "",
-							]
-								.filter(Boolean)
-								.join("");
-
-							content = content.replace(
-								urlPattern,
-								`<url><loc>${url}</loc>${hreflangLinks}</url>`,
-							);
-							modified = true;
-						}
-					}
-
-					if (modified) {
-						await writeFile(filepath, content, "utf-8");
-						logger.info(`Added hreflang links to ${filename}`);
-					}
-				}
-			},
-		},
+	return async (item) => {
+		linksByUrlPromise ??= getTranslationLinksByUrl(options);
+		const links = (await linksByUrlPromise).get(item.url);
+		return links ? { ...item, links } : item;
 	};
 }
