@@ -1,0 +1,578 @@
+---
+import RepoSetupFolderGlyph from "@/components/blog/RepoSetupFolderGlyph.astro";
+
+const { t } = Astro.locals;
+
+const commands = [
+	"nvm use",
+	"corepack enable",
+	"pnpm install",
+	"pyenv local 3.12",
+	"uv sync",
+	"direnv allow",
+];
+---
+
+<figure class="setup-handoff">
+	<div class="ownership-heading" aria-hidden="true">
+		<span>{t("blog.setupHandoff.inYourMemory")}</span>
+		<span>{t("blog.setupHandoff.inTheRepo")}</span>
+	</div>
+
+	<div class="handoff-stage" aria-hidden="true">
+		<section class="manual-side">
+			<span class="mobile-side-heading">
+				{t("blog.setupHandoff.inYourMemory")}
+			</span>
+			<div class="source-chip source-readme">README</div>
+			<div class="source-chip source-shell">shell history</div>
+			<div class="source-chip source-tool">.tool-versions</div>
+
+			<div class="manual-terminal">
+				<header>
+					<span></span><span></span><span></span>
+					<strong>{t("blog.setupHandoff.manualRitual")}</strong>
+				</header>
+				<div class="terminal-body">
+					{
+						commands.map((command, index) => (
+							<code class="manual-command" style={`--command-index: ${index}`}>
+								<i>$</i> {command}
+							</code>
+						))
+					}
+				</div>
+			</div>
+		</section>
+
+		<div class="handoff-track">
+			<span class="track-line"></span>
+			<span class="moving-config">config</span>
+			<span class="track-arrow">→</span>
+		</div>
+
+		<section class="repository-side">
+			<span class="mobile-side-heading">
+				{t("blog.setupHandoff.inTheRepo")}
+			</span>
+			<div class="repo-folder">
+				<RepoSetupFolderGlyph />
+				<strong>repository</strong>
+			</div>
+
+			<div class="mise-file">
+				<header><span></span>mise.toml</header>
+				<div class="file-section section-tools">
+					<strong>[tools]</strong>
+					<span>node · pnpm · python · uv</span>
+				</div>
+				<div class="file-section section-env">
+					<strong>[env]</strong>
+					<span>API_BASE_URL</span>
+				</div>
+				<div class="file-section section-tasks">
+					<strong>[tasks]</strong>
+					<span>check · dev</span>
+				</div>
+			</div>
+
+			<div class="ready-state">
+				<span></span>
+				<code>$ mise install</code>
+				<strong>{t("blog.setupHandoff.ready")}</strong>
+			</div>
+		</section>
+	</div>
+
+	<figcaption class="sr-only">
+		{t("blog.setupHandoff.description")}
+	</figcaption>
+</figure>
+
+<style>
+	.setup-handoff {
+		margin-block: 2rem;
+		padding: 1.25rem;
+		overflow: hidden;
+		border: 1px solid var(--color-border);
+		border-radius: 1rem;
+		background: var(--color-card);
+		color: var(--color-title);
+	}
+
+	.ownership-heading {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 5.5rem minmax(0, 1fr);
+		margin-bottom: 0.875rem;
+		color: var(--color-subtitle);
+		font-size: 0.625rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.ownership-heading span:last-child {
+		grid-column: 3;
+	}
+
+	.handoff-stage {
+		display: grid;
+		min-height: 22rem;
+		grid-template-columns: minmax(0, 1fr) 5.5rem minmax(0, 1fr);
+		align-items: center;
+	}
+
+	.manual-side,
+	.repository-side {
+		position: relative;
+		min-width: 0;
+		height: 19.5rem;
+	}
+
+	.mobile-side-heading {
+		display: none;
+	}
+
+	.manual-terminal {
+		position: absolute;
+		top: 2.25rem;
+		right: 0;
+		bottom: 2rem;
+		left: 0;
+		overflow: hidden;
+		border: 1px solid var(--color-border);
+		border-radius: 0.75rem;
+		background: var(--color-code-background);
+		box-shadow: var(--shadow-soft);
+	}
+
+	.manual-terminal header {
+		display: flex;
+		align-items: center;
+		gap: 0.3rem;
+		padding: 0.625rem 0.75rem;
+		border-bottom: 1px solid
+			color-mix(in oklch, var(--color-code-foreground) 16%, transparent);
+	}
+
+	.manual-terminal header > span {
+		width: 0.35rem;
+		height: 0.35rem;
+		border-radius: 999px;
+		background: var(--color-subtitle);
+		opacity: 0.45;
+	}
+
+	.manual-terminal header strong {
+		margin-left: 0.35rem;
+		color: var(--color-code-foreground);
+		font-size: 0.5625rem;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+	}
+
+	.terminal-body {
+		display: flex;
+		flex-direction: column;
+		gap: 0.625rem;
+		padding: 0.875rem;
+	}
+
+	.manual-command {
+		display: block;
+		padding: 0;
+		background: none;
+		color: var(--color-foreground);
+		font-size: 0.625rem;
+		white-space: nowrap;
+	}
+
+	.manual-command i {
+		color: var(--color-code-foreground);
+		font-style: normal;
+	}
+
+	.source-chip {
+		position: absolute;
+		z-index: 2;
+		padding: 0.28rem 0.5rem;
+		border: 1px solid var(--color-border);
+		border-radius: 999px;
+		background: var(--color-background);
+		color: var(--color-subtitle);
+		font-family: ui-monospace, monospace;
+		font-size: 0.5rem;
+		box-shadow: var(--shadow-soft);
+	}
+
+	.source-readme {
+		top: 0;
+		left: 0.75rem;
+	}
+
+	.source-shell {
+		top: 0.5rem;
+		right: 0.5rem;
+	}
+
+	.source-tool {
+		right: 0.75rem;
+		bottom: 0;
+	}
+
+	.handoff-track {
+		position: relative;
+		height: 3rem;
+	}
+
+	.track-line {
+		position: absolute;
+		top: 50%;
+		right: 0.6rem;
+		left: 0.6rem;
+		height: 1px;
+		background: var(--color-primary);
+	}
+
+	.track-arrow {
+		position: absolute;
+		top: 50%;
+		right: 0.1rem;
+		color: var(--color-primary);
+		font-size: 1rem;
+		transform: translateY(-55%);
+	}
+
+	.moving-config {
+		position: absolute;
+		z-index: 2;
+		top: 50%;
+		left: 0;
+		padding: 0.25rem 0.4rem;
+		border: 1px solid var(--color-primary);
+		border-radius: 0.35rem;
+		background: var(--color-card);
+		color: var(--color-primary);
+		font-family: ui-monospace, monospace;
+		font-size: 0.45rem;
+		transform: translateY(-50%);
+	}
+
+	.repository-side {
+		display: grid;
+		grid-template-columns: 5.25rem minmax(0, 1fr);
+		align-content: center;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.repo-folder {
+		position: relative;
+		color: var(--color-primary);
+		text-align: center;
+	}
+
+	.repo-folder strong {
+		display: block;
+		margin-top: 0.25rem;
+		color: var(--color-subtitle);
+		font-family: ui-monospace, monospace;
+		font-size: 0.5rem;
+		font-weight: 500;
+	}
+
+	.mise-file {
+		position: relative;
+		z-index: 2;
+		overflow: hidden;
+		border: 1px solid var(--color-border);
+		border-radius: 0.75rem;
+		background: var(--color-background);
+		box-shadow: var(--shadow-soft);
+	}
+
+	.mise-file > header {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.625rem 0.75rem;
+		border-bottom: 1px solid var(--color-border);
+		font-family: ui-monospace, monospace;
+		font-size: 0.6rem;
+		font-weight: 700;
+	}
+
+	.mise-file > header span {
+		width: 0.45rem;
+		height: 0.55rem;
+		border-radius: 0.12rem;
+		background: var(--color-primary);
+	}
+
+	.file-section {
+		padding: 0.55rem 0.75rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.file-section:last-child {
+		border-bottom: 0;
+	}
+
+	.file-section strong,
+	.file-section span {
+		display: block;
+		font-family: ui-monospace, monospace;
+		font-size: 0.5rem;
+	}
+
+	.file-section strong {
+		color: var(--color-primary);
+	}
+
+	.file-section span {
+		margin-top: 0.15rem;
+		color: var(--color-subtitle);
+	}
+
+	.ready-state {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.5rem 0.75rem;
+		border: 1px solid var(--color-border);
+		border-radius: 0.6rem;
+		background: var(--color-background);
+	}
+
+	.ready-state > span {
+		width: 0.4rem;
+		height: 0.4rem;
+		border-radius: 999px;
+		background: var(--color-available);
+	}
+
+	.ready-state code {
+		padding: 0;
+		background: none;
+		color: var(--color-subtitle);
+		font-size: 0.5rem;
+	}
+
+	.ready-state strong {
+		margin-left: auto;
+		font-size: 0.5rem;
+	}
+
+	.setup-handoff .manual-command {
+		animation: command-appears 8s ease-in-out infinite;
+		animation-delay: calc(var(--command-index) * 180ms);
+		animation-fill-mode: backwards;
+	}
+
+	.setup-handoff .source-chip {
+		animation: source-fades 8s ease-in-out infinite;
+	}
+
+	.setup-handoff .moving-config {
+		animation: config-handoff 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+	}
+
+	.setup-handoff .mise-file {
+		animation: file-receives 8s ease-in-out infinite;
+	}
+
+	.setup-handoff .file-section {
+		animation: section-settles 8s ease-in-out infinite;
+		animation-fill-mode: backwards;
+	}
+
+	.setup-handoff .section-env {
+		animation-delay: 120ms;
+	}
+
+	.setup-handoff .section-tasks {
+		animation-delay: 240ms;
+	}
+
+	.setup-handoff .ready-state {
+		animation: ready-arrives 8s ease-in-out infinite;
+	}
+
+	@keyframes command-appears {
+		0%,
+		8% {
+			opacity: 0;
+			transform: translateX(-0.5rem);
+		}
+		26%,
+		38% {
+			opacity: 1;
+			transform: translateX(0);
+		}
+		52%,
+		76% {
+			opacity: 0.3;
+			transform: translateX(0.25rem);
+		}
+		87%,
+		100% {
+			opacity: 0;
+			transform: translateX(-0.5rem);
+		}
+	}
+
+	@keyframes source-fades {
+		0%,
+		38% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+		55%,
+		92% {
+			opacity: 0.22;
+			transform: translateY(0.25rem);
+		}
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes config-handoff {
+		0%,
+		34% {
+			opacity: 0;
+			transform: translate(0, -50%) scale(0.8);
+		}
+		42% {
+			opacity: 1;
+		}
+		62% {
+			opacity: 1;
+			transform: translate(4.1rem, -50%) scale(1);
+		}
+		70%,
+		100% {
+			opacity: 0;
+			transform: translate(4.1rem, -50%) scale(0.8);
+		}
+	}
+
+	@keyframes file-receives {
+		0%,
+		46%,
+		86%,
+		100% {
+			border-color: var(--color-border);
+			transform: scale(1);
+		}
+		60%,
+		74% {
+			border-color: var(--color-primary);
+			transform: scale(1.015);
+		}
+	}
+
+	@keyframes section-settles {
+		0%,
+		48% {
+			opacity: 0.35;
+			transform: translateY(-0.35rem);
+		}
+		64%,
+		94% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+		100% {
+			opacity: 0.35;
+			transform: translateY(-0.35rem);
+		}
+	}
+
+	@keyframes ready-arrives {
+		0%,
+		65% {
+			opacity: 0;
+			transform: translateY(0.5rem);
+		}
+		76%,
+		94% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+		100% {
+			opacity: 0;
+			transform: translateY(0.5rem);
+		}
+	}
+
+	@media (max-width: 42rem) {
+		.ownership-heading {
+			display: none;
+		}
+
+		.mobile-side-heading {
+			display: block;
+			grid-column: 1 / -1;
+			margin-bottom: 0.5rem;
+			color: var(--color-subtitle);
+			font-size: 0.5625rem;
+			font-weight: 700;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+
+		.handoff-stage {
+			min-height: auto;
+			grid-template-columns: 1fr;
+			gap: 0.75rem;
+		}
+
+		.manual-side,
+		.repository-side {
+			height: 15rem;
+		}
+
+		.manual-side {
+			height: 16rem;
+		}
+
+		.manual-side .source-readme,
+		.manual-side .source-shell {
+			top: 1.65rem;
+		}
+
+		.manual-side .manual-terminal {
+			top: 3rem;
+			bottom: 1.5rem;
+		}
+
+		.handoff-track {
+			display: none;
+		}
+
+		.repository-side {
+			grid-template-columns: 4.75rem minmax(0, 1fr);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.setup-handoff .manual-command,
+		.setup-handoff .source-chip,
+		.setup-handoff .moving-config,
+		.setup-handoff .mise-file,
+		.setup-handoff .file-section,
+		.setup-handoff .ready-state {
+			animation: none;
+		}
+
+		.moving-config {
+			display: none;
+		}
+	}
+</style>

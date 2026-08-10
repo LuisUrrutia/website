@@ -1,0 +1,352 @@
+---
+import WorktreeFolderGlyph from "@/components/blog/WorktreeFolderGlyph.astro";
+
+interface Props {
+	leftBranch: string;
+	rightBranch: string;
+	description: string;
+	class?: string;
+}
+
+const { leftBranch, rightBranch, description, class: className } = Astro.props;
+const { t } = Astro.locals;
+---
+
+<figure
+	class:list={[
+		"worktree-branches border-border bg-card my-8 rounded-2xl border p-6",
+		className,
+	]}
+>
+	<div class="shared-core">
+		<div class="repository-glyph">
+			<WorktreeFolderGlyph kind="repository" />
+		</div>
+		<div>
+			<strong>{t("blog.worktree.sharedData")}</strong>
+			<span>objects · refs · config</span>
+		</div>
+	</div>
+
+	<div class="editor-grid">
+		<section class="editor feature-editor">
+			<header>
+				<div class="folder-glyph feature-folder">
+					<WorktreeFolderGlyph kind="worktree" />
+				</div>
+				<div>
+					<strong>{t("blog.worktree.feature")}</strong>
+					<code>{leftBranch}</code>
+				</div>
+			</header>
+
+			<div class="code-area" aria-hidden="true">
+				<span class="code-line line-long"></span>
+				<span class="code-line line-medium"></span>
+				<span class="code-line line-short"></span>
+				<span class="cursor"></span>
+			</div>
+
+			<footer>
+				<span class="server-dot" aria-hidden="true"></span>
+				{t("blog.worktree.devServer")}
+				<strong>{t("blog.worktree.modified")}</strong>
+			</footer>
+		</section>
+
+		<section class="editor hotfix-editor">
+			<header>
+				<div class="folder-glyph hotfix-folder">
+					<WorktreeFolderGlyph kind="worktree" />
+				</div>
+				<div>
+					<strong>{t("blog.worktree.hotfix")}</strong>
+					<code>{rightBranch}</code>
+				</div>
+			</header>
+
+			<div class="terminal" aria-hidden="true">
+				<span><i>$</i> bun run dev</span>
+				<span class="terminal-output">{t("blog.worktree.ready")}</span>
+				<span class="terminal-command"><i>$</i> git commit</span>
+			</div>
+
+			<footer>
+				<span class="server-dot" aria-hidden="true"></span>
+				{t("blog.worktree.independent")}
+				<strong>{t("blog.worktree.clean")}</strong>
+			</footer>
+		</section>
+	</div>
+
+	<figcaption class="sr-only">{description}</figcaption>
+</figure>
+
+<style>
+	.worktree-branches {
+		color: var(--color-title);
+	}
+
+	.shared-core {
+		display: flex;
+		width: fit-content;
+		align-items: center;
+		gap: 0.75rem;
+		margin: 0 auto 1.5rem;
+		padding: 0.625rem 1rem;
+		border: 1px solid var(--color-border);
+		border-radius: 0.75rem;
+		background: var(--color-background);
+	}
+
+	.repository-glyph {
+		width: 2.5rem;
+		color: var(--color-title);
+	}
+
+	.shared-core strong,
+	.shared-core span {
+		display: block;
+	}
+
+	.shared-core strong {
+		font-size: 0.75rem;
+	}
+
+	.shared-core span {
+		margin-top: 0.125rem;
+		color: var(--color-subtitle);
+		font-family: ui-monospace, monospace;
+		font-size: 0.625rem;
+	}
+
+	.editor-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+	}
+
+	.editor {
+		min-width: 0;
+		overflow: hidden;
+		border: 1px solid var(--color-border);
+		border-radius: 0.875rem;
+		background: var(--color-background);
+	}
+
+	.editor header {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.875rem 1rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.folder-glyph {
+		width: 2.5rem;
+		flex: none;
+	}
+
+	.feature-folder {
+		color: var(--color-primary);
+	}
+
+	.hotfix-folder {
+		color: var(--color-code-foreground);
+	}
+
+	.editor header strong,
+	.editor header code {
+		display: block;
+	}
+
+	.editor header strong {
+		font-size: 0.75rem;
+	}
+
+	.editor header code {
+		max-width: 12rem;
+		margin-top: 0.125rem;
+		padding: 0;
+		overflow: hidden;
+		background: none;
+		color: var(--color-subtitle);
+		font-size: 0.625rem;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.code-area,
+	.terminal {
+		position: relative;
+		height: 8.5rem;
+		padding: 1.25rem;
+	}
+
+	.code-area {
+		display: flex;
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.code-line {
+		display: block;
+		height: 0.375rem;
+		border-radius: 999px;
+		background: var(--color-primary);
+		transform-origin: left;
+		animation: code-edited 3.8s ease-in-out infinite alternate;
+	}
+
+	.line-long {
+		width: 78%;
+	}
+
+	.line-medium {
+		width: 58%;
+		animation-delay: -1.2s;
+	}
+
+	.line-short {
+		width: 42%;
+		animation-delay: -2.4s;
+	}
+
+	.cursor {
+		position: absolute;
+		bottom: 1.25rem;
+		left: 1.25rem;
+		width: 0.5rem;
+		height: 1rem;
+		background: var(--color-primary);
+		animation: cursor-blink 1s steps(1) infinite;
+	}
+
+	.terminal {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		color: var(--color-foreground);
+		font-family: ui-monospace, monospace;
+		font-size: 0.6875rem;
+	}
+
+	.terminal span {
+		display: block;
+	}
+
+	.terminal i {
+		color: var(--color-code-foreground);
+		font-style: normal;
+	}
+
+	.terminal-output {
+		color: var(--color-subtitle);
+		animation: terminal-output 4.5s ease-in-out infinite;
+	}
+
+	.terminal-command {
+		animation: terminal-command 4.5s steps(18, end) infinite;
+		clip-path: inset(0 100% 0 0);
+	}
+
+	.editor footer {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.625rem 1rem;
+		border-top: 1px solid var(--color-border);
+		color: var(--color-subtitle);
+		font-size: 0.625rem;
+	}
+
+	.editor footer strong {
+		margin-left: auto;
+		color: var(--color-title);
+	}
+
+	.server-dot {
+		width: 0.4rem;
+		height: 0.4rem;
+		border-radius: 999px;
+		background: var(--color-available);
+		animation: server-alive 1.8s ease-in-out infinite;
+	}
+
+	.hotfix-editor .server-dot {
+		animation-delay: -0.9s;
+	}
+
+	@keyframes code-edited {
+		from {
+			opacity: 0.45;
+			transform: scaleX(0.45);
+		}
+		to {
+			opacity: 0.9;
+			transform: scaleX(1);
+		}
+	}
+
+	@keyframes cursor-blink {
+		50% {
+			opacity: 0;
+		}
+	}
+
+	@keyframes terminal-output {
+		0%,
+		18%,
+		100% {
+			opacity: 0;
+			transform: translateY(-0.25rem);
+		}
+		30%,
+		78% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes terminal-command {
+		0%,
+		42%,
+		100% {
+			clip-path: inset(0 100% 0 0);
+		}
+		74%,
+		88% {
+			clip-path: inset(0 0 0 0);
+		}
+	}
+
+	@keyframes server-alive {
+		50% {
+			opacity: 0.35;
+		}
+	}
+
+	@media (max-width: 40rem) {
+		.worktree-branches {
+			padding: 1rem;
+		}
+
+		.editor-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.code-line,
+		.cursor,
+		.terminal-output,
+		.terminal-command,
+		.server-dot {
+			animation: none;
+			opacity: 1;
+			transform: none;
+			clip-path: none;
+		}
+	}
+</style>

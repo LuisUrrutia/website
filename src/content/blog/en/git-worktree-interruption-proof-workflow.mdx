@@ -9,12 +9,14 @@ translationSlug: "git-worktree-interruption-proof-workflow"
 ---
 
 import { Image } from "astro:assets";
-import ThemedImage from "@/components/ThemedImage.astro";
+import {
+	Callout,
+	Disclosure,
+	Reveal,
+	WorktreeBranches,
+} from "@/components/blog";
 import twoBranchesFolder from "@/assets/blog/git-worktree/two-branches-folder.png";
-import sharedGitFolderLight from "@/assets/blog/git-worktree/shared-git-folder-light.svg";
-import sharedGitFolderDark from "@/assets/blog/git-worktree/shared-git-folder-dark.svg";
 import worktreeComparison from "@/assets/blog/git-worktree/worktree-comparison.png";
-import Callout from "@/components/Callout.astro";
 
 You're deep in a feature branch. Dev server running. Uncommitted changes across a dozen files. _Finally_ in flow. Then Slack pings: "Hey, can you look into this customer issue?" Or worse: "Can you implement this ASAP?"
 
@@ -39,10 +41,10 @@ And stashing has its own problems. Which stash was for this branch? Did you incl
 
 Git worktrees skip all of this. Each worktree has its own working directory. You can leave your feature branch mid-thought, with uncommitted changes everywhere, and open a completely separate folder for the urgent fix. When you come back, **everything is exactly as you left it**. Server still running. Files still modified. No digging through old stashes.
 
-<ThemedImage
-	light={sharedGitFolderLight}
-	dark={sharedGitFolderDark}
-	alt="Diagram showing one .git folder connected to two working directories, each with different branch names"
+<WorktreeBranches
+	leftBranch="arbitrum-stylus-support"
+	rightBranch="optimism-fix"
+	description="Two independent worktrees sharing Git data while keeping their files, processes, and branch context separate"
 />
 
 <Callout icon="git-branch">
@@ -70,10 +72,20 @@ wt switch -c hotfix
 
 Worktrunk addresses worktrees by branch name instead of paths. It handles directory management automatically. It supports hooks to automate setup, so you can have it run `npm install` or copy `.env` files every time you create a new worktree. When you're ready to merge, `wt merge` handles squashing, rebasing, and cleanup in one command.
 
-<Image
-	src={worktreeComparison}
-	alt="Side-by-side comparison of git worktree commands versus Worktrunk equivalents"
-/>
+<Disclosure summary="What Worktrunk handles for you">
+	<ul>
+		<li>Creates and locates worktrees by branch name.</li>
+		<li>Runs setup hooks when a worktree is created.</li>
+		<li>Handles merge, rebase, squash, and cleanup workflows.</li>
+	</ul>
+</Disclosure>
+
+<Reveal>
+	<Image
+		src={worktreeComparison}
+		alt="Side-by-side comparison of git worktree commands versus Worktrunk equivalents"
+	/>
+</Reveal>
 
 ## Why worktrees are suddenly everywhere
 
