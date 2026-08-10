@@ -1,12 +1,11 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { render } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Navbar from "@/components/Navbar.astro";
 import Container from "@/components/Container.astro";
-import A from "@/components/mdx/A.astro";
 import { getSiteUrl } from "@/i18n";
 import BlogPostArticle from "@/views/blog-post/BlogPostArticle.astro";
+import BlogPostContent from "@/views/blog-post/BlogPostContent.astro";
 import BlogPostHead from "@/views/blog-post/BlogPostHead.astro";
 import BlogPostProseStyles from "@/views/blog-post/BlogPostProseStyles.astro";
 import { prepareBlogPostPageMetadata } from "@/views/blog-post/blog-post-metadata";
@@ -18,7 +17,6 @@ interface Props {
 
 const { post, translatedPost } = Astro.props;
 const { t, lang } = Astro.locals;
-const { Content } = await render(post);
 
 const siteUrl = getSiteUrl({ site: Astro.site, origin: Astro.url.origin });
 const metadata = prepareBlogPostPageMetadata({
@@ -53,7 +51,7 @@ const metadata = prepareBlogPostPageMetadata({
 		data-page-transition="slide"
 	>
 		<BlogPostArticle post={post} metadata={metadata} lang={lang} t={t}>
-			<Content components={{ a: A }} />
+			<BlogPostContent post={post} />
 		</BlogPostArticle>
 	</Container>
 </Layout>

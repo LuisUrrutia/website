@@ -8,6 +8,8 @@ lang: "en"
 translationSlug: "your-repo-should-own-the-setup"
 ---
 
+import { RepoSetupHandoff } from "@/components/blog";
+
 Every repo has its own little ritual.
 
 The problem starts when you jump between personal projects, company code, and open-source repos, and each one expects a different Node, Python, or package manager setup.
@@ -51,6 +53,8 @@ pnpm run dev
 None of those commands are ridiculous by themselves. Stack enough of them together, though, and setup starts feeling like a scavenger hunt.
 
 Mise gives you a place to move that ritual into the repo.
+
+<RepoSetupHandoff />
 
 ```toml
 [tools]

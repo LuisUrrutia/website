@@ -51,6 +51,20 @@ export const ui = {
 		"blog.updatedOn": "Updated on",
 		"blog.readingTime": "{minutes} min read",
 		"blog.alsoAvailable": "This post is also available in:",
+		"blog.worktree.sharedData": "Shared Git data",
+		"blog.worktree.feature": "Feature worktree",
+		"blog.worktree.hotfix": "Hotfix worktree",
+		"blog.worktree.devServer": "Dev server running",
+		"blog.worktree.modified": "3 modified",
+		"blog.worktree.ready": "ready on localhost",
+		"blog.worktree.independent": "Independent process",
+		"blog.worktree.clean": "clean",
+		"blog.setupHandoff.inYourMemory": "Lives in your memory",
+		"blog.setupHandoff.inTheRepo": "Lives in the repository",
+		"blog.setupHandoff.manualRitual": "Manual ritual",
+		"blog.setupHandoff.ready": "Ready to work",
+		"blog.setupHandoff.description":
+			"Setup commands and scattered configuration move from the developer's memory into a mise file owned by the repository.",
 
 		// Common
 		"common.viewMore": "View More",
@@ -176,6 +190,20 @@ export const ui = {
 		"blog.updatedOn": "Actualizado el",
 		"blog.readingTime": "{minutes} min de lectura",
 		"blog.alsoAvailable": "Esta publicación también está disponible en:",
+		"blog.worktree.sharedData": "Datos de Git compartidos",
+		"blog.worktree.feature": "Worktree de la feature",
+		"blog.worktree.hotfix": "Worktree del hotfix",
+		"blog.worktree.devServer": "Servidor de desarrollo activo",
+		"blog.worktree.modified": "3 modificados",
+		"blog.worktree.ready": "listo en localhost",
+		"blog.worktree.independent": "Proceso independiente",
+		"blog.worktree.clean": "limpio",
+		"blog.setupHandoff.inYourMemory": "Vive en tu memoria",
+		"blog.setupHandoff.inTheRepo": "Vive en el repositorio",
+		"blog.setupHandoff.manualRitual": "Ritual manual",
+		"blog.setupHandoff.ready": "Listo para trabajar",
+		"blog.setupHandoff.description":
+			"Los comandos de setup y la configuración dispersa pasan de la memoria del desarrollador a un archivo de mise propiedad del repositorio.",
 
 		// Common
 		"common.viewMore": "Ver más",
