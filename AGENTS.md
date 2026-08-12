@@ -21,6 +21,7 @@ bun install          # Install dependencies
 bun run dev          # Dev server at localhost:4321
 bun run build        # Production build to dist/
 bun run lint         # OxLint with type-aware rules
+bun run check        # Type check with astro check
 bun run test         # Vitest test suite
 bun run fmt:fix      # Auto-fix formatting
 bun run fmt          # Check formatting (CI)
