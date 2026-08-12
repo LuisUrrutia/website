@@ -9,6 +9,11 @@ updates:
     cooldown:
       default-days: 3
       semver-major-days: 7
+    ignore:
+      # @astrojs/check@0.9.10 peers on typescript ^5.0.0 || ^6.0.0; under TS 7
+      # `astro check` crashes in @astrojs/language-server getTsconfig.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       all-dependencies:
         patterns:
