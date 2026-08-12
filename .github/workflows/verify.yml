@@ -41,6 +41,9 @@ jobs:
       - name: Lint
         run: bun run lint
 
+      - name: Type check
+        run: bun run check
+
       - name: Format check
         run: bun run fmt
 
