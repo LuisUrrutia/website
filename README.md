@@ -68,14 +68,14 @@
 
 ### CI/CD
 
-| Workflow   | Description                                       |
-| ---------- | ------------------------------------------------- |
-| Verify     | Lint, format check, tests, and build on PRs       |
-| Release    | Semantic-release with Cloudflare Pages deployment |
-| CodeQL     | Security vulnerability scanning                   |
-| Lighthouse | Performance and accessibility audits (>= 90%)     |
-| Commitlint | Validates conventional commit format              |
-| Dependabot | Weekly automated dependency updates               |
+| Workflow   | Description                                             |
+| ---------- | ------------------------------------------------------- |
+| Verify     | Lint, type check, format check, tests, and build on PRs |
+| Release    | Semantic-release with Cloudflare Pages deployment       |
+| CodeQL     | Security vulnerability scanning                         |
+| Lighthouse | Performance and accessibility audits (>= 90%)           |
+| Commitlint | Validates conventional commit format                    |
+| Dependabot | Weekly automated dependency updates                     |
 
 ## Getting Started
 
@@ -101,16 +101,17 @@ The site will be available at `http://localhost:4321` with hot module replacemen
 
 ### Commands
 
-| Command                 | Description                                           |
-| ----------------------- | ----------------------------------------------------- |
-| `bun run dev`           | Start development server at `localhost:4321` with HMR |
-| `bun run build`         | Build optimized production site to `dist/`            |
-| `bun run preview`       | Preview the production build locally                  |
-| `bun run build:preview` | Build and preview in one command                      |
-| `bun run lint`          | Run OxLint with type-aware rules                      |
-| `bun run fmt`           | Check code formatting with Prettier                   |
-| `bun run fmt:fix`       | Auto-fix formatting issues                            |
-| `bun run test`          | Run the Vitest suite                                  |
+| Command                 | Description                                            |
+| ----------------------- | ------------------------------------------------------ |
+| `bun run dev`           | Start development server at `localhost:4321` with HMR  |
+| `bun run build`         | Build optimized production site to `dist/`             |
+| `bun run preview`       | Preview the production build locally                   |
+| `bun run build:preview` | Build and preview in one command                       |
+| `bun run lint`          | Run OxLint with type-aware rules                       |
+| `bun run check`         | Type check `.astro` and `.ts` files with `astro check` |
+| `bun run fmt`           | Check code formatting with Prettier                    |
+| `bun run fmt:fix`       | Auto-fix formatting issues                             |
+| `bun run test`          | Run the Vitest suite                                   |
 
 ### Testing with Docker
 
