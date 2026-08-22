@@ -1,3 +1,5 @@
 [install]
 # Only install package versions published at least 3 days ago
 minimumReleaseAge = 259200
+# Security fixes should not wait for the supply-chain quarantine window
+minimumReleaseAgeExcludes = ["deepmerge-ts", "nanoid"]
