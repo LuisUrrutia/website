@@ -1,0 +1,70 @@
+---
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<blog-reveal class:list={["blog-reveal", className]}>
+	<div class="blog-reveal-content">
+		<slot />
+	</div>
+</blog-reveal>
+
+<style>
+	.blog-reveal {
+		display: block;
+		margin-block: 2rem;
+	}
+
+	.blog-reveal:defined:not([data-visible="true"]) .blog-reveal-content {
+		opacity: 0;
+		transform: translateY(1.25rem);
+	}
+
+	.blog-reveal-content {
+		transition:
+			opacity 500ms ease-out,
+			transform 500ms ease-out;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.blog-reveal-content {
+			opacity: 1;
+			transform: none;
+			transition: none;
+		}
+	}
+</style>
+
+<script>
+	class BlogRevealElement extends HTMLElement {
+		connectedCallback(): void {
+			if (this.dataset.init === "true") return;
+			this.dataset.init = "true";
+
+			const reducedMotion = window.matchMedia(
+				"(prefers-reduced-motion: reduce)",
+			).matches;
+			if (reducedMotion || !("IntersectionObserver" in window)) {
+				this.dataset.visible = "true";
+				return;
+			}
+
+			const observer = new IntersectionObserver(
+				([entry]) => {
+					if (!entry?.isIntersecting) return;
+					this.dataset.visible = "true";
+					observer.disconnect();
+				},
+				{ threshold: 0.15 },
+			);
+			observer.observe(this);
+		}
+	}
+
+	if (!customElements.get("blog-reveal")) {
+		customElements.define("blog-reveal", BlogRevealElement);
+	}
+</script>

@@ -1,0 +1,76 @@
+---
+interface Props {
+	summary: string;
+	open?: boolean;
+	class?: string;
+}
+
+const { summary, open = false, class: className } = Astro.props;
+---
+
+<details
+	class:list={[
+		"blog-disclosure border-border bg-card my-8 overflow-hidden rounded-xl border",
+		className,
+	]}
+	open={open}
+>
+	<summary
+		class="text-title focus-visible:ring-accent flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+	>
+		<span>{summary}</span>
+		<svg
+			class="text-subtitle size-5 shrink-0 transition-transform motion-reduce:transition-none"
+			viewBox="0 0 20 20"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="1.75"
+			aria-hidden="true"
+		>
+			<path d="m5 7.5 5 5 5-5" stroke-linecap="round" stroke-linejoin="round"
+			></path>
+		</svg>
+	</summary>
+	<div class="blog-disclosure-content border-border border-t px-5 py-4">
+		<slot />
+	</div>
+</details>
+
+<style>
+	.blog-disclosure summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.blog-disclosure[open] summary svg {
+		transform: rotate(180deg);
+	}
+
+	.blog-disclosure-content :global(:first-child) {
+		margin-top: 0;
+	}
+
+	.blog-disclosure-content :global(:last-child) {
+		margin-bottom: 0;
+	}
+
+	@supports selector(details::details-content) {
+		.blog-disclosure::details-content {
+			block-size: 0;
+			overflow: hidden;
+			transition:
+				block-size 250ms ease,
+				content-visibility 250ms allow-discrete;
+		}
+
+		.blog-disclosure[open]::details-content {
+			block-size: auto;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.blog-disclosure::details-content,
+		.blog-disclosure summary svg {
+			transition: none;
+		}
+	}
+</style>

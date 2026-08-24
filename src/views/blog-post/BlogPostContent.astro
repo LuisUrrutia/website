@@ -1,0 +1,13 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import A from "@/components/mdx/A.astro";
+
+interface Props {
+	post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Content components={{ a: A }} />

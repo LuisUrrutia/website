@@ -9,12 +9,14 @@ translationSlug: "git-worktree-interruption-proof-workflow"
 ---
 
 import { Image } from "astro:assets";
-import ThemedImage from "@/components/ThemedImage.astro";
+import {
+	Callout,
+	Disclosure,
+	Reveal,
+	WorktreeBranches,
+} from "@/components/blog";
 import twoBranchesFolder from "@/assets/blog/git-worktree/two-branches-folder.png";
-import sharedGitFolderLight from "@/assets/blog/git-worktree/shared-git-folder-light.svg";
-import sharedGitFolderDark from "@/assets/blog/git-worktree/shared-git-folder-dark.svg";
 import worktreeComparison from "@/assets/blog/git-worktree/worktree-comparison.png";
-import Callout from "@/components/Callout.astro";
 
 Estás metido en una feature branch, con el servidor de desarrollo corriendo y cambios sin commitear en una docena de archivos. _Por fin_ en flow. Entonces llega el mensaje de Slack: "Oye, ¿puedes revisar este problema de un cliente?" O peor: "¿Puedes implementar esto urgente?"
 
@@ -39,10 +41,10 @@ Y el stash tiene sus propios problemas: ¿cuál stash era para esta branch?, ¿i
 
 Git worktrees se salta todo esto. Cada worktree tiene su propio directorio de trabajo, así que puedes dejar tu feature branch a medias, con cambios sin commitear por todos lados, y abrir una carpeta completamente separada para el fix urgente. Cuando vuelves, **todo está exactamente como lo dejaste**: servidor corriendo, archivos modificados, sin tener que rebuscar entre stashes.
 
-<ThemedImage
-	light={sharedGitFolderLight}
-	dark={sharedGitFolderDark}
-	alt="Diagrama mostrando una carpeta .git conectada a dos directorios de trabajo, cada uno con diferentes nombres de branch"
+<WorktreeBranches
+	leftBranch="arbitrum-stylus-support"
+	rightBranch="optimism-fix"
+	description="Dos worktrees independientes que comparten datos de Git mientras mantienen separados sus archivos, procesos y contexto de branch"
 />
 
 <Callout icon="git-branch">
@@ -70,10 +72,20 @@ wt switch -c hotfix
 
 Worktrunk te permite acceder a los worktrees por nombre de branch en lugar de paths, maneja la gestión de directorios automáticamente y soporta hooks para automatizar el setup, así que puedes hacer que corra `npm install` o copie archivos `.env` cada vez que creas un nuevo worktree. Cuando estás listo para mergear, `wt merge` maneja el squash, rebase y limpieza en un solo comando.
 
-<Image
-	src={worktreeComparison}
-	alt="Comparación lado a lado de comandos git worktree versus equivalentes de Worktrunk"
-/>
+<Disclosure summary="Lo que Worktrunk resuelve por ti">
+	<ul>
+		<li>Crea y encuentra worktrees por nombre de branch.</li>
+		<li>Ejecuta hooks de setup al crear un worktree.</li>
+		<li>Gestiona los workflows de merge, rebase, squash y limpieza.</li>
+	</ul>
+</Disclosure>
+
+<Reveal>
+	<Image
+		src={worktreeComparison}
+		alt="Comparación lado a lado de comandos git worktree versus equivalentes de Worktrunk"
+	/>
+</Reveal>
 
 ## Por qué los worktrees están de repente en todos lados
 

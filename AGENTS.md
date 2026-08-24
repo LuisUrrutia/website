@@ -37,6 +37,7 @@ src/
 │   ├── images/          # Site images (profile photos, OG background)
 │   └── testimonials/    # Testimonial photos
 ├── components/          # UI components (.astro)
+│   ├── blog/            # Components available to every MDX blog post
 │   ├── mdx/             # MDX component overrides (A.astro for links)
 │   └── seo/             # JSON-LD, meta tags, Open Graph, canonical
 ├── content/
@@ -137,6 +138,28 @@ const { t } = Astro.locals;
 
 Content collection with MDX posts in `src/content/blog/en/` and `src/content/blog/es/`.
 
+Posts may combine Markdown with Astro components. Use `Image` from `astro:assets`, and import the reusable blog components exported from `src/components/blog/index.ts`:
+
+- `ThemedImage` for theme-aware images
+- `Callout` for highlighted information
+- `Reveal` for a reveal-on-scroll animation
+- `Disclosure` for an accessible interactive details block
+- `WorktreeBranches` for the animated shared-repository diagram
+
+Import only the components used by each post so Astro does not include unused component styles or scripts. Add reusable blog components to the barrel export. Keep components static by default and include client-side scripts only when the interaction requires them.
+
+```mdx
+import { Image } from "astro:assets";
+import { Disclosure, Reveal } from "@/components/blog";
+import diagram from "@/assets/blog/example/diagram.png";
+
+<Disclosure summary="More details">Interactive content</Disclosure>
+
+<Reveal>
+	<Image src={diagram} alt="Description of the diagram" />
+</Reveal>
+```
+
 **Frontmatter schema** (defined in `src/content.config.ts`):
 
 ```yaml
@@ -165,7 +188,7 @@ const posts = await getBlogPosts("en");
 const { posts, currentPage, totalPages } = await getPaginatedBlogPosts("en", 1);
 ```
 
-**MDX component overrides**: Blog posts use `<Content components={{ a: A }} />` to auto-add `target="_blank"` and screen reader text to external links.
+**MDX component overrides**: `BlogPostContent.astro` renders each post and supplies the `a` override to `<Content>`. It automatically adds `target="_blank"` and screen reader text to external links.
 
 ### CSS / Theme
 
@@ -303,25 +326,27 @@ New blog posts automatically get:
 
 ## Key Files
 
-| Purpose                | File                                   |
-| ---------------------- | -------------------------------------- |
-| SEO constants & Person | `src/data/seo.ts`                      |
-| Blog utilities         | `src/data/blog.ts`                     |
-| Translations           | `src/i18n/ui.ts`                       |
-| i18n utilities         | `src/i18n/utils.ts`                    |
-| Theme tokens           | `src/styles/theme.css`                 |
-| Date/URL formatters    | `src/lib/formatters.ts`                |
-| Theme logic            | `src/lib/theme/theme.ts`               |
-| Main layout            | `src/layouts/Layout.astro`             |
-| Middleware (locals)    | `src/middleware.ts`                    |
-| Content schema         | `src/content.config.ts`                |
-| Sitemap hreflang       | `src/integrations/sitemap-hreflang.ts` |
-| Social sharing         | `src/lib/social-share/index.ts`        |
-| Lighthouse badge       | `scripts/lighthouse-badge.ts`          |
-| Technologies data      | `src/data/technologies.ts`             |
-| Companies data         | `src/data/companies.ts`                |
-| Testimonials data      | `src/data/testimonials.ts`             |
-| Socials data           | `src/data/socials.ts`                  |
+| Purpose                | File                                        |
+| ---------------------- | ------------------------------------------- |
+| SEO constants & Person | `src/data/seo.ts`                           |
+| Blog utilities         | `src/data/blog.ts`                          |
+| Blog content renderer  | `src/views/blog-post/BlogPostContent.astro` |
+| Blog component exports | `src/components/blog/index.ts`              |
+| Translations           | `src/i18n/ui.ts`                            |
+| i18n utilities         | `src/i18n/utils.ts`                         |
+| Theme tokens           | `src/styles/theme.css`                      |
+| Date/URL formatters    | `src/lib/formatters.ts`                     |
+| Theme logic            | `src/lib/theme/theme.ts`                    |
+| Main layout            | `src/layouts/Layout.astro`                  |
+| Middleware (locals)    | `src/middleware.ts`                         |
+| Content schema         | `src/content.config.ts`                     |
+| Sitemap hreflang       | `src/integrations/sitemap-hreflang.ts`      |
+| Social sharing         | `src/lib/social-share/index.ts`             |
+| Lighthouse badge       | `scripts/lighthouse-badge.ts`               |
+| Technologies data      | `src/data/technologies.ts`                  |
+| Companies data         | `src/data/companies.ts`                     |
+| Testimonials data      | `src/data/testimonials.ts`                  |
+| Socials data           | `src/data/socials.ts`                       |
 
 ## Type Definitions
 
