@@ -6,6 +6,7 @@
     "astro": "astro",
     "build": "astro build",
     "build:preview": "rm -rf dist; astro build && astro preview",
+    "check": "astro check",
     "dev": "astro dev",
     "fmt": "prettier . --check",
     "fmt:fix": "prettier . --write",
