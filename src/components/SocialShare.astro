@@ -99,7 +99,7 @@ const shareLinks = [
 					href={url}
 					{...newTabAttributes}
 					aria-label={label}
-					class="text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+					class="press-feedback text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background flex size-8 items-center justify-center rounded-lg hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
 				>
 					<Icon class="size-4" aria-hidden="true" />
 					<span class="sr-only">{t("a11y.opensInNewTab")}</span>
@@ -108,7 +108,7 @@ const shareLinks = [
 		}
 		<button
 			type="button"
-			class="copy-link text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background flex size-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+			class="copy-link press-feedback text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background flex size-8 cursor-pointer items-center justify-center rounded-lg hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
 			aria-label={t("share.copyLink")}
 			data-url={url}
 		>

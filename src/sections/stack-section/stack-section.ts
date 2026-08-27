@@ -19,6 +19,27 @@ export interface StackVisibilityState {
 	shouldHideExpandButton: boolean;
 }
 
+interface SameDocumentViewTransition {
+	finished: Promise<void>;
+	skipTransition(): void;
+}
+
+type ViewTransitionDocument = Document & {
+	startViewTransition(update: () => void): SameDocumentViewTransition;
+};
+
+const STACK_TRANSITION_CLASS = "stack-transitioning";
+const STACK_ITEM_TRANSITION_CLASS = "stack-item";
+const STACK_ITEM_ENTER_CLASS = "stack-item-enter";
+const STACK_ITEM_EXIT_CLASS = "stack-item-exit";
+
+function hasViewTransitions(value: Document): value is ViewTransitionDocument {
+	return (
+		"startViewTransition" in value &&
+		typeof value.startViewTransition === "function"
+	);
+}
+
 export function getMatchingStackIndices({
 	totalItems,
 	indicesByCategory,
@@ -72,7 +93,7 @@ export function getStackVisibilityState({
 export function initStackSections(): void {
 	document
 		.querySelectorAll<HTMLElement>(".stack-section")
-		.forEach((section) => {
+		.forEach((section, sectionIndex) => {
 			if (section.dataset.init) return;
 			section.dataset.init = "true";
 
@@ -87,6 +108,16 @@ export function initStackSections(): void {
 			const elements = Array.from(
 				section.querySelectorAll<HTMLElement>(".stack-item"),
 			);
+			elements.forEach((element, elementIndex) => {
+				element.style.setProperty(
+					"view-transition-name",
+					`stack-${sectionIndex}-item-${elementIndex}`,
+				);
+				element.style.setProperty(
+					"view-transition-class",
+					STACK_ITEM_TRANSITION_CLASS,
+				);
+			});
 
 			const initialVisible = Number(section.dataset.initialVisible) || 9;
 			const totalItems = elements.length;
@@ -102,34 +133,26 @@ export function initStackSections(): void {
 			);
 			const activeCategories = new Set<string>();
 			let isExpanded = false;
+			let activeTransition: SameDocumentViewTransition | undefined;
 
-			function update(): void {
-				const hasFilter = activeCategories.size > 0;
-				const state = getStackVisibilityState({
-					totalItems,
-					initialVisible,
-					indicesByCategory,
-					activeCategories,
-					isExpanded,
-				});
-				const nextVisible = state.visibleIndices;
-
+			function applyVisibilityState(state: StackVisibilityState): void {
 				for (const index of visibleIndices) {
-					if (!nextVisible.has(index)) {
+					if (!state.visibleIndices.has(index)) {
 						elements[index].classList.add("hidden");
 					}
 				}
 
-				for (const index of nextVisible) {
+				for (const index of state.visibleIndices) {
 					if (!visibleIndices.has(index)) {
 						elements[index].classList.remove("hidden");
 					}
 				}
 
 				visibleIndices.clear();
-				for (const index of nextVisible) visibleIndices.add(index);
+				for (const index of state.visibleIndices) visibleIndices.add(index);
 
 				if (clearBtn) {
+					const hasFilter = activeCategories.size > 0;
 					clearBtn.setAttribute("aria-hidden", String(!hasFilter));
 					clearBtn.setAttribute("tabindex", hasFilter ? "0" : "-1");
 				}
@@ -143,6 +166,64 @@ export function initStackSections(): void {
 						.replace("{visible}", String(state.showing))
 						.replace("{total}", String(state.totalMatching));
 				}
+			}
+
+			function resetItemTransitionClasses(): void {
+				for (const element of elements) {
+					element.style.setProperty(
+						"view-transition-class",
+						STACK_ITEM_TRANSITION_CLASS,
+					);
+				}
+			}
+
+			function update(): void {
+				const state = getStackVisibilityState({
+					totalItems,
+					initialVisible,
+					indicesByCategory,
+					activeCategories,
+					isExpanded,
+				});
+				const enteringIndices = [...state.visibleIndices].filter(
+					(index) => !visibleIndices.has(index),
+				);
+				const exitingIndices = [...visibleIndices].filter(
+					(index) => !state.visibleIndices.has(index),
+				);
+
+				if (
+					!hasViewTransitions(document) ||
+					(enteringIndices.length === 0 && exitingIndices.length === 0)
+				) {
+					applyVisibilityState(state);
+					return;
+				}
+
+				const enteringSet = new Set(enteringIndices);
+				const exitingSet = new Set(exitingIndices);
+				elements.forEach((element, index) => {
+					const transitionClass = enteringSet.has(index)
+						? `${STACK_ITEM_TRANSITION_CLASS} ${STACK_ITEM_ENTER_CLASS}`
+						: exitingSet.has(index)
+							? `${STACK_ITEM_TRANSITION_CLASS} ${STACK_ITEM_EXIT_CLASS}`
+							: STACK_ITEM_TRANSITION_CLASS;
+					element.style.setProperty("view-transition-class", transitionClass);
+				});
+
+				activeTransition?.skipTransition();
+				document.documentElement.classList.add(STACK_TRANSITION_CLASS);
+				const transition = document.startViewTransition(() => {
+					applyVisibilityState(state);
+				});
+				activeTransition = transition;
+
+				void transition.finished.finally(() => {
+					if (activeTransition !== transition) return;
+					activeTransition = undefined;
+					document.documentElement.classList.remove(STACK_TRANSITION_CLASS);
+					resetItemTransitionClasses();
+				});
 			}
 
 			filtersContainer?.addEventListener("click", (event) => {

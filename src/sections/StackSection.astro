@@ -126,3 +126,69 @@ technologies.forEach((technology, index) => {
 
 	initStackSections();
 </script>
+
+<style is:global>
+	html.stack-transitioning,
+	html.stack-transitioning [data-page-transition] {
+		view-transition-name: none;
+	}
+
+	::view-transition-group(.stack-item) {
+		animation-duration: 220ms;
+		animation-timing-function: var(--ease-in-out);
+	}
+
+	::view-transition-old(.stack-item),
+	::view-transition-new(.stack-item) {
+		animation: none;
+		mix-blend-mode: normal;
+	}
+
+	::view-transition-old(.stack-item-exit) {
+		animation: stack-item-exit 160ms var(--ease-out) both;
+	}
+
+	::view-transition-new(.stack-item-enter) {
+		animation: stack-item-enter 200ms var(--ease-out) both;
+	}
+
+	@keyframes stack-item-exit {
+		to {
+			opacity: 0;
+			transform: translateY(-0.5rem);
+		}
+	}
+
+	@keyframes stack-item-enter {
+		from {
+			opacity: 0;
+			transform: translateY(0.5rem);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		::view-transition-group(.stack-item) {
+			animation-duration: 0ms;
+		}
+
+		::view-transition-old(.stack-item-exit) {
+			animation: stack-item-fade-out 100ms var(--ease-out) both;
+		}
+
+		::view-transition-new(.stack-item-enter) {
+			animation: stack-item-fade-in 100ms var(--ease-out) both;
+		}
+	}
+
+	@keyframes stack-item-fade-out {
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes stack-item-fade-in {
+		from {
+			opacity: 0;
+		}
+	}
+</style>

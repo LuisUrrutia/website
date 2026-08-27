@@ -88,6 +88,7 @@ const newTabAttributes = getNewTabLinkAttributes();
 	.marquee-container {
 		position: relative;
 		overflow: hidden;
+		touch-action: pan-y;
 		-webkit-mask-image: linear-gradient(
 			to right,
 			transparent,
@@ -109,6 +110,7 @@ const newTabAttributes = getNewTabLinkAttributes();
 		width: max-content;
 		animation: marquee var(--marquee-duration) linear infinite;
 		transform: translateZ(0);
+		user-select: none;
 		will-change: transform;
 	}
 
@@ -173,7 +175,7 @@ const newTabAttributes = getNewTabLinkAttributes();
 	}
 
 	.marquee-track.is-dragging {
-		animation-play-state: paused;
+		animation: none;
 		cursor: grabbing;
 	}
 
@@ -185,6 +187,28 @@ const newTabAttributes = getNewTabLinkAttributes();
 </style>
 
 <script>
+	interface MotionSample {
+		x: number;
+		time: number;
+	}
+
+	const SAMPLE_WINDOW_MS = 80;
+	const PROJECTION_MS = 180;
+	const INERTIA_DURATION_MS = 220;
+	const REDUCED_INERTIA_DURATION_MS = 100;
+	const MAX_INERTIA_VIEWPORT_RATIO = 0.25;
+	const REDUCED_MAX_INERTIA_VIEWPORT_RATIO = 0.04;
+	const DRAG_THRESHOLD_PX = 5;
+
+	function clamp(value: number, minimum: number, maximum: number): number {
+		return Math.min(Math.max(value, minimum), maximum);
+	}
+
+	function normalizeOffset(offset: number, contentWidth: number): number {
+		const normalized = offset % contentWidth;
+		return normalized > 0 ? normalized - contentWidth : normalized;
+	}
+
 	function initMarqueeDrag(): void {
 		document
 			.querySelectorAll<HTMLElement>(".marquee-container")
@@ -199,69 +223,184 @@ const newTabAttributes = getNewTabLinkAttributes();
 
 				const isReverse = track.classList.contains("marquee-track--reverse");
 				let isDragging = false;
+				let activePointerId: number | undefined;
 				let startX = 0;
 				let currentOffset = 0;
+				let dragDistance = 0;
+				let suppressNextClick = false;
+				let samples: MotionSample[] = [];
+				let inertiaAnimation: Animation | undefined;
 
 				function getTranslateX(): number {
 					const matrix = new DOMMatrix(getComputedStyle(track).transform);
 					return matrix.m41;
 				}
 
+				function recordSample(x: number): void {
+					const time = performance.now();
+					samples = samples.filter(
+						(sample) => time - sample.time <= SAMPLE_WINDOW_MS,
+					);
+					samples.push({ x, time });
+				}
+
+				function getVelocity(): number {
+					const first = samples[0];
+					const last = samples[samples.length - 1];
+					if (!first || !last || first === last) return 0;
+
+					const elapsed = last.time - first.time;
+					return elapsed > 0 ? (last.x - first.x) / elapsed : 0;
+				}
+
 				function onStart(x: number): void {
 					isDragging = true;
 					startX = x;
 					currentOffset = getTranslateX();
+					inertiaAnimation?.cancel();
+					inertiaAnimation = undefined;
+					delete track.dataset.inertiaActive;
 					track.classList.add("is-dragging");
 					track.style.transform = `translateX(${currentOffset}px)`;
+					dragDistance = 0;
+					samples = [];
+					recordSample(x);
 				}
 
 				function onMove(x: number): void {
 					if (!isDragging) return;
 					const delta = x - startX;
+					dragDistance = Math.max(dragDistance, Math.abs(delta));
 					const contentWidth = track.scrollWidth / 2;
 					let newOffset = currentOffset + delta;
 
-					// Wrap around seamlessly
 					if (newOffset > 0) newOffset -= contentWidth;
 					if (newOffset < -contentWidth) newOffset += contentWidth;
 
 					track.style.transform = `translateX(${newOffset}px)`;
+					recordSample(x);
 				}
 
-				function onEnd(): void {
-					if (!isDragging) return;
-					isDragging = false;
+				function resumeMarquee(offset: number, contentWidth: number): void {
+					const normalizedOffset = normalizeOffset(offset, contentWidth);
+					const prefersReducedMotion = window.matchMedia(
+						"(prefers-reduced-motion: reduce)",
+					).matches;
 
-					// Calculate where we are as a fraction of the animation cycle.
-					// The animation goes from 0 to -50% (half the total scrollWidth).
-					const contentWidth = track.scrollWidth / 2;
-					const finalX = getTranslateX();
+					if (prefersReducedMotion) {
+						track.style.transform = `translateX(${normalizedOffset}px)`;
+						track.classList.remove("is-dragging");
+						return;
+					}
 
-					// Normalize to 0..1 progress through the animation
-					let progress = -finalX / contentWidth;
+					let progress = -normalizedOffset / contentWidth;
 					if (isReverse) progress = 1 - progress;
 					progress = ((progress % 1) + 1) % 1;
-
-					// Resume animation from the drag position using negative delay
-					const duration = parseFloat(
+					const duration = Number.parseFloat(
 						getComputedStyle(container).getPropertyValue("--marquee-duration"),
 					);
-					track.style.transform = "";
 					track.style.animationDelay = `-${progress * duration}s`;
+					track.style.transform = "";
 					track.classList.remove("is-dragging");
 				}
 
+				function onEnd(x: number): void {
+					if (!isDragging) return;
+					recordSample(x);
+					isDragging = false;
+					suppressNextClick = dragDistance >= DRAG_THRESHOLD_PX;
+
+					const contentWidth = track.scrollWidth / 2;
+					const finalX = getTranslateX();
+					const prefersReducedMotion = window.matchMedia(
+						"(prefers-reduced-motion: reduce)",
+					).matches;
+					const maximumProjection =
+						window.innerWidth *
+						(prefersReducedMotion
+							? REDUCED_MAX_INERTIA_VIEWPORT_RATIO
+							: MAX_INERTIA_VIEWPORT_RATIO);
+					const projection = clamp(
+						getVelocity() * PROJECTION_MS,
+						-maximumProjection,
+						maximumProjection,
+					);
+					let animationStart = finalX;
+					let animationEnd = finalX + projection;
+
+					if (animationEnd > 0) {
+						animationStart -= contentWidth;
+						animationEnd -= contentWidth;
+					} else if (animationEnd < -contentWidth) {
+						animationStart += contentWidth;
+						animationEnd += contentWidth;
+					}
+
+					track.style.transform = `translateX(${animationStart}px)`;
+					const easing = getComputedStyle(document.documentElement)
+						.getPropertyValue("--ease-out")
+						.trim();
+					const animation = track.animate(
+						[
+							{ transform: `translateX(${animationStart}px)` },
+							{ transform: `translateX(${animationEnd}px)` },
+						],
+						{
+							duration: prefersReducedMotion
+								? REDUCED_INERTIA_DURATION_MS
+								: INERTIA_DURATION_MS,
+							easing,
+							fill: "forwards",
+						},
+					);
+					inertiaAnimation = animation;
+					track.dataset.inertiaActive = "true";
+
+					void animation.finished
+						.then(() => {
+							if (inertiaAnimation !== animation || isDragging) return;
+							inertiaAnimation = undefined;
+							delete track.dataset.inertiaActive;
+							track.style.transform = `translateX(${animationEnd}px)`;
+							animation.cancel();
+							resumeMarquee(animationEnd, contentWidth);
+						})
+						.catch(() => undefined);
+				}
+
+				container.addEventListener("pointerdown", (event) => {
+					if (activePointerId !== undefined) return;
+					activePointerId = event.pointerId;
+					container.setPointerCapture(event.pointerId);
+					onStart(event.clientX);
+				});
+
+				container.addEventListener("pointermove", (event) => {
+					if (event.pointerId !== activePointerId) return;
+					onMove(event.clientX);
+				});
+
+				function finishPointer(event: PointerEvent): void {
+					if (event.pointerId !== activePointerId) return;
+					onEnd(event.clientX);
+					if (container.hasPointerCapture(event.pointerId)) {
+						container.releasePointerCapture(event.pointerId);
+					}
+					activePointerId = undefined;
+				}
+
+				container.addEventListener("pointerup", finishPointer);
+				container.addEventListener("pointercancel", finishPointer);
 				container.addEventListener(
-					"touchstart",
-					(e) => onStart(e.touches[0].clientX),
-					{ passive: true },
+					"click",
+					(event) => {
+						if (!suppressNextClick) return;
+						suppressNextClick = false;
+						event.preventDefault();
+						event.stopPropagation();
+					},
+					true,
 				);
-				container.addEventListener(
-					"touchmove",
-					(e) => onMove(e.touches[0].clientX),
-					{ passive: true },
-				);
-				container.addEventListener("touchend", onEnd);
 			});
 	}
 

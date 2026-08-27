@@ -1,0 +1,234 @@
+/* playwright-cli evaluates this file as a function expression. */
+async (page) => {
+	const failures = [];
+	const pageErrors = [];
+	let checkCount = 0;
+	page.on("pageerror", (error) => pageErrors.push(error.message));
+
+	function check(condition, message) {
+		checkCount += 1;
+		if (!condition) failures.push(message);
+	}
+
+	await page.emulateMedia({ reducedMotion: "no-preference" });
+	await page.goto("http://127.0.0.1:4321", { waitUntil: "networkidle" });
+
+	const tokens = await page.evaluate(() => {
+		const styles = getComputedStyle(document.documentElement);
+		return {
+			easeOut: styles.getPropertyValue("--ease-out").trim(),
+			easeInOut: styles.getPropertyValue("--ease-in-out").trim(),
+		};
+	});
+	check(
+		tokens.easeOut === "cubic-bezier(0.23, 1, 0.32, 1)",
+		"The shared ease-out token is missing.",
+	);
+	check(
+		tokens.easeInOut === "cubic-bezier(0.77, 0, 0.175, 1)",
+		"The shared ease-in-out token is missing.",
+	);
+
+	const stack = await page.evaluate(async () => {
+		const button = document.querySelector(".stack-filter");
+		const items = [...document.querySelectorAll(".stack-item")];
+		if (!(button instanceof HTMLButtonElement)) return null;
+
+		let transitionObserved = false;
+		const observer = new MutationObserver(() => {
+			transitionObserved ||= document.documentElement.classList.contains(
+				"stack-transitioning",
+			);
+		});
+		observer.observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: ["class"],
+		});
+
+		const visibleBefore = items.filter(
+			(item) => !item.classList.contains("hidden"),
+		).length;
+		button.click();
+		await new Promise((resolve) =>
+			requestAnimationFrame(() => requestAnimationFrame(resolve)),
+		);
+		const pageFadeAnimations = document
+			.getAnimations()
+			.filter(
+				(animation) =>
+					animation.effect instanceof KeyframeEffect &&
+					animation.effect.pseudoElement?.includes("page-fade"),
+			).length;
+		await new Promise((resolve) => setTimeout(resolve, 240));
+		observer.disconnect();
+
+		return {
+			visibleBefore,
+			visibleAfter: items.filter((item) => !item.classList.contains("hidden"))
+				.length,
+			transitionObserved,
+			pageFadeAnimations,
+			hasViewTransitions: typeof document.startViewTransition === "function",
+			namesAreStable: items.every(
+				(item) => getComputedStyle(item).viewTransitionName !== "none",
+			),
+		};
+	});
+	check(stack !== null, "The Stack filter is unavailable.");
+	if (stack) {
+		check(
+			stack.visibleAfter !== stack.visibleBefore,
+			"Filtering does not change Stack visibility.",
+		);
+		check(stack.namesAreStable, "Stack items have no stable transition names.");
+		check(
+			!stack.hasViewTransitions || stack.transitionObserved,
+			"The Stack update did not start a same-document View Transition.",
+		);
+		check(
+			stack.pageFadeAnimations === 0,
+			"Filtering Stack started the page-level fade transition.",
+		);
+	}
+
+	const theme = await page.evaluate(async () => {
+		const button = document.querySelector(".theme-toggle");
+		if (!(button instanceof HTMLButtonElement)) return null;
+
+		const activeBefore = button.dataset.mode;
+		const icons = [...button.querySelectorAll(".theme-icon")];
+		const transitionDuration = icons[0]
+			? getComputedStyle(icons[0]).transitionDuration
+			: "";
+		button.click();
+		const activeAfter = button.dataset.mode;
+		const transitioningIcons = icons.filter(
+			(icon) => icon.getAnimations().length > 0,
+		).length;
+		await new Promise((resolve) => setTimeout(resolve, 180));
+
+		return {
+			activeBefore,
+			activeAfter,
+			transitionDuration,
+			transitioningIcons,
+			visibleIcons: icons.filter(
+				(icon) => Number.parseFloat(getComputedStyle(icon).opacity) > 0.99,
+			).length,
+		};
+	});
+	check(theme !== null, "The theme toggle is unavailable.");
+	if (theme) {
+		check(
+			theme.activeBefore !== theme.activeAfter,
+			"The theme mode did not change.",
+		);
+		check(
+			theme.transitionDuration.includes("0.16s"),
+			"Theme icons do not use the 160ms transition.",
+		);
+		check(theme.transitioningIcons >= 2, "Theme icons did not crossfade.");
+		check(
+			theme.visibleIcons === 1,
+			"Exactly one theme icon should remain visible.",
+		);
+	}
+
+	const themeButton = page.locator(".theme-toggle").first();
+	const themeButtonBox = await themeButton.boundingBox();
+	check(themeButtonBox !== null, "The press target is unavailable.");
+	if (themeButtonBox) {
+		await page.mouse.move(
+			themeButtonBox.x + themeButtonBox.width / 2,
+			themeButtonBox.y + themeButtonBox.height / 2,
+		);
+		await page.mouse.down();
+		await page.waitForTimeout(100);
+		const pressedTransform = await themeButton.evaluate(
+			(element) => getComputedStyle(element).transform,
+		);
+		await page.mouse.up();
+		check(
+			pressedTransform !== "none" &&
+				pressedTransform !== "matrix(1, 0, 0, 1, 0, 0)",
+			"Press feedback did not change the control transform.",
+		);
+	}
+
+	const marquee = page.locator(".marquee-container").first();
+	const marqueeBox = await marquee.boundingBox();
+	check(marqueeBox !== null, "The marquee gesture target is unavailable.");
+	if (marqueeBox) {
+		const centerX = marqueeBox.x + marqueeBox.width / 2;
+		const centerY = marqueeBox.y + marqueeBox.height / 2;
+		await page.mouse.move(centerX, centerY);
+		await page.mouse.down();
+		await page.mouse.move(centerX - 120, centerY, { steps: 3 });
+		await page.mouse.up();
+		const inertiaStarted = await page
+			.locator(".marquee-track")
+			.first()
+			.evaluate((element) => element.dataset.inertiaActive === "true");
+		await page.waitForTimeout(260);
+		const inertiaFinished = await page
+			.locator(".marquee-track")
+			.first()
+			.evaluate((element) => element.dataset.inertiaActive !== "true");
+		check(inertiaStarted, "Marquee inertia did not start after a drag.");
+		check(inertiaFinished, "Marquee inertia did not settle.");
+	}
+
+	await page.emulateMedia({ reducedMotion: "reduce" });
+	const reducedMotion = await page.evaluate(() => {
+		const icon = document.querySelector(".theme-icon");
+		const pressTarget = document.querySelector(".theme-toggle");
+		const marqueeTrack = document.querySelector(".marquee-track");
+		if (!icon || !pressTarget || !marqueeTrack) return null;
+
+		return {
+			iconDuration: getComputedStyle(icon).transitionDuration,
+			iconTransform: getComputedStyle(icon).transform,
+			pressDuration: getComputedStyle(pressTarget).transitionDuration,
+			marqueeAnimation: getComputedStyle(marqueeTrack).animationName,
+		};
+	});
+	check(reducedMotion !== null, "Reduced-motion targets are unavailable.");
+	if (reducedMotion) {
+		check(
+			reducedMotion.iconDuration.includes("0.1s"),
+			"Theme icons do not use the reduced 100ms fade.",
+		);
+		check(
+			reducedMotion.iconTransform === "none",
+			"Theme icon scaling remains enabled with reduced motion.",
+		);
+		check(
+			reducedMotion.pressDuration.includes("0.1s"),
+			"Press feedback does not use the reduced 100ms duration.",
+		);
+		check(
+			reducedMotion.marqueeAnimation === "none",
+			"The automatic marquee remains animated with reduced motion.",
+		);
+	}
+
+	await page.emulateMedia({ reducedMotion: "no-preference" });
+	for (const route of ["/blog", "/es/"]) {
+		const response = await page.goto(`http://127.0.0.1:4321${route}`, {
+			waitUntil: "networkidle",
+		});
+		check(response?.ok() === true, `The ${route} smoke route did not return 200.`);
+		check(
+			(await page.locator("#main-content").count()) === 1,
+			`The ${route} smoke route has no main content.`,
+		);
+	}
+
+	check(pageErrors.length === 0, `Browser errors: ${pageErrors.join("; ")}`);
+	if (failures.length > 0) throw new Error(failures.join("\n"));
+
+	return {
+		checks: checkCount,
+		status: "passed",
+	};
+}

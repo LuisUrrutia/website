@@ -8,3 +8,24 @@
 @utility scrollbar-gutter-stable {
 	scrollbar-gutter: stable;
 }
+
+.press-feedback {
+	transition-duration: 160ms;
+	transition-property:
+		color, background-color, border-color, box-shadow, transform;
+	transition-timing-function: var(--ease-out);
+}
+
+.press-feedback:active {
+	transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.press-feedback {
+		transition-duration: 100ms;
+	}
+
+	.press-feedback:active {
+		transform: scale(0.99);
+	}
+}

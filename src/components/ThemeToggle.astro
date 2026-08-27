@@ -28,7 +28,7 @@ const {
 <button
 	type="button"
 	class:list={[
-		"theme-toggle hover:text-subtitle focus-visible:ring-accent focus-visible:ring-offset-background flex cursor-pointer items-center justify-center rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+		"theme-toggle press-feedback hover:text-subtitle focus-visible:ring-accent focus-visible:ring-offset-background grid cursor-pointer items-center justify-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
 		className,
 	]}
 	aria-label={labels.auto}
@@ -54,14 +54,20 @@ const {
 
 <style>
 	.theme-icon {
-		display: none;
+		grid-area: 1 / 1;
+		opacity: 0;
+		transform: scale(0.95);
+		transition:
+			opacity 160ms var(--ease-out),
+			transform 160ms var(--ease-out);
 	}
 
 	/* Show icon based on button's data-mode (set by JS after interaction) */
 	:where(.theme-toggle[data-mode="light"]) .theme-icon-light,
 	:where(.theme-toggle[data-mode="dark"]) .theme-icon-dark,
 	:where(.theme-toggle[data-mode="auto"]) .theme-icon-auto {
-		display: block;
+		opacity: 1;
+		transform: scale(1);
 	}
 
 	/* Initial state: show icon based on root's data-theme-mode (set by blocking script) */
@@ -74,7 +80,30 @@ const {
 	:global(:where([data-theme-mode="auto"]))
 		.theme-toggle:not([data-mode])
 		.theme-icon-auto {
-		display: block;
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.theme-icon {
+			transform: none;
+			transition: opacity 100ms var(--ease-out);
+		}
+
+		:where(.theme-toggle[data-mode="light"]) .theme-icon-light,
+		:where(.theme-toggle[data-mode="dark"]) .theme-icon-dark,
+		:where(.theme-toggle[data-mode="auto"]) .theme-icon-auto,
+		:global(:where([data-theme-mode="light"]))
+			.theme-toggle:not([data-mode])
+			.theme-icon-light,
+		:global(:where([data-theme-mode="dark"]))
+			.theme-toggle:not([data-mode])
+			.theme-icon-dark,
+		:global(:where([data-theme-mode="auto"]))
+			.theme-toggle:not([data-mode])
+			.theme-icon-auto {
+			transform: none;
+		}
 	}
 </style>
 
