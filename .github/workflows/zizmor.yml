@@ -1,0 +1,43 @@
+name: Zizmor
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/dependabot.yml"
+      - ".github/workflows/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/dependabot.yml"
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  zizmor:
+    name: zizmor
+    runs-on: ubicloud-standard-2
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Audit GitHub automation
+        uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054 # v0.6.2
+        with:
+          advanced-security: false
+          annotations: true
+          collect: all
+          inputs: .github
+          persona: pedantic
