@@ -7,7 +7,7 @@ on:
     paths:
       - ".github/dependabot.yml"
       - ".github/workflows/**"
-  pull_request:
+  pull_request_target: # zizmor: ignore[dangerous-triggers] The PR commit is fetched remotely as data and never executed.
     branches:
       - main
     paths:
@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -28,16 +28,32 @@ jobs:
     runs-on: ubicloud-standard-2
     timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
       - name: Audit GitHub automation
-        uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054 # v0.6.2
-        with:
-          advanced-security: false
-          annotations: true
-          collect: all
-          inputs: .github
-          persona: pedantic
+        env:
+          AUDIT_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          AUDIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -u
+          if [[ ! "$AUDIT_REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
+            printf 'Invalid repository: %s\n' "$AUDIT_REPOSITORY" >&2
+            exit 1
+          fi
+          if [[ ! "$AUDIT_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            printf 'Invalid commit SHA: %s\n' "$AUDIT_SHA" >&2
+            exit 1
+          fi
+          image="ghcr.io/zizmorcore/zizmor:1.29.0@sha256:863026d54f91271b10b60b67ad8054cb37120167e162482597db102b3026a284"
+          docker run \
+            --rm \
+            --env GH_TOKEN \
+            "$image" \
+            --persona=pedantic \
+            --strict-collection \
+            --collect=workflows \
+            --collect=dependabot \
+            --format=github \
+            --color=never \
+            -- \
+            "$AUDIT_REPOSITORY@$AUDIT_SHA"
