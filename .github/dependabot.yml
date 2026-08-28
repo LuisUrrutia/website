@@ -7,16 +7,65 @@ updates:
     commit-message:
       prefix: "chore(deps)"
     cooldown:
-      default-days: 3
+      default-days: 7
       semver-major-days: 7
     ignore:
+      # @astrojs/check 0.9.10 supports TypeScript 5 and 6 only.
+      # Owner: @LuisUrrutia. Review by 2026-11-28 or when its peer range expands.
       - dependency-name: "typescript"
         update-types:
           - "version-update:semver-major"
     groups:
-      all-dependencies:
+      astro:
+        applies-to: "version-updates"
+        patterns:
+          - "@astrojs/*"
+          - "astro"
+          - "astro-compressor"
+          - "astro-og-canvas"
+        update-types:
+          - "minor"
+          - "patch"
+      styling:
+        applies-to: "version-updates"
+        patterns:
+          - "@tailwindcss/*"
+          - "tailwindcss"
+        update-types:
+          - "minor"
+          - "patch"
+      quality:
+        applies-to: "version-updates"
+        patterns:
+          - "@commitlint/*"
+          - "@prettier/*"
+          - "husky"
+          - "lint-staged"
+          - "oxlint"
+          - "oxlint-tsgolint"
+          - "prettier"
+          - "prettier-plugin-*"
+          - "typescript"
+          - "vitest"
+        update-types:
+          - "minor"
+          - "patch"
+      release:
+        applies-to: "version-updates"
+        patterns:
+          - "@semantic-release/*"
+          - "badge-maker"
+          - "semantic-release"
+        update-types:
+          - "minor"
+          - "patch"
+      remaining-minor-and-patch:
+        applies-to: "version-updates"
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -25,8 +74,9 @@ updates:
     commit-message:
       prefix: "chore(deps)"
     cooldown:
-      default-days: 3
+      default-days: 7
     groups:
       codeql:
+        applies-to: "version-updates"
         patterns:
           - "github/codeql-action/*"
