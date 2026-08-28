@@ -19,6 +19,7 @@ permissions:
 
 jobs:
   lighthouse:
+    name: Lighthouse
     runs-on: ubicloud-standard-2
     timeout-minutes: 15
     steps:
@@ -44,7 +45,7 @@ jobs:
         run: bun run build
 
       - name: Lighthouse CI
-        uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # v12.6.2
+        uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # 12.6.2
         with:
           uploadArtifacts: true
           configPath: ./lighthouserc.json

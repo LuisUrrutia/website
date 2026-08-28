@@ -1,0 +1,68 @@
+name: Dependency security
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".bun-version"
+      - ".github/workflows/dependency-security.yml"
+      - "bun.lock"
+      - "package.json"
+      - "scripts/bun-dependency-snapshot.ts"
+  schedule:
+    - cron: "30 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  inventory:
+    name: Audit and submit
+    runs-on: ubicloud-standard-2
+    timeout-minutes: 10
+    permissions:
+      contents: write # Submit the resolved Bun graph to GitHub
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: ".bun-version"
+
+      - name: Audit dependencies
+        run: bun audit
+
+      - name: Prepare dependency snapshot
+        env:
+          SNAPSHOT_PATH: ${{ runner.temp }}/bun-dependency-snapshot.json
+        shell: bash
+        run: bun scripts/bun-dependency-snapshot.ts "$SNAPSHOT_PATH"
+
+      - name: Submit dependency snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          SNAPSHOT_PATH: ${{ runner.temp }}/bun-dependency-snapshot.json
+        shell: bash
+        run: |
+          set -u
+          snapshot_id=$(gh api \
+            --method POST \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "repos/$REPOSITORY/dependency-graph/snapshots" \
+            --input "$SNAPSHOT_PATH" \
+            --jq '.id')
+          if [[ ! "$snapshot_id" =~ ^[0-9]+$ ]]; then
+            printf 'Dependency submission returned an invalid snapshot ID: %s\n' "$snapshot_id" >&2
+            exit 1
+          fi
+          printf 'Submitted dependency snapshot %s\n' "$snapshot_id"

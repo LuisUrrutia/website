@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/codeql.yml"
       - "src/**"
+      - "scripts/**"
       - "*.ts"
       - "*.js"
       - "*.mjs"
@@ -18,6 +19,7 @@ on:
     paths:
       - ".github/workflows/codeql.yml"
       - "src/**"
+      - "scripts/**"
       - "*.ts"
       - "*.js"
       - "*.mjs"
@@ -34,11 +36,12 @@ permissions: {}
 
 jobs:
   analyze:
+    name: Analyze
     runs-on: ubicloud-standard-2
     timeout-minutes: 15
     permissions:
-      security-events: write
-      actions: read
+      security-events: write # Upload CodeQL analysis results
+      actions: read # Read workflow metadata for pull request analysis
       contents: read
 
     steps:
