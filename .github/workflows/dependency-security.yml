@@ -38,9 +38,6 @@ jobs:
         with:
           bun-version-file: ".bun-version"
 
-      - name: Audit dependencies
-        run: bun audit
-
       - name: Prepare dependency snapshot
         env:
           SNAPSHOT_PATH: ${{ runner.temp }}/bun-dependency-snapshot.json
@@ -66,3 +63,6 @@ jobs:
             exit 1
           fi
           printf 'Submitted dependency snapshot %s\n' "$snapshot_id"
+
+      - name: Audit dependencies
+        run: bun audit

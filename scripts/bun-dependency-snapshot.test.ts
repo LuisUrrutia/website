@@ -78,4 +78,49 @@ describe("createBunDependencySnapshot", () => {
 			),
 		).toThrow("app depends on missing package missing");
 	});
+
+	it("includes installed peer dependencies and skips missing optional peers", () => {
+		const snapshot = createBunDependencySnapshot(
+			{
+				workspaces: { "": { dependencies: { app: "1.0.0" } } },
+				packages: {
+					app: ["app@1.0.0", "", { dependencies: { plugin: "1.0.0" } }],
+					"app/plugin": [
+						"plugin@1.0.0",
+						"",
+						{
+							peerDependencies: { host: "^2.0.0", addon: "^1.0.0" },
+							optionalPeers: ["addon"],
+						},
+					],
+					"app/host": ["host@2.0.0", "", {}],
+				},
+			},
+			metadata,
+		);
+		const resolved = snapshot.manifests["bun.lock"].resolved;
+
+		expect(Object.keys(resolved)).toHaveLength(3);
+		expect(resolved["pkg:npm/plugin@1.0.0"].dependencies).toEqual([
+			"pkg:npm/host@2.0.0",
+		]);
+		expect(resolved["pkg:npm/host@2.0.0"]).toMatchObject({
+			relationship: "indirect",
+			scope: "runtime",
+		});
+	});
+
+	it("rejects missing required peer dependencies", () => {
+		expect(() =>
+			createBunDependencySnapshot(
+				{
+					workspaces: { "": { dependencies: { app: "1.0.0" } } },
+					packages: {
+						app: ["app@1.0.0", "", { peerDependencies: { missing: "1.0.0" } }],
+					},
+				},
+				metadata,
+			),
+		).toThrow("app depends on missing peer package missing");
+	});
 });

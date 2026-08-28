@@ -58,6 +58,8 @@ interface BunPackage {
 	name: string;
 	version: string;
 	dependencyNames: string[];
+	requiredPeerDependencyNames: string[];
+	optionalPeerDependencyNames: string[];
 }
 
 interface BunLock {
@@ -97,6 +99,19 @@ function parseStringRecord(
 		entries.push([name, requirement]);
 	}
 	return Object.fromEntries(entries);
+}
+
+function parseStringArray(value: unknown, path: string): string[] {
+	if (value === undefined) return [];
+	if (!Array.isArray(value)) throw new Error(`${path} must be an array`);
+
+	const entries = value.map((entry, index) => {
+		if (typeof entry !== "string" || entry.length === 0) {
+			throw new Error(`${path}[${index}] must be a non-empty string`);
+		}
+		return entry;
+	});
+	return [...new Set(entries)].sort();
 }
 
 function parseNpmResolution(
@@ -170,6 +185,15 @@ function parseBunLock(value: unknown): BunLock {
 			packageMetadata.optionalDependencies,
 			`bun.lock.packages.${key}[2].optionalDependencies`,
 		);
+		const packagePeerDependencies = parseStringRecord(
+			packageMetadata.peerDependencies,
+			`bun.lock.packages.${key}[2].peerDependencies`,
+		);
+		const optionalPeerDependencyNames = parseStringArray(
+			packageMetadata.optionalPeers,
+			`bun.lock.packages.${key}[2].optionalPeers`,
+		);
+		const optionalPeerDependencies = new Set(optionalPeerDependencyNames);
 
 		packages.set(key, {
 			name,
@@ -180,6 +204,12 @@ function parseBunLock(value: unknown): BunLock {
 					...Object.keys(packageOptionalDependencies),
 				]),
 			].sort(),
+			requiredPeerDependencyNames: Object.keys(packagePeerDependencies)
+				.filter(
+					(dependencyName) => !optionalPeerDependencies.has(dependencyName),
+				)
+				.sort(),
+			optionalPeerDependencyNames,
 		});
 	}
 
@@ -196,25 +226,63 @@ function parseBunLock(value: unknown): BunLock {
 	};
 }
 
+function getParentPackageKey(
+	packages: Map<string, BunPackage>,
+	packageKey: string,
+): string | undefined {
+	const packageRecord = packages.get(packageKey);
+	if (!packageRecord) throw new Error(`missing package ${packageKey}`);
+	if (packageKey === packageRecord.name) return undefined;
+
+	const suffix = `/${packageRecord.name}`;
+	if (!packageKey.endsWith(suffix)) {
+		throw new Error(
+			`bun.lock package key ${packageKey} does not match ${packageRecord.name}`,
+		);
+	}
+	const parentKey = packageKey.slice(0, -suffix.length);
+	if (!packages.has(parentKey)) {
+		throw new Error(
+			`bun.lock package ${packageKey} has missing parent ${parentKey}`,
+		);
+	}
+	return parentKey;
+}
+
 function resolveDependencyKey(
 	packages: Map<string, BunPackage>,
 	parentKey: string,
 	dependencyName: string,
 ): string {
-	let parentPrefix = parentKey;
-	while (parentPrefix.length > 0) {
-		const nestedKey = `${parentPrefix}/${dependencyName}`;
+	let packageKey: string | undefined = parentKey;
+	while (packageKey !== undefined) {
+		const nestedKey = `${packageKey}/${dependencyName}`;
 		if (packages.get(nestedKey)?.name === dependencyName) return nestedKey;
-
-		const separator = parentPrefix.lastIndexOf("/");
-		if (separator < 0) break;
-		parentPrefix = parentPrefix.slice(0, separator);
+		packageKey = getParentPackageKey(packages, packageKey);
 	}
 
 	if (packages.get(dependencyName)?.name === dependencyName) {
 		return dependencyName;
 	}
 	throw new Error(`${parentKey} depends on missing package ${dependencyName}`);
+}
+
+function findPeerDependencyKey(
+	packages: Map<string, BunPackage>,
+	packageKey: string,
+	dependencyName: string,
+): string | undefined {
+	let ancestorKey = getParentPackageKey(packages, packageKey);
+	while (ancestorKey !== undefined) {
+		const peerKey = `${ancestorKey}/${dependencyName}`;
+		if (packages.get(peerKey)?.name === dependencyName) return peerKey;
+		ancestorKey = getParentPackageKey(packages, ancestorKey);
+	}
+
+	if (packages.get(dependencyName)?.name === dependencyName) {
+		return dependencyName;
+	}
+	return undefined;
 }
 
 function resolveRootDependencyKey(
@@ -227,6 +295,40 @@ function resolveRootDependencyKey(
 	throw new Error(
 		`root workspace depends on missing package ${dependencyName}`,
 	);
+}
+
+function resolvePackageDependencyKeys(
+	lock: BunLock,
+	packageKey: string,
+): string[] {
+	const packageRecord = lock.packages.get(packageKey);
+	if (!packageRecord) throw new Error(`missing package ${packageKey}`);
+
+	const dependencyKeys = packageRecord.dependencyNames.map((dependencyName) =>
+		resolveDependencyKey(lock.packages, packageKey, dependencyName),
+	);
+	for (const dependencyName of packageRecord.requiredPeerDependencyNames) {
+		const peerKey = findPeerDependencyKey(
+			lock.packages,
+			packageKey,
+			dependencyName,
+		);
+		if (!peerKey) {
+			throw new Error(
+				`${packageKey} depends on missing peer package ${dependencyName}`,
+			);
+		}
+		dependencyKeys.push(peerKey);
+	}
+	for (const dependencyName of packageRecord.optionalPeerDependencyNames) {
+		const peerKey = findPeerDependencyKey(
+			lock.packages,
+			packageKey,
+			dependencyName,
+		);
+		if (peerKey) dependencyKeys.push(peerKey);
+	}
+	return [...new Set(dependencyKeys)];
 }
 
 function collectReachablePackages(
@@ -243,13 +345,7 @@ function collectReachablePackages(
 		if (packageKey === undefined || reachable.has(packageKey)) continue;
 
 		reachable.add(packageKey);
-		const packageRecord = lock.packages.get(packageKey);
-		if (!packageRecord) throw new Error(`missing package ${packageKey}`);
-		for (const dependencyName of packageRecord.dependencyNames) {
-			pending.push(
-				resolveDependencyKey(lock.packages, packageKey, dependencyName),
-			);
-		}
+		pending.push(...resolvePackageDependencyKeys(lock, packageKey));
 	}
 	return reachable;
 }
@@ -305,12 +401,13 @@ function buildResolvedDependencies(
 		const packageRecord = lock.packages.get(packageKey);
 		if (!packageRecord) throw new Error(`missing package ${packageKey}`);
 		const packageUrl = npmPackageUrl(packageRecord.name, packageRecord.version);
-		const childPackageUrls = packageRecord.dependencyNames.map((name) => {
-			const childKey = resolveDependencyKey(lock.packages, packageKey, name);
-			const child = lock.packages.get(childKey);
-			if (!child) throw new Error(`missing package ${childKey}`);
-			return npmPackageUrl(child.name, child.version);
-		});
+		const childPackageUrls = resolvePackageDependencyKeys(lock, packageKey).map(
+			(childKey) => {
+				const child = lock.packages.get(childKey);
+				if (!child) throw new Error(`missing package ${childKey}`);
+				return npmPackageUrl(child.name, child.version);
+			},
+		);
 
 		mergeResolvedDependency(resolved, {
 			packageUrl,
