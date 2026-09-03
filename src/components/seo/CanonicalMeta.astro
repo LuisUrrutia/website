@@ -7,11 +7,12 @@
  * language/region variants.
  *
  * For pages with content that has different slugs per locale (e.g., blog posts),
- * pass the `alternateUrls` prop to override the default URL computation.
+ * pass the `alternateUrls` prop with the locales the content exists in; only
+ * those locales get an hreflang tag.
  *
  * @see https://developers.google.com/search/docs/specialty/international/localized-versions
  */
-import { getLocalizedUrls, locales, type Locale } from "@/i18n";
+import { getLocalizedUrls, type Locale } from "@/i18n";
 
 export interface Props {
 	/** Base site URL (without trailing slash) */
@@ -36,12 +37,8 @@ const localizedUrls = getLocalizedUrls({
 
 <link rel="canonical" href={localizedUrls.canonicalUrl} />
 {
-	locales.map((loc) => (
-		<link
-			rel="alternate"
-			hreflang={loc}
-			href={localizedUrls.alternateUrls[loc]}
-		/>
+	Object.entries(localizedUrls.alternateUrls).map(([hreflang, href]) => (
+		<link rel="alternate" hreflang={hreflang} href={href} />
 	))
 }
 <link rel="alternate" hreflang="x-default" href={localizedUrls.xDefaultUrl} />

@@ -15,6 +15,9 @@ interface Props {
 const { post, metadata, lang } = Astro.props;
 ---
 
+<!-- Giscus comments load only on posts, so warm its origin here -->
+<link rel="preconnect" href="https://giscus.app" crossorigin />
+<link rel="dns-prefetch" href="https://giscus.app" />
 <BreadcrumbJsonLd items={metadata.breadcrumbItems} />
 <ArticleJsonLd
 	title={post.data.title}

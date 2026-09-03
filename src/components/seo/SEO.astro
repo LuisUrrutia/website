@@ -18,15 +18,21 @@
  * />
  * ```
  */
-import CanonicalMeta from "./CanonicalMeta.astro";
-import OpenGraphMeta, { type ArticleMeta } from "./OpenGraphMeta.astro";
-import TwitterCardMeta from "./TwitterCardMeta.astro";
-import { locales, getCanonicalUrl, getSiteUrl, joinSiteUrl } from "@/i18n";
+import CanonicalMeta from "@/components/seo/CanonicalMeta.astro";
+import OpenGraphMeta, {
+	type ArticleMeta,
+} from "@/components/seo/OpenGraphMeta.astro";
+import TwitterCardMeta from "@/components/seo/TwitterCardMeta.astro";
+import {
+	getAlternateLocale,
+	getCanonicalUrl,
+	getSiteUrl,
+	joinSiteUrl,
+	type Locale,
+} from "@/i18n";
 import { defaultOgImage, siteOwner } from "@/data/seo";
 
 export type { ArticleMeta };
-
-import type { Locale } from "@/i18n";
 
 export interface Props {
 	/** Page title */
@@ -70,8 +76,7 @@ const canonicalUrl = getCanonicalUrl({
 	alternateUrls,
 });
 
-// Get alternate locale for og:locale:alternate
-const alternateLocale = locales.find((l) => l !== lang) ?? lang;
+const alternateLocale = getAlternateLocale(lang);
 
 // Robots content
 const robotsContent = noindex ? "noindex, nofollow" : "index, follow";

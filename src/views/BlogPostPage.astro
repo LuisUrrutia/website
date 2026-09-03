@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Navbar from "@/components/Navbar.astro";
 import Container from "@/components/Container.astro";
+import { siteOwner } from "@/data/seo";
 import { getSiteUrl } from "@/i18n";
 import BlogPostArticle from "@/views/blog-post/BlogPostArticle.astro";
 import BlogPostContent from "@/views/blog-post/BlogPostContent.astro";
@@ -37,7 +38,7 @@ const metadata = prepareBlogPostPageMetadata({
 	article={{
 		publishedTime: post.data.date.toISOString(),
 		modifiedTime: post.data.updatedDate?.toISOString(),
-		author: "Luis Urrutia",
+		author: siteOwner.name,
 		section: post.data.category,
 		tags: post.data.tags,
 	}}
