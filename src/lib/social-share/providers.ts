@@ -62,11 +62,10 @@ export const providers: Record<SocialProviderType, ProviderConfig> = {
 
 	[SocialProvider.Email]: {
 		buildShareUrl: ({ url, text }) => {
-			const params = new URLSearchParams({
-				subject: text ?? "",
-				body: text ? `${text}\n\n${url}` : url,
-			});
-			return `mailto:?${params}`;
+			// RFC 6068 mailto bodies are percent-encoded; URLSearchParams would turn spaces into "+".
+			const subject = encodeURIComponent(text ?? "");
+			const body = encodeURIComponent(text ? `${text}\n\n${url}` : url);
+			return `mailto:?subject=${subject}&body=${body}`;
 		},
 	},
 
