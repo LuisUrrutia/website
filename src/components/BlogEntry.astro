@@ -2,21 +2,15 @@
 import type { HTMLTag } from "astro/types";
 import IconArrowRight from "@/assets/icons/arrow-right.svg";
 import Pill from "@/components/Pill.astro";
-import { intlLocales } from "@/i18n";
+import { formatPostDate } from "@/lib/formatters";
 
 type HeadingLevel = Extract<HTMLTag, "h1" | "h2" | "h3" | "h4" | "h5" | "h6">;
 
 interface Props {
 	title: string;
 	category: string;
-	categoryColor?: string;
 	date: Date;
 	href?: string;
-	external?: boolean;
-	readingTime?: string;
-	"aria-label"?: string;
-	locale?: string;
-	dateFormat?: Intl.DateTimeFormatOptions;
 	/** Unique slug for view transition name (enables title animation between pages) */
 	slug?: string;
 	/** Heading level for the title. Defaults to "h3". */
@@ -32,14 +26,8 @@ const { lang } = Astro.locals;
 const {
 	title,
 	category,
-	categoryColor,
 	date,
 	href,
-	external,
-	readingTime,
-	"aria-label": ariaLabel,
-	locale = intlLocales[lang],
-	dateFormat = { day: "numeric", month: "short", year: "numeric" },
 	slug,
 	headingLevel: Heading = "h3",
 	hideBorder = false,
@@ -50,37 +38,26 @@ const {
 const titleTransitionName = slug ? `post-title-${slug}` : undefined;
 const pillTransitionName = slug ? `post-pill-${slug}` : undefined;
 
-const formattedDate = date.toLocaleDateString(locale, dateFormat);
-
+const formattedDate = formatPostDate(date, lang, "short");
 const isoDate = date.toISOString().split("T")[0];
 
 const Tag = href ? "a" : "div";
-
-const linkProps = href
-	? {
-			href,
-			...(external && { target: "_blank", rel: "noopener noreferrer" }),
-			...(ariaLabel && { "aria-label": ariaLabel }),
-		}
-	: {};
 ---
 
 <Tag
-	{...linkProps}
+	href={href}
 	class:list={[
-		"group focus-visible:ring-accent focus-visible:ring-offset-card relative -mx-3 flex flex-col gap-4 overflow-hidden rounded-lg px-3 transition-colors hover:bg-black/[0.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:flex-row md:pt-8 dark:hover:bg-white/[0.03]",
-		lazyTransition && "blog-entry",
+		"blog-entry group hover:bg-title/3 focus-visible:ring-accent focus-visible:ring-offset-card relative -mx-3 flex flex-col gap-4 overflow-hidden rounded-lg px-3 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:flex-row md:pt-8",
+		lazyTransition && "blog-entry--lazy",
 	]}
 	data-transition-name={lazyTransition ? slug : undefined}
 >
-	<div class="text-muted flex w-24 flex-col pt-8 text-sm md:pt-0">
+	<div class="text-subtitle flex w-24 flex-col pt-8 text-sm md:pt-0">
 		<time datetime={isoDate}>{formattedDate}</time>
-		{readingTime && <span class="text-xs">{readingTime}</span>}
 	</div>
 	<div class:list={["flex-1 pb-8", !hideBorder && "border-border border-b"]}>
 		<div class="flex flex-col gap-3">
 			<Pill
-				color={categoryColor}
 				style={!lazyTransition && pillTransitionName
 					? `view-transition-name: ${pillTransitionName}`
 					: undefined}
@@ -88,7 +65,7 @@ const linkProps = href
 				>{category}</Pill
 			>
 			<Heading
-				class="text-title text-lg font-medium underline decoration-transparent decoration-1 underline-offset-2 transition-colors duration-200 group-hover:decoration-current md:text-xl"
+				class="text-title text-lg font-medium underline decoration-transparent decoration-1 underline-offset-2 transition-colors duration-200 group-hover:decoration-current motion-reduce:transition-none md:text-xl"
 				style={!lazyTransition && titleTransitionName
 					? `view-transition-name: ${titleTransitionName}`
 					: undefined}
@@ -101,7 +78,7 @@ const linkProps = href
 	{
 		href && (
 			<IconArrowRight
-				class="text-muted absolute top-1/2 right-0 size-5 shrink-0 translate-x-2 -translate-y-1/2 opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100"
+				class="text-subtitle absolute top-1/2 right-0 size-5 shrink-0 translate-x-2 -translate-y-1/2 opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100 motion-reduce:transition-none"
 				aria-hidden="true"
 			/>
 		)
@@ -112,7 +89,9 @@ const linkProps = href
 	function initLazyTransitions(): void {
 		// Scope to blog entry links only, not all links on the page
 		document
-			.querySelectorAll<HTMLAnchorElement>(".blog-entry[data-transition-name]")
+			.querySelectorAll<HTMLAnchorElement>(
+				".blog-entry--lazy[data-transition-name]",
+			)
 			.forEach((link) => {
 				if (link.dataset.transitionInit) return;
 				link.dataset.transitionInit = "true";

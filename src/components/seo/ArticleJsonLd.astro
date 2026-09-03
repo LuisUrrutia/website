@@ -6,7 +6,6 @@
  * and article metadata for better SEO on blog content.
  */
 import { buildPersonEntity } from "@/data/seo";
-import { toISOWithTimezone } from "@/lib/formatters";
 
 interface Props {
 	/** Article title */
@@ -41,11 +40,6 @@ const {
 	lang,
 } = Astro.props;
 
-const formattedPublishedTime = toISOWithTimezone(publishedTime);
-const formattedModifiedTime = modifiedTime
-	? toISOWithTimezone(modifiedTime)
-	: undefined;
-
 // Use the shared person entity for author and publisher
 const personEntity = buildPersonEntity(siteUrl);
 
@@ -56,8 +50,8 @@ const jsonLd = {
 	description,
 	url,
 	image,
-	datePublished: formattedPublishedTime,
-	...(formattedModifiedTime && { dateModified: formattedModifiedTime }),
+	datePublished: publishedTime.toISOString(),
+	...(modifiedTime && { dateModified: modifiedTime.toISOString() }),
 	...(tags && tags.length > 0 && { keywords: tags.join(", ") }),
 	...(lang && { inLanguage: lang }),
 	mainEntityOfPage: {
