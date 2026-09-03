@@ -14,10 +14,11 @@ const HEIGHT = 252;
 const VERTICAL_WIDTH = 205;
 
 // Horizontal photo widths (below lg):
-// - Below sm: max 552px container, above sm: max 600px
-// - Srcset: 552px (1x xs), 600px (1x sm+), 1104px (2x xs), 1200px (2x sm+)
+// - Below sm: viewport minus container and card padding, above sm: max 600px
+// - Srcset covers common mobile and tablet device pixel ratios
 const HORIZONTAL_WIDTH = 600;
-const HORIZONTAL_WIDTHS = [552, HORIZONTAL_WIDTH, 1104, 1200];
+const HORIZONTAL_WIDTHS = [340, 552, HORIZONTAL_WIDTH, 680, 1104, 1200];
+const HORIZONTAL_SIZES = "(max-width: 639px) calc(100vw - 72px), 600px";
 
 // Vertical photo widths (lg and above):
 // - Fixed at VERTICAL_WIDTH across lg (1024px), xl (1280px), 2xl (1536px)
@@ -65,13 +66,13 @@ const [horizontalAvif, horizontalWebp, verticalAvif, verticalWebp] =
 		type="image/avif"
 		srcset={horizontalAvif.srcSet.attribute}
 		media="(max-width: 1023px)"
-		sizes="(max-width: 639px) 552px, 600px"
+		sizes={HORIZONTAL_SIZES}
 	/>
 	<source
 		type="image/webp"
 		srcset={horizontalWebp.srcSet.attribute}
 		media="(max-width: 1023px)"
-		sizes="(max-width: 639px) 552px, 600px"
+		sizes={HORIZONTAL_SIZES}
 	/>
 	{/* lg and above: vertical photo */}
 	<source

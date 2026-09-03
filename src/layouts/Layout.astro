@@ -28,9 +28,9 @@ const {
 <!doctype html>
 <html lang={lang} dir="ltr" class="scrollbar-gutter-stable">
 	<head>
+		<meta charset="UTF-8" />
 		<ThemeScript />
 		{!skipLocaleRedirect && <LocaleScript currentLocale={lang} />}
-		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 
@@ -74,14 +74,12 @@ const {
 						type="application/rss+xml"
 						title={t("rss.title")}
 						href="/rss.xml"
-						hreflang="en"
 					/>
 					<link
 						rel="alternate"
 						type="application/rss+xml"
 						title="Luis Urrutia - Notas de Ingeniería (ES)"
 						href="/es/rss.xml"
-						hreflang="es"
 					/>
 				</>
 			) : (
@@ -91,14 +89,12 @@ const {
 						type="application/rss+xml"
 						title={t("rss.title")}
 						href="/es/rss.xml"
-						hreflang="es"
 					/>
 					<link
 						rel="alternate"
 						type="application/rss+xml"
 						title="Luis Urrutia - Engineering Notes (EN)"
 						href="/rss.xml"
-						hreflang="en"
 					/>
 				</>
 			)

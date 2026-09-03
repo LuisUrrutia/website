@@ -31,7 +31,9 @@ const descriptionId = description ? "work-status-description" : undefined;
 	>
 		{
 			isOpen ? (
-				<IconCircle class="ripple size-1.5 rounded-full" aria-hidden="true" />
+				<span class="ripple size-1.5 rounded-full" aria-hidden="true">
+					<IconCircle class="size-full rounded-full" />
+				</span>
 			) : (
 				<IconLaptop class="text-title size-3" aria-hidden="true" />
 			)
@@ -72,6 +74,9 @@ const descriptionId = description ? "work-status-description" : undefined;
 
 	.ripple {
 		position: relative;
+		display: grid;
+		flex: none;
+		place-items: center;
 	}
 
 	.ripple::after {
@@ -80,7 +85,8 @@ const descriptionId = description ? "work-status-description" : undefined;
 		inset: 0;
 		border-radius: inherit;
 		background-color: currentColor;
-		animation: ripple 1.7s linear infinite;
+		animation: ripple 1.7s var(--ease-out) infinite;
+		pointer-events: none;
 		will-change: transform, opacity;
 	}
 
@@ -90,12 +96,22 @@ const descriptionId = description ? "work-status-description" : undefined;
 			opacity: 0.4;
 		}
 		70% {
-			transform: scale(9);
+			transform: scale(2.75);
 			opacity: 0;
 		}
 		100% {
-			transform: scale(9);
+			transform: scale(2.75);
 			opacity: 0;
+		}
+	}
+
+	@keyframes ripple-reduced {
+		0%,
+		100% {
+			opacity: 0.2;
+		}
+		50% {
+			opacity: 0.45;
 		}
 	}
 
@@ -105,8 +121,8 @@ const descriptionId = description ? "work-status-description" : undefined;
 		}
 
 		.ripple::after {
-			animation: none;
-			opacity: 0.4;
+			animation: ripple-reduced 1.7s linear infinite;
+			transform: none;
 		}
 	}
 </style>

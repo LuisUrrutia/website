@@ -53,8 +53,12 @@ const posts = allPosts
 		class="flex flex-col gap-8"
 		data-page-transition="fade"
 	>
-		<HeroSection socials={socials} workStatus="open" />
-		<StackSection technologies={technologies} />
+		<HeroSection
+			socials={socials}
+			workStatus="open"
+			contactHref="mailto:hello@urrutia.me"
+		/>
+		<StackSection technologies={technologies} initialVisible={6} />
 		{
 			posts.length > 0 && (
 				<LatestPostsSection

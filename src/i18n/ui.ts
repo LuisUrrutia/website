@@ -18,7 +18,7 @@ export const ui = {
 		"hero.bio.suffix":
 			" of experience building and operating large-scale production systems. I specialize in system design, reliability, and performance, delivering software that drives measurable business outcomes.",
 		"hero.location": "Madrid, Spain",
-		"hero.companies": "Some companies I added value to:",
+		"hero.companies": "Selected experience:",
 		"hero.photoAlt": "Photo of Luis Urrutia",
 
 		// Stack
@@ -157,7 +157,7 @@ export const ui = {
 		"hero.bio.suffix":
 			" de experiencia construyendo y operando sistemas de producción a gran escala. Me especializo en diseño de sistemas, confiabilidad y rendimiento, entregando software que genera resultados de negocio medibles.",
 		"hero.location": "Madrid, España",
-		"hero.companies": "Algunas empresas a las que aporté valor:",
+		"hero.companies": "Experiencia seleccionada:",
 		"hero.photoAlt": "Foto de Luis Urrutia",
 
 		// Stack

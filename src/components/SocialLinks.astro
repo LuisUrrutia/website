@@ -65,7 +65,10 @@ const links = socialConfig
 	links.length > 0 && (
 		<nav
 			aria-label={ariaLabel}
-			class:list={["flex gap-3.5", vertical ? "flex-col" : "items-center"]}
+			class:list={[
+				"flex gap-0 sm:gap-3.5",
+				vertical ? "flex-col" : "items-center",
+			]}
 		>
 			{links.map(({ key, icon: Icon, url, label }) => (
 				<a
@@ -85,6 +88,10 @@ const links = socialConfig
 <style>
 	.social-link {
 		position: relative;
+		display: grid;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+		place-items: center;
 		isolation: isolate;
 		color: var(--color-title);
 		border-radius: 0.5rem;
@@ -144,5 +151,12 @@ const links = socialConfig
 	.social-link--x {
 		--glow-color-40: oklch(30% 0 0 / 0.24);
 		--glow-color-15: oklch(30% 0 0 / 0.09);
+	}
+
+	@media (min-width: 40rem) {
+		.social-link {
+			min-width: auto;
+			min-height: auto;
+		}
 	}
 </style>
