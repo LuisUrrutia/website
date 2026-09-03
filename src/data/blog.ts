@@ -2,6 +2,7 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import {
 	matchesLocale,
 	getAlternateLocale,
+	getLocalizedPath,
 	getSlugWithoutLocale,
 	type Locale,
 } from "@/i18n";
@@ -20,6 +21,13 @@ export async function getBlogPosts(locale: Locale): Promise<BlogPost[]> {
 		matchesLocale(locale)(data),
 	);
 	return posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+}
+
+/**
+ * Localized path of a post, e.g. "/es/blog/<slug>/".
+ */
+export function getBlogPostPath(post: Pick<BlogPost, "id">, locale: Locale) {
+	return getLocalizedPath(`/blog/${getSlugWithoutLocale(post.id)}`, locale);
 }
 
 /**
@@ -46,50 +54,38 @@ export async function getPaginatedBlogPosts(
  * Generate static paths for paginated blog pages (page 2+).
  */
 export async function getBlogPageStaticPaths(locale: Locale) {
-	const allPosts = await getBlogPosts(locale);
-	const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+	const { totalPages } = await getPaginatedBlogPosts(locale);
 
-	return Array.from({ length: totalPages - 1 }, (_, i) => {
-		const page = i + 2;
-		const start = (page - 1) * POSTS_PER_PAGE;
-
-		return {
-			params: { page: String(page) },
-			props: {
-				posts: allPosts.slice(start, start + POSTS_PER_PAGE),
-				currentPage: page,
-				totalPages,
-			},
-		};
-	});
+	return Promise.all(
+		Array.from({ length: Math.max(totalPages - 1, 0) }, async (_, i) => {
+			const page = i + 2;
+			return {
+				params: { page: String(page) },
+				props: await getPaginatedBlogPosts(locale, page),
+			};
+		}),
+	);
 }
 
 /**
  * Generate static paths for individual blog posts.
- * Finds translated versions and returns them in props.
+ * Finds published translated versions and returns them in props.
  */
 export async function getBlogPostStaticPaths(locale: Locale) {
 	const alternateLocale = getAlternateLocale(locale);
-
-	const posts = await getCollection("blog", ({ data }) =>
-		matchesLocale(locale)(data),
-	);
-
-	const allPosts = await getCollection("blog");
+	const [posts, alternatePosts] = await Promise.all([
+		getBlogPosts(locale),
+		getBlogPosts(alternateLocale),
+	]);
 
 	return posts.map((post) => {
-		const slug = getSlugWithoutLocale(post.id);
-
-		// Find the translated version
-		const translatedPost = allPosts.find(
-			(p) =>
-				p.data.lang === alternateLocale &&
-				p.data.translationSlug === post.data.translationSlug &&
-				p.id !== post.id,
-		);
+		const { translationSlug } = post.data;
+		const translatedPost = translationSlug
+			? alternatePosts.find((p) => p.data.translationSlug === translationSlug)
+			: undefined;
 
 		return {
-			params: { slug },
+			params: { slug: getSlugWithoutLocale(post.id) },
 			props: { post, translatedPost },
 		};
 	});
