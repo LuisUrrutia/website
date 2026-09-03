@@ -14,7 +14,7 @@
  * <LanguageSwitcher />
  * ```
  */
-import { locales, localeNames } from "@/i18n";
+import { getLocalizedPath, locales, localeNames } from "@/i18n";
 
 interface Props {
 	class?: string;
@@ -22,11 +22,15 @@ interface Props {
 
 const { class: className } = Astro.props;
 const { lang, t } = Astro.locals;
+const homeUrls = Object.fromEntries(
+	locales.map((locale) => [locale, getLocalizedPath("/", locale)]),
+);
 ---
 
 <div
 	class:list={["language-switcher relative", className]}
 	data-current-lang={lang}
+	data-home-urls={JSON.stringify(homeUrls)}
 >
 	<label class="sr-only" for="language-select"
 		>{t("a11y.languageSwitcher")}</label
@@ -86,10 +90,15 @@ const { lang, t } = Astro.locals;
 				if (select.dataset.init) return;
 				select.dataset.init = "true";
 
+				const homeUrls: Record<string, string> = JSON.parse(
+					select.closest<HTMLElement>(".language-switcher")?.dataset.homeUrls ||
+						"{}",
+				);
+
 				select.addEventListener("change", () => {
 					const locale = select.value;
-					const urls = getHreflangUrls();
-					const url = urls[locale];
+					// Pages without a translation have no hreflang for it; go to that locale's home
+					const url = getHreflangUrls()[locale] ?? homeUrls[locale];
 					if (url) {
 						window.location.href = url;
 					}

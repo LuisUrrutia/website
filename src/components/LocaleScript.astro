@@ -6,38 +6,34 @@
  * - Browser language detection for first-time visitors only
  * - Automatic redirect to preferred locale on first visit
  *
+ * The redirect target comes from the page's own `hreflang` link tags, which is
+ * the only source that knows the translated slug of a blog post. Pages that
+ * have no translation for the browser locale fall back to that locale's home.
+ *
  * After the first visit, users can navigate freely between locales.
- * Must be placed in <head> before any rendering.
+ * Must be placed in <head> after the SEO tags and before any rendering.
  */
-import { locales, defaultLocale } from "@/i18n/locales";
+import { getLocalizedPath, locales } from "@/i18n";
 
 interface Props {
 	currentLocale: string;
 }
 
 const { currentLocale } = Astro.props;
-const localesJson = JSON.stringify(locales);
-const localePrefixesJson = JSON.stringify(
-	Object.fromEntries(
-		locales.map((locale) => [
-			locale,
-			locale === defaultLocale ? "" : `/${locale}`,
-		]),
-	),
+const homeUrls = Object.fromEntries(
+	locales.map((locale) => [locale, getLocalizedPath("/", locale)]),
 );
 ---
 
 <script
 	is:inline
 	data-current-locale={currentLocale}
-	data-locales={localesJson}
-	data-locale-prefixes={localePrefixesJson}
+	data-home-urls={JSON.stringify(homeUrls)}
 >
 	(function () {
 		const script = document.currentScript;
 		const currentLocale = script.dataset.currentLocale;
-		const locales = JSON.parse(script.dataset.locales);
-		const localePrefixes = JSON.parse(script.dataset.localePrefixes);
+		const homeUrls = JSON.parse(script.dataset.homeUrls);
 
 		const HAS_VISITED_KEY = "has-visited";
 		const COOKIE_NAME = "has-visited";
@@ -87,25 +83,16 @@ const localePrefixesJson = JSON.stringify(
 			const browserLang = navigator.language;
 			if (!browserLang) return null;
 
-			// Check exact match first (e.g., "es-CL" -> "es")
+			// Match the language only (e.g., "es-CL" -> "es")
 			const langCode = browserLang.split("-")[0].toLowerCase();
-			return locales.includes(langCode) ? langCode : null;
+			return Object.hasOwn(homeUrls, langCode) ? langCode : null;
 		}
 
-		function getLocalizedPath(path, locale) {
-			return (localePrefixes[locale] || "") + path;
-		}
-
-		function getPathWithoutLocale(pathname) {
-			for (const locale of locales) {
-				if (pathname.startsWith("/" + locale + "/")) {
-					return pathname.slice(locale.length + 1);
-				}
-				if (pathname === "/" + locale) {
-					return "/";
-				}
-			}
-			return pathname;
+		function getAlternateUrl(locale) {
+			const link = document.querySelector(
+				'link[rel="alternate"][hreflang="' + locale + '"]:not([type])',
+			);
+			return link ? link.href : homeUrls[locale];
 		}
 
 		// Only redirect on first visit
@@ -119,9 +106,9 @@ const localePrefixesJson = JSON.stringify(
 		// Detect browser language and redirect if needed
 		const browserLocale = getBrowserLocale();
 		if (browserLocale && browserLocale !== currentLocale) {
-			const pathWithoutLocale = getPathWithoutLocale(window.location.pathname);
-			const newPath = getLocalizedPath(pathWithoutLocale, browserLocale);
-			window.location.replace(newPath + window.location.search);
+			const target = new URL(getAlternateUrl(browserLocale), window.location);
+			target.search = window.location.search;
+			window.location.replace(target.href);
 		}
 	})();
 </script>
