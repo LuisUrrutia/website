@@ -20,7 +20,7 @@ const { light, dark, alt, class: className } = Astro.props;
 	/>
 	<Image
 		src={dark}
-		alt=""
+		alt={alt}
 		loading="lazy"
 		class="mx-auto hidden [[data-theme=dark]_&]:block"
 	/>

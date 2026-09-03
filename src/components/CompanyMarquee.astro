@@ -17,13 +17,9 @@ const { t } = Astro.locals;
 const newTabAttributes = getNewTabLinkAttributes();
 ---
 
-<div
-	class="marquee-container"
-	aria-label={label}
-	style={`--marquee-duration: ${duration}s`}
->
+<div class="marquee-container" style={`--marquee-duration: ${duration}s`}>
 	<!-- Visually hidden list for screen readers -->
-	<ul class="sr-only">
+	<ul class="sr-only" aria-label={label}>
 		{
 			companies.map((company) => (
 				<li>

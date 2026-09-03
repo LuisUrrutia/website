@@ -9,7 +9,7 @@
  * <TestimonialCard
  *   name="John Doe"
  *   role="Software Engineer at Company"
- *   photo="/testimonials/john.jpg"
+ *   photo={johnPhoto}
  *   quote="Great developer to work with!"
  * />
  * ```
@@ -42,8 +42,8 @@ const linkedInLabel = t("a11y.onLinkedIn").replace("{name}", name);
 		linkedin && (
 			<div class="absolute top-1 right-1 sm:top-4 sm:right-4">
 				<SocialLinks
-					linkedin={linkedin}
-					ariaLabel={linkedInLabel}
+					as="div"
+					linkedin={{ url: linkedin, label: linkedInLabel }}
 					iconClass="size-5"
 					vertical
 				/>

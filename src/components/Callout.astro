@@ -27,6 +27,7 @@ const iconSvg = icon ? icons[iconPath] : null;
 		iconSvg && (
 			<div
 				class="callout-icon text-subtitle mt-0.5 shrink-0"
+				aria-hidden="true"
 				set:html={iconSvg}
 			/>
 		)

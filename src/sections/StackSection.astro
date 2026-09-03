@@ -12,7 +12,7 @@
  *   technologies={[
  *     { name: "React", icon: "/tech/react.svg", experience: 5, category: "frameworks" }
  *   ]}
- *   initialVisible={9}
+ *   initialVisible={6}
  * />
  * ```
  */
@@ -76,18 +76,14 @@ technologies.forEach((technology, index) => {
 				/>
 				{
 					categories.map(({ id, label }) => (
-						<FilterChip
-							class="stack-filter"
-							data-category={id}
-							category={id}
-							label={label}
-						/>
+						<FilterChip class="stack-filter" category={id} label={label} />
 					))
 				}
 			</div>
 		</header>
 
 		<ul
+			id={`${id}-grid`}
 			class="stack-grid grid list-none grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
 			role="list"
 		>
@@ -108,6 +104,7 @@ technologies.forEach((technology, index) => {
 
 		<ExpandButton
 			id="stack-expand-btn"
+			controlsId={`${id}-grid`}
 			expandedText={t("common.viewLess")}
 			collapsedText={t("common.viewMore")}
 			class:list={[
