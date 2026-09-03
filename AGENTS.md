@@ -43,14 +43,14 @@ src/
 │   └── seo/             # JSON-LD, meta tags, Open Graph, canonical
 ├── content/
 │   └── blog/            # MDX blog posts (en/ and es/ subdirectories)
-├── data/                # Static data (blog, seo, companies, socials, technologies, testimonials)
+├── data/                # Static data and loaders (blog, rss, seo, companies, socials, technologies, testimonials)
 ├── i18n/                # Translations (ui.ts), locale config, utilities
 ├── integrations/        # Custom Astro integrations (sitemap-hreflang.ts)
 ├── layouts/             # Layout.astro (single layout for all pages)
 ├── lib/
 │   ├── social-share/    # Social sharing URL builders
 │   ├── theme/           # Theme management (auto/light/dark)
-│   └── formatters.ts    # Date, experience, reading time, URL formatters
+│   └── formatters.ts    # Post date, experience, and reading time formatters
 ├── pages/               # Routes (/, /es/, /blog/, /og/, /rss.xml, /robots.txt, /404)
 ├── sections/            # Page sections (Hero, Stack, LatestPosts, Testimonials, Contact)
 ├── styles/              # CSS (global.css, theme.css with oklch tokens, utilities.css)
@@ -331,12 +331,13 @@ New blog posts automatically get:
 | ---------------------- | ------------------------------------------- |
 | SEO constants & Person | `src/data/seo.ts`                           |
 | Blog utilities         | `src/data/blog.ts`                          |
+| RSS feed builder       | `src/data/rss.ts`                           |
 | Blog content renderer  | `src/views/blog-post/BlogPostContent.astro` |
 | Blog component exports | `src/components/blog/index.ts`              |
 | Translations           | `src/i18n/ui.ts`                            |
 | i18n utilities         | `src/i18n/utils.ts`                         |
 | Theme tokens           | `src/styles/theme.css`                      |
-| Date/URL formatters    | `src/lib/formatters.ts`                     |
+| Date/text formatters   | `src/lib/formatters.ts`                     |
 | Theme logic            | `src/lib/theme/theme.ts`                    |
 | Main layout            | `src/layouts/Layout.astro`                  |
 | Middleware (locals)    | `src/middleware.ts`                         |
@@ -398,3 +399,4 @@ Pre-commit hooks run Prettier and OxLint automatically via lint-staged.
 14. **Guard double init** -- Use `dataset.init` when an initializer can encounter the same element more than once
 15. **External link attributes** -- Always include `target="_blank"`, `rel="noopener noreferrer"`, and `referrerpolicy="strict-origin-when-cross-origin"`
 16. **README voice** -- Use the `humanize` skill for README edits. Avoid em dashes and narrative double-hyphen separators
+17. **Trailing slashes** -- `trailingSlash: "always"`; build every internal path with `getLocalizedPath`/`getBlogPostPath` so links, canonical, hreflang, sitemap and RSS agree
