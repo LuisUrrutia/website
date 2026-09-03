@@ -1,11 +1,10 @@
 import type { Technology } from "@/types/technology";
 
 /**
- * Technologies ordered for display (first 9 shown by default).
- * Order is intentional - core skills first, then supporting technologies.
+ * Technologies ordered for display. The page decides how many show before
+ * "View more"; order is intentional - core skills first, then supporting technologies.
  */
 export const technologies: Technology[] = [
-	// First 9 visible by default (in this exact order)
 	{
 		name: "React",
 		icon: "/tech/react.svg",
@@ -64,7 +63,6 @@ export const technologies: Technology[] = [
 		experience: 5,
 		category: "tools",
 	},
-	// Remaining technologies
 	{
 		name: "Kubernetes",
 		icon: "/tech/kubernetes.svg",

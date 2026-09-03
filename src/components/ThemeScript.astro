@@ -1,11 +1,12 @@
 ---
 // Inline blocking script to prevent theme flash
 // Native MPA navigation reloads this script before every page render.
+import { THEME_KEY } from "@/lib/theme/constants";
 ---
 
-<script is:inline>
+<script is:inline data-theme-key={THEME_KEY}>
 	function applyTheme() {
-		const key = "theme";
+		const key = document.currentScript.dataset.themeKey;
 		const stored = localStorage.getItem(key);
 		const prefersDark = window.matchMedia(
 			"(prefers-color-scheme: dark)",

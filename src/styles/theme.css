@@ -3,7 +3,7 @@
  *
  * Color format: oklch for better perceptual uniformity and wider gamut.
  * Structure: semantic tokens (--color-*) reference primitive tokens (--oklch-*).
- * Dark mode: uses CSS custom properties toggled via .dark class.
+ * Dark mode: primitive tokens are redefined under [data-theme="dark"].
  */
 
 @theme {
@@ -12,7 +12,7 @@
 
 	/*
 	 * Semantic Colors
-	 * These reference CSS variables defined in :root/.dark below.
+	 * These reference CSS variables defined in :root and [data-theme="dark"] below.
 	 * Using oklch() for better color interpolation and P3 gamut support.
 	 */
 	--color-background: oklch(var(--oklch-background));

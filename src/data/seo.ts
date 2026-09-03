@@ -26,9 +26,6 @@ export const twitterHandle = "@luisurrutia_dev";
 /** Default OG image path (relative to site root) */
 export const defaultOgImage = "/og-image.png";
 
-/** Logo path for og:logo (relative to site root) */
-export const siteLogo = "/favicons/favicon.svg";
-
 /** Profile image path for Person schema (relative to site root) */
 export const profileImage = "/images/profile.jpg";
 
