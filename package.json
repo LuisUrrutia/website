@@ -13,7 +13,8 @@
     "lint": "oxlint --type-aware",
     "prepare": "husky",
     "preview": "astro preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:browser": "playwright test"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown",
@@ -40,6 +41,7 @@
     "@astrojs/check": "^0.9.10",
     "@commitlint/cli": "^21.2.2",
     "@commitlint/config-conventional": "^21.2.2",
+    "@playwright/test": "1.62.1",
     "@prettier/plugin-oxc": "0.2.2",
     "@semantic-release/commit-analyzer": "13.0.1",
     "@semantic-release/exec": "7.1.0",
