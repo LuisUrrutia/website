@@ -14,6 +14,7 @@
     "prepare": "husky",
     "preview": "astro preview",
     "test": "vitest run",
+    "pretest:browser": "bun run build",
     "test:browser": "playwright test"
   },
   "lint-staged": {
