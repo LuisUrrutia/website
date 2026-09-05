@@ -30,3 +30,9 @@ pnpm-debug.log*
 
 # alternate package manager lockfile
 pnpm-lock.yaml
+
+# browser test output
+test-results/
+playwright-report/
+.playwright-cli/
+.lighthouseci/
