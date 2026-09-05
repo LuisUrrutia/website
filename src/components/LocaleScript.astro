@@ -95,8 +95,8 @@ const homeUrls = Object.fromEntries(
 			return link ? link.href : homeUrls[locale];
 		}
 
-		// Only redirect on first visit
-		if (hasVisited()) {
+		// Section IDs belong to the requested language; keep shared deep links intact.
+		if (hasVisited() || window.location.hash) {
 			return;
 		}
 

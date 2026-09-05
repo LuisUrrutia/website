@@ -7,7 +7,12 @@ import { THEME_KEY } from "@/lib/theme/constants";
 <script is:inline data-theme-key={THEME_KEY}>
 	function applyTheme() {
 		const key = document.currentScript.dataset.themeKey;
-		const stored = localStorage.getItem(key);
+		let stored;
+		try {
+			stored = localStorage.getItem(key);
+		} catch {
+			// Storage can be blocked even when the browser supports localStorage.
+		}
 		const prefersDark = window.matchMedia(
 			"(prefers-color-scheme: dark)",
 		).matches;

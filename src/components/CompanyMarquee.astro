@@ -17,67 +17,81 @@ const { t } = Astro.locals;
 const newTabAttributes = getNewTabLinkAttributes();
 ---
 
-<div class="marquee-container" style={`--marquee-duration: ${duration}s`}>
-	<!-- Visually hidden list for screen readers -->
-	<ul class="sr-only" aria-label={label}>
-		{
-			companies.map((company) => (
-				<li>
-					<a href={company.url} {...newTabAttributes}>
-						{company.name}
-						<span class="sr-only">{t("a11y.opensInNewTab")}</span>
-					</a>
-				</li>
-			))
-		}
-	</ul>
+<div class="company-marquee flex flex-col gap-2">
+	<div class="marquee-container" style={`--marquee-duration: ${duration}s`}>
+		<!-- Keyboard focus reveals the complete, stationary company list. -->
+		<ul class="company-list sr-only" aria-label={label}>
+			{
+				companies.map((company) => (
+					<li>
+						<a
+							href={company.url}
+							{...newTabAttributes}
+							class="text-accent focus-visible:ring-accent inline-flex min-h-11 items-center rounded-sm px-2 underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+						>
+							{company.name}
+							<span class="sr-only">{t("a11y.opensInNewTab")}</span>
+						</a>
+					</li>
+				))
+			}
+		</ul>
 
-	<!-- Visual marquee (hidden from screen readers) -->
-	<div
-		class:list={[
-			"marquee-track",
-			{ "marquee-track--reverse": direction === "right" },
-		]}
-		aria-hidden="true"
-	>
-		{
-			[0, 1].map((iteration) => (
-				<div class="marquee-content">
-					{companies.map((company, index) => (
-						<>
-							{index > 0 && <IconGitCommit class="marquee-separator" />}
-							<a
-								href={company.url}
-								{...newTabAttributes}
-								tabindex="-1"
-								class="marquee-link"
-							>
-								<img
-									src={company.logo}
-									alt={`${company.name} logo`}
-									class="marquee-logo marquee-logo--light"
-									width={company.width}
-									height="28"
-									loading={iteration === 0 ? "eager" : "lazy"}
-									decoding="async"
-								/>
-								<img
-									src={company.logoDark}
-									alt=""
-									class="marquee-logo marquee-logo--dark"
-									width={company.width}
-									height="28"
-									loading="lazy"
-									decoding="async"
-								/>
-							</a>
-						</>
-					))}
-					<IconGitCommit class="marquee-separator" />
-				</div>
-			))
-		}
+		<!-- Visual marquee (hidden from screen readers) -->
+		<div
+			class:list={[
+				"marquee-track",
+				{ "marquee-track--reverse": direction === "right" },
+			]}
+			aria-hidden="true"
+		>
+			{
+				[0, 1].map((iteration) => (
+					<div class="marquee-content">
+						{companies.map((company, index) => (
+							<>
+								{index > 0 && <IconGitCommit class="marquee-separator" />}
+								<a
+									href={company.url}
+									{...newTabAttributes}
+									tabindex="-1"
+									class="marquee-link"
+								>
+									<img
+										src={company.logo}
+										alt={`${company.name} logo`}
+										class="marquee-logo marquee-logo--light"
+										width={company.width}
+										height="28"
+										loading={iteration === 0 ? "eager" : "lazy"}
+										decoding="async"
+									/>
+									<img
+										src={company.logoDark}
+										alt=""
+										class="marquee-logo marquee-logo--dark"
+										width={company.width}
+										height="28"
+										loading="lazy"
+										decoding="async"
+									/>
+								</a>
+							</>
+						))}
+						<IconGitCommit class="marquee-separator" />
+					</div>
+				))
+			}
+		</div>
 	</div>
+	<button
+		type="button"
+		aria-pressed="false"
+		class="marquee-pause text-subtitle focus-visible:ring-accent min-h-11 cursor-pointer self-end rounded-lg px-3 text-sm underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+		aria-label={t("a11y.pauseCompanyAnimation")}
+	>
+		{t("hero.pauseAnimation")}
+	</button>
 </div>
 
 <style>
@@ -116,6 +130,39 @@ const newTabAttributes = getNewTabLinkAttributes();
 
 	.marquee-container:hover .marquee-track {
 		animation-play-state: paused;
+	}
+
+	.company-marquee:has(.marquee-pause[aria-pressed="true"]) .marquee-track,
+	.marquee-container:has(.company-list:focus-within) .marquee-track {
+		animation-play-state: paused;
+	}
+
+	.marquee-container:has(.company-list:focus-within) {
+		mask-image: none;
+		-webkit-mask-image: none;
+		overflow: visible;
+	}
+
+	.company-list:focus-within {
+		position: static;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1rem;
+		width: auto;
+		height: auto;
+		margin: 0;
+		overflow: visible;
+		clip-path: none;
+		white-space: normal;
+	}
+
+	.marquee-container:has(.company-list:focus-within) .marquee-track {
+		display: none;
+	}
+
+	.marquee-pause[aria-pressed="true"] {
+		background: var(--color-pill);
+		color: var(--color-pill-foreground);
 	}
 
 	.marquee-content {
@@ -176,9 +223,30 @@ const newTabAttributes = getNewTabLinkAttributes();
 		cursor: grabbing;
 	}
 
-	@media (prefers-reduced-motion: reduce) {
+	@media (prefers-reduced-motion: reduce), (scripting: none) {
 		.marquee-track {
 			animation: none;
+			display: none;
+		}
+		.marquee-container {
+			mask-image: none;
+			-webkit-mask-image: none;
+			overflow: visible;
+		}
+		.company-list {
+			position: static;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem 1rem;
+			width: auto;
+			height: auto;
+			margin: 0;
+			overflow: visible;
+			clip-path: none;
+			white-space: normal;
+		}
+		.marquee-pause {
+			display: none;
 		}
 	}
 </style>
@@ -217,6 +285,21 @@ const newTabAttributes = getNewTabLinkAttributes();
 					container.querySelector<HTMLElement>(".marquee-track");
 				if (!trackElement) return;
 				const track: HTMLElement = trackElement;
+				const pauseButton =
+					container.parentElement?.querySelector<HTMLButtonElement>(
+						".marquee-pause",
+					);
+				pauseButton?.addEventListener("click", () => {
+					const offset = getTranslateX();
+					inertiaAnimation?.cancel();
+					inertiaAnimation = undefined;
+					delete track.dataset.inertiaActive;
+					resumeMarquee(offset, track.scrollWidth / 2);
+					pauseButton.setAttribute(
+						"aria-pressed",
+						String(pauseButton.getAttribute("aria-pressed") !== "true"),
+					);
+				});
 
 				const isReverse = track.classList.contains("marquee-track--reverse");
 				let isDragging = false;
@@ -366,6 +449,11 @@ const newTabAttributes = getNewTabLinkAttributes();
 				}
 
 				container.addEventListener("pointerdown", (event) => {
+					if (
+						event.target instanceof Element &&
+						event.target.closest(".company-list")
+					)
+						return;
 					if (activePointerId !== undefined) return;
 					activePointerId = event.pointerId;
 					container.setPointerCapture(event.pointerId);

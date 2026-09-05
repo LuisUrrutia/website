@@ -54,7 +54,7 @@ const { post, metadata, t } = Astro.props;
 				{t("blog.alsoAvailable")}{" "}
 				<a
 					href={metadata.alternateUrl}
-					class="text-accent focus-visible:ring-accent focus-visible:ring-offset-card rounded-sm hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+					class="text-accent focus-visible:ring-accent focus-visible:ring-offset-card rounded-sm underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
 				>
 					{localeNames[metadata.alternateLang]}
 				</a>
