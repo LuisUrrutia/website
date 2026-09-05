@@ -1,32 +1,33 @@
-import type { TranslationKey } from "@/i18n";
-export { getSiteUrl } from "@/i18n/url-paths";
+import { intlLocales, type Locale, type TranslationKey } from "@/i18n";
 
 /**
- * Format a Date to ISO 8601 with timezone offset.
- * Example: "2024-12-23T12:34:00-05:00"
+ * Frontmatter dates parse as UTC midnight, so formatting in the build
+ * machine's local zone would shift them by a day west of UTC.
  */
-export function toISOWithTimezone(date: Date): string {
-	const offset = -date.getTimezoneOffset();
-	const sign = offset >= 0 ? "+" : "-";
-	const absOffset = Math.abs(offset);
-	const hours = String(Math.floor(absOffset / 60)).padStart(2, "0");
-	const minutes = String(absOffset % 60).padStart(2, "0");
+const postDateStyles = {
+	short: { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" },
+	long: { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" },
+} satisfies Record<string, Intl.DateTimeFormatOptions>;
 
-	const year = date.getFullYear();
-	const month = String(date.getMonth() + 1).padStart(2, "0");
-	const day = String(date.getDate()).padStart(2, "0");
-	const hour = String(date.getHours()).padStart(2, "0");
-	const minute = String(date.getMinutes()).padStart(2, "0");
-	const second = String(date.getSeconds()).padStart(2, "0");
+export type PostDateStyle = keyof typeof postDateStyles;
 
-	return `${year}-${month}-${day}T${hour}:${minute}:${second}${sign}${hours}:${minutes}`;
+/**
+ * Format a post date for display in the given locale.
+ * formatPostDate(new Date("2026-05-17"), "en", "long") → "May 17, 2026"
+ */
+export function formatPostDate(
+	date: Date,
+	lang: Locale,
+	style: PostDateStyle = "long",
+): string {
+	return date.toLocaleDateString(intlLocales[lang], postDateStyles[style]);
 }
 
 /**
  * Format years of experience using localized strings.
- * formatExperience(0.5, t) → "Less than a year"
- * formatExperience(1, t) → "1 year"
- * formatExperience(3, t) → "3 years"
+ * formatExperience(0.5, t) → "Less than 1 year of experience"
+ * formatExperience(1, t) → "+1 year of experience"
+ * formatExperience(3, t) → "+3 years of experience"
  */
 export function formatExperience(
 	years: number,
@@ -64,8 +65,8 @@ export function calculateReadingTime(content: string): number {
 		content
 			.replace(/```[\s\S]*?```/g, "") // Remove fenced code blocks
 			.replace(/`[^`]+`/g, "") // Remove inline code
-			.replace(/import\s+.*?;?\n/g, "") // Remove imports
-			.replace(/export\s+.*?;?\n/g, "") // Remove exports
+			.replace(/^import\s[\s\S]*?from\s+["'][^"']+["'];?[^\S\n]*$/gm, "") // Remove imports, including multi-line ones
+			.replace(/^export\s.*$/gm, "") // Remove exports
 			.replace(/\{[^}]*\}/g, ""), // Remove JSX expressions
 	)
 		.replace(/[#*`~[\]]/g, "") // Remove markdown formatting

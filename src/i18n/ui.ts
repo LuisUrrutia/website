@@ -18,7 +18,7 @@ export const ui = {
 		"hero.bio.suffix":
 			" of experience building and operating large-scale production systems. I specialize in system design, reliability, and performance, delivering software that drives measurable business outcomes.",
 		"hero.location": "Madrid, Spain",
-		"hero.companies": "Some companies I added value to:",
+		"hero.companies": "Selected experience:",
 		"hero.photoAlt": "Photo of Luis Urrutia",
 
 		// Stack
@@ -45,8 +45,6 @@ export const ui = {
 			"Engineering notes by Luis Urrutia on system design, reliability, and building production software at scale.",
 		"blog.empty": "No posts available",
 		"blog.viewMore": "View More",
-		"blog.allPosts": "All Posts",
-		"blog.backToBlog": "Back to Blog",
 		"blog.publishedOn": "Published on",
 		"blog.updatedOn": "Updated on",
 		"blog.readingTime": "{minutes} min read",
@@ -157,7 +155,7 @@ export const ui = {
 		"hero.bio.suffix":
 			" de experiencia construyendo y operando sistemas de producción a gran escala. Me especializo en diseño de sistemas, confiabilidad y rendimiento, entregando software que genera resultados de negocio medibles.",
 		"hero.location": "Madrid, España",
-		"hero.companies": "Algunas empresas a las que aporté valor:",
+		"hero.companies": "Experiencia seleccionada:",
 		"hero.photoAlt": "Foto de Luis Urrutia",
 
 		// Stack
@@ -184,8 +182,6 @@ export const ui = {
 			"Notas de ingeniería de Luis Urrutia sobre diseño de sistemas, confiabilidad y construcción de software de producción a escala.",
 		"blog.empty": "No hay publicaciones disponibles",
 		"blog.viewMore": "Ver más",
-		"blog.allPosts": "Todas las publicaciones",
-		"blog.backToBlog": "Volver al Blog",
 		"blog.publishedOn": "Publicado el",
 		"blog.updatedOn": "Actualizado el",
 		"blog.readingTime": "{minutes} min de lectura",

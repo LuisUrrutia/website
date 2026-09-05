@@ -4,8 +4,9 @@ import ThemeScript from "@/components/ThemeScript.astro";
 import LocaleScript from "@/components/LocaleScript.astro";
 import ViewportIndicator from "@/components/ViewportIndicator.astro";
 import { SEO, type SEOProps } from "@/components/seo";
+import { getAlternateLocale, getLocalizedPath, useTranslations } from "@/i18n";
 
-import "../styles/global.css";
+import "@/styles/global.css";
 
 export interface Props extends Partial<SEOProps> {
 	/** Page title (defaults to meta.title translation) */
@@ -23,19 +24,28 @@ const {
 	skipLocaleRedirect = false,
 	...seoProps
 } = Astro.props;
+
+// Current locale's feed first so readers pick it up by default.
+const alternateLang = getAlternateLocale(lang);
+const rssFeeds = [lang, alternateLang].map((locale) => ({
+	title: useTranslations(locale)("rss.title"),
+	href: getLocalizedPath("/rss.xml", locale, { kind: "file" }),
+}));
 ---
 
 <!doctype html>
 <html lang={lang} dir="ltr" class="scrollbar-gutter-stable">
 	<head>
-		<ThemeScript />
-		{!skipLocaleRedirect && <LocaleScript currentLocale={lang} />}
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<ThemeScript />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
 
 		<!-- SEO Meta Tags -->
 		<SEO title={title} description={description} {...seoProps} />
+
+		<!-- Reads the hreflang tags above, so it must follow the SEO tags -->
+		{!skipLocaleRedirect && <LocaleScript currentLocale={lang} />}
 
 		<!-- Fonts -->
 		<Font cssVariable="--font-inter" preload />
@@ -65,50 +75,17 @@ const {
 		<!-- Sitemap -->
 		<link rel="sitemap" href="/sitemap-index.xml" />
 
-		<!-- RSS Feed - prioritize current locale -->
+		<!-- RSS Feeds -->
 		{
-			lang === "en" ? (
-				<>
-					<link
-						rel="alternate"
-						type="application/rss+xml"
-						title={t("rss.title")}
-						href="/rss.xml"
-						hreflang="en"
-					/>
-					<link
-						rel="alternate"
-						type="application/rss+xml"
-						title="Luis Urrutia - Notas de Ingeniería (ES)"
-						href="/es/rss.xml"
-						hreflang="es"
-					/>
-				</>
-			) : (
-				<>
-					<link
-						rel="alternate"
-						type="application/rss+xml"
-						title={t("rss.title")}
-						href="/es/rss.xml"
-						hreflang="es"
-					/>
-					<link
-						rel="alternate"
-						type="application/rss+xml"
-						title="Luis Urrutia - Engineering Notes (EN)"
-						href="/rss.xml"
-						hreflang="en"
-					/>
-				</>
-			)
+			rssFeeds.map((feed) => (
+				<link
+					rel="alternate"
+					type="application/rss+xml"
+					title={feed.title}
+					href={feed.href}
+				/>
+			))
 		}
-
-		<!-- Preconnect and DNS Prefetch for external domains -->
-		<link rel="preconnect" href="https://giscus.app" crossorigin />
-		<link rel="dns-prefetch" href="https://giscus.app" />
-		<link rel="dns-prefetch" href="https://github.com" />
-		<link rel="dns-prefetch" href="https://linkedin.com" />
 
 		<!-- Windows Tiles -->
 		<meta name="msapplication-TileColor" content="#FBFBF9" />
@@ -126,27 +103,7 @@ const {
 			content="#1C1B29"
 		/>
 
-		<!--
-			Prefetch hidden tech stack icons (items 10+, shown on "View More").
-			First 9 items are visible by default and don't need prefetching.
-		-->
-		<link rel="prefetch" href="/tech/kubernetes.svg" as="image" />
-		<link rel="prefetch" href="/tech/postgresql.svg" as="image" />
-		<link rel="prefetch" href="/tech/python.svg" as="image" />
-		<link rel="prefetch" href="/tech/solidity.svg" as="image" />
-		<link rel="prefetch" href="/tech/astro-light.svg" as="image" />
-		<link rel="prefetch" href="/tech/astro-dark.svg" as="image" />
-		<link rel="prefetch" href="/tech/svelte.svg" as="image" />
-		<link rel="prefetch" href="/tech/terraform.svg" as="image" />
-		<link rel="prefetch" href="/tech/git.svg" as="image" />
-		<link rel="prefetch" href="/tech/redis.svg" as="image" />
-		<link rel="prefetch" href="/tech/mongodb.svg" as="image" />
-		<link rel="prefetch" href="/tech/dynamodb.svg" as="image" />
-		<link rel="prefetch" href="/tech/claude.svg" as="image" />
-		<link rel="prefetch" href="/tech/chatgpt.svg" as="image" />
-		<link rel="prefetch" href="/tech/figma.svg" as="image" />
-
-		<!-- JSON-LD slot for page-specific structured data -->
+		<!-- Page-specific head content (JSON-LD, prefetch hints) -->
 		<slot name="head" />
 	</head>
 	<body
@@ -155,7 +112,7 @@ const {
 		<!-- Skip to main content link for accessibility -->
 		<a
 			href="#main-content"
-			class="bg-accent text-button-foreground fixed top-0 left-1/2 z-50 -translate-x-1/2 -translate-y-full rounded-b-lg px-4 py-2 font-medium transition-transform focus:translate-y-0"
+			class="bg-accent text-button-foreground fixed top-0 left-1/2 z-50 -translate-x-1/2 -translate-y-full rounded-b-lg px-4 py-2 font-medium transition-transform focus:translate-y-0 motion-reduce:transition-none"
 		>
 			{t("a11y.skipToContent")}
 		</a>

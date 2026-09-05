@@ -1,4 +1,4 @@
-import { defaultLocale, isValidLocale, locales, type Locale } from "./locales";
+import { defaultLocale, locales, type Locale } from "@/i18n/locales";
 
 export interface SiteUrlContext {
 	site?: URL;
@@ -9,30 +9,43 @@ export interface LocalizedUrlsInput {
 	siteUrl: string;
 	pathWithoutLocale: string;
 	locale: Locale;
+	/**
+	 * Explicit per-locale URLs for content whose slug differs between locales.
+	 * When provided, only the listed locales are considered to exist.
+	 */
 	alternateUrls?: Partial<Record<Locale, string>>;
 }
 
 export interface LocalizedUrls {
 	canonicalUrl: string;
-	alternateUrls: Record<Locale, string>;
+	alternateUrls: Partial<Record<Locale, string>>;
 	xDefaultUrl: string;
-}
-
-export interface LocaleRedirectInput {
-	pathname: string;
-	search?: string;
-	currentLocale: Locale;
-	browserLocale: string | null;
 }
 
 const localeSlugPattern = new RegExp(`^(${locales.join("|")})/`);
 const absoluteUrlPattern = /^https?:\/\//i;
+const pathnameSplitPattern = /^([^?#]*)(.*)$/;
 
 function getPathFromUrlLike(value: string): string {
 	if (!absoluteUrlPattern.test(value)) return value || "/";
 
 	const url = new URL(value);
 	return `${url.pathname}${url.search}${url.hash}` || "/";
+}
+
+/**
+ * Pages build as `<path>/index.html`, so the host serves them at the
+ * slash-terminated URL. Emitting that form everywhere keeps canonical,
+ * hreflang, sitemap and internal links in agreement and avoids a redirect
+ * hop. File paths must bypass this page-path normalization.
+ */
+export function withTrailingSlash(path: string): string {
+	const match = pathnameSplitPattern.exec(path);
+	const pathname = match?.[1] ?? path;
+	const suffix = match?.[2] ?? "";
+	if (pathname === "" || pathname.endsWith("/")) return path;
+
+	return `${pathname}/${suffix}`;
 }
 
 export function getSiteUrl({ site, origin }: SiteUrlContext): string {
@@ -44,8 +57,13 @@ export function joinSiteUrl(siteUrl: string, pathOrUrl: string): string {
 	return `${siteUrl}${pathOrUrl.startsWith("/") ? "" : "/"}${pathOrUrl}`;
 }
 
-export function getLocalizedPath(path: string, lang: Locale): string {
-	const pathname = getPathFromUrlLike(path);
+export function getLocalizedPath(
+	path: string,
+	lang: Locale,
+	{ kind = "page" }: { kind?: "page" | "file" } = {},
+): string {
+	const urlPath = getPathFromUrlLike(path);
+	const pathname = kind === "file" ? urlPath : withTrailingSlash(urlPath);
 	if (lang === defaultLocale) return pathname;
 	return `/${lang}${pathname}`;
 }
@@ -68,62 +86,50 @@ export function getSlugWithoutLocale(slug: string): string {
 	return slug.replace(localeSlugPattern, "");
 }
 
-export function getCanonicalPath(
-	pathWithoutLocale: string,
-	locale: Locale,
-): string {
-	return getLocalizedPath(pathWithoutLocale, locale);
-}
-
 export function getLocalizedSiteUrl(
 	siteUrl: string,
 	pathWithoutLocale: string,
 	locale: Locale,
 ): string {
-	return joinSiteUrl(siteUrl, getCanonicalPath(pathWithoutLocale, locale));
+	return joinSiteUrl(siteUrl, getLocalizedPath(pathWithoutLocale, locale));
 }
 
-export function getCanonicalUrl(input: LocalizedUrlsInput): string {
-	return getUrlForLocale(input, input.locale);
-}
-
-export function getUrlForLocale(
+function getUrlForLocale(
 	{ siteUrl, pathWithoutLocale, alternateUrls }: LocalizedUrlsInput,
 	locale: Locale,
-): string {
-	const alternateUrl = alternateUrls?.[locale];
-	if (alternateUrl) return joinSiteUrl(siteUrl, alternateUrl);
+): string | undefined {
+	if (alternateUrls) {
+		const alternateUrl = alternateUrls[locale];
+		if (!alternateUrl) return undefined;
+		return joinSiteUrl(
+			siteUrl,
+			absoluteUrlPattern.test(alternateUrl)
+				? alternateUrl
+				: withTrailingSlash(alternateUrl),
+		);
+	}
 	return getLocalizedSiteUrl(siteUrl, pathWithoutLocale, locale);
 }
 
-export function getXDefaultUrl({
-	siteUrl,
-	pathWithoutLocale,
-	alternateUrls,
-}: LocalizedUrlsInput): string {
-	return joinSiteUrl(siteUrl, alternateUrls?.en ?? pathWithoutLocale);
+export function getCanonicalUrl(input: LocalizedUrlsInput): string {
+	return (
+		getUrlForLocale(input, input.locale) ??
+		getLocalizedSiteUrl(input.siteUrl, input.pathWithoutLocale, input.locale)
+	);
 }
 
 export function getLocalizedUrls(input: LocalizedUrlsInput): LocalizedUrls {
+	const canonicalUrl = getCanonicalUrl(input);
+	const alternateUrls: Partial<Record<Locale, string>> = {};
+
+	for (const locale of locales) {
+		const url = getUrlForLocale(input, locale);
+		if (url) alternateUrls[locale] = url;
+	}
+
 	return {
-		canonicalUrl: getCanonicalUrl(input),
-		alternateUrls: {
-			en: getUrlForLocale(input, "en"),
-			es: getUrlForLocale(input, "es"),
-		},
-		xDefaultUrl: getXDefaultUrl(input),
+		canonicalUrl,
+		alternateUrls,
+		xDefaultUrl: alternateUrls[defaultLocale] ?? canonicalUrl,
 	};
-}
-
-export function getLocaleRedirectPath({
-	pathname,
-	search = "",
-	currentLocale,
-	browserLocale,
-}: LocaleRedirectInput): string | null {
-	if (!browserLocale || !isValidLocale(browserLocale)) return null;
-	if (browserLocale === currentLocale) return null;
-
-	const pathWithoutLocale = getPathWithoutLocale(pathname);
-	return `${getLocalizedPath(pathWithoutLocale, browserLocale)}${search}`;
 }

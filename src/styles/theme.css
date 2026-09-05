@@ -3,7 +3,7 @@
  *
  * Color format: oklch for better perceptual uniformity and wider gamut.
  * Structure: semantic tokens (--color-*) reference primitive tokens (--oklch-*).
- * Dark mode: uses CSS custom properties toggled via .dark class.
+ * Dark mode: primitive tokens are redefined under [data-theme="dark"].
  */
 
 @theme {
@@ -12,7 +12,7 @@
 
 	/*
 	 * Semantic Colors
-	 * These reference CSS variables defined in :root/.dark below.
+	 * These reference CSS variables defined in :root and [data-theme="dark"] below.
 	 * Using oklch() for better color interpolation and P3 gamut support.
 	 */
 	--color-background: oklch(var(--oklch-background));
@@ -66,7 +66,7 @@
 	--oklch-card-foreground: 53.5% 0.014 264;
 	/* available status */
 	--oklch-available: 72.3% 0.194 149;
-	--oklch-available-foreground: 100% 0 0;
+	--oklch-available-foreground: 20% 0.04 149;
 	/* #6366F1 - Primary (indigo) */
 	--oklch-primary: 54.6% 0.215 264;
 	/* #4F46E5 - Secondary (deeper indigo) */

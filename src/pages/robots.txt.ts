@@ -1,10 +1,9 @@
 import type { APIRoute } from "astro";
 
+// Generated OG images stay crawlable: Article rich results and Twitter cards
+// only render an image the crawler is allowed to fetch.
 const getRobotsTxt = (sitemapURL: URL) => `User-agent: *
 Allow: /
-
-# Prevent crawling generated OG images
-Disallow: /og/
 
 Sitemap: ${sitemapURL.href}
 `;

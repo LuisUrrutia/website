@@ -4,11 +4,13 @@ on:
   pull_request:
     branches:
       - main
+    # Skip only files that cannot change the built site or this workflow.
     paths-ignore:
       - "**/*.md"
       - "docs/**"
-      - ".github/**"
-      - "*.config.*"
+      - "commitlint.config.js"
+      - "prettier.config.mjs"
+      - "vitest.config.ts"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

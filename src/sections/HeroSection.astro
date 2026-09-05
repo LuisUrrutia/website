@@ -15,6 +15,7 @@
  */
 import type { Company } from "@/types/company";
 import type { SocialLinksProps } from "@/types/social";
+import IconArrowRight from "@/assets/icons/arrow-right.svg";
 import Card from "@/components/Card.astro";
 import CompanyMarquee from "@/components/CompanyMarquee.astro";
 import IconLocation from "@/assets/icons/location.svg";
@@ -23,6 +24,7 @@ import ProfilePicture from "@/components/ProfilePicture.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
 import WorkStatusBadge from "@/components/WorkStatusBadge.astro";
 import { companies as defaultCompanies } from "@/data/companies";
+import { employer } from "@/data/seo";
 import { getLinkPolicy } from "@/lib/link-policy";
 
 type WorkStatus = "open" | "busy";
@@ -36,6 +38,8 @@ interface Props {
 	companies?: Company[];
 	/** Section ID for navigation. Defaults to "hero". */
 	id?: string;
+	/** Optional direct contact link displayed alongside the location. */
+	contactHref?: string;
 }
 
 const {
@@ -43,9 +47,13 @@ const {
 	workStatus = "busy",
 	companies = defaultCompanies,
 	id = "hero",
+	contactHref,
 } = Astro.props;
 const { t } = Astro.locals;
-const openZeppelinLinkPolicy = getLinkPolicy("https://www.openzeppelin.com/");
+const employerLinkPolicy = getLinkPolicy(employer.url);
+const contactAriaLabel = /^mailto:/i.test(contactHref ?? "")
+	? `${t("contact.cta")} - ${t("a11y.opensEmailClient")}`
+	: t("contact.cta");
 
 const statusTextKey = workStatus === "open" ? "status.open" : "status.busy";
 const statusDescriptionKey =
@@ -86,12 +94,14 @@ const statusDescriptionKey =
 						{t("hero.greeting")}
 						<span class="block sm:inline">{t("hero.intro")}</span>
 					</h1>
-					<p class="text-muted my-1 text-sm font-light text-pretty">
+					<p class="text-subtitle my-1 text-sm font-light text-pretty">
 						{t("hero.tagline.prefix")}<a
-							href="https://www.openzeppelin.com/"
-							{...openZeppelinLinkPolicy.newTabAttributes}
-							class="text-accent font-medium underline-offset-2 hover:underline"
-							>OpenZeppelin</a
+							href={employer.url}
+							{...employerLinkPolicy.newTabAttributes}
+							class="text-accent focus-visible:ring-accent focus-visible:ring-offset-card rounded-sm font-medium underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+							>{employer.name}<span class="sr-only">
+								{t("a11y.opensInNewTab")}
+							</span></a
 						> · {t("hero.tagline.tech")}
 					</p>
 				</div>
@@ -106,16 +116,33 @@ const statusDescriptionKey =
 				</p>
 			</div>
 
-			<div class="flex items-center gap-2.5 text-sm font-light">
-				<IconLocation class="size-4" aria-hidden="true" />
-				<span>{t("hero.location")}</span>
+			<div class="flex flex-wrap items-center justify-between gap-3">
+				<div class="flex items-center gap-2.5 text-sm font-light">
+					<IconLocation class="size-4" aria-hidden="true" />
+					<span>{t("hero.location")}</span>
+				</div>
+				{
+					contactHref && (
+						<a
+							href={contactHref}
+							aria-label={contactAriaLabel}
+							class="group text-accent focus-visible:ring-accent focus-visible:ring-offset-card inline-flex min-h-11 items-center gap-1.5 rounded-lg px-1 text-sm font-medium underline-offset-4 transition-colors hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:min-h-0 sm:translate-y-px"
+						>
+							<span>{t("contact.cta")}</span>
+							<IconArrowRight
+								class="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
+								aria-hidden="true"
+							/>
+						</a>
+					)
+				}
 			</div>
 		</div>
 	</div>
 
 	<div class="flex flex-col gap-3">
 		<p class="flex items-center gap-1.5 text-sm font-light">
-			<IconRocket />
+			<IconRocket aria-hidden="true" />
 			{t("hero.companies")}
 		</p>
 		<CompanyMarquee companies={companies} label={t("hero.companies")} />

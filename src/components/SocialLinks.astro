@@ -9,10 +9,15 @@ import { getNewTabLinkAttributes } from "@/lib/link-policy";
 type Props = SocialLinksProps & {
 	/** Icon size classes. Defaults to "size-6 sm:size-4". */
 	iconClass?: string;
-	/** Aria label for the social links navigation. */
-	ariaLabel: string;
+	/** Aria label for the navigation landmark. Ignored when `as` is "div". */
+	ariaLabel?: string;
 	/** Display links vertically. Defaults to false. */
 	vertical?: boolean;
+	/**
+	 * Wrapper element. Defaults to "nav"; use "div" for a single contextual link
+	 * so it does not add another navigation landmark to the page.
+	 */
+	as?: "nav" | "div";
 };
 
 const { t } = Astro.locals;
@@ -26,6 +31,7 @@ const {
 	iconClass = "size-6 sm:size-4",
 	ariaLabel,
 	vertical = false,
+	as: Wrapper = "nav",
 } = Astro.props;
 
 const socialConfig = [
@@ -63,9 +69,12 @@ const links = socialConfig
 
 {
 	links.length > 0 && (
-		<nav
-			aria-label={ariaLabel}
-			class:list={["flex gap-3.5", vertical ? "flex-col" : "items-center"]}
+		<Wrapper
+			aria-label={Wrapper === "nav" ? ariaLabel : undefined}
+			class:list={[
+				"flex gap-0 sm:gap-3.5",
+				vertical ? "flex-col" : "items-center",
+			]}
 		>
 			{links.map(({ key, icon: Icon, url, label }) => (
 				<a
@@ -78,13 +87,17 @@ const links = socialConfig
 					<span class="sr-only">{t("a11y.opensInNewTab")}</span>
 				</a>
 			))}
-		</nav>
+		</Wrapper>
 	)
 }
 
 <style>
 	.social-link {
 		position: relative;
+		display: grid;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+		place-items: center;
 		isolation: isolate;
 		color: var(--color-title);
 		border-radius: 0.5rem;
@@ -144,5 +157,12 @@ const links = socialConfig
 	.social-link--x {
 		--glow-color-40: oklch(30% 0 0 / 0.24);
 		--glow-color-15: oklch(30% 0 0 / 0.09);
+	}
+
+	@media (min-width: 40rem) {
+		.social-link {
+			min-width: auto;
+			min-height: auto;
+		}
 	}
 </style>

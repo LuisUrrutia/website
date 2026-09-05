@@ -86,7 +86,7 @@ const shareLinks = [
 ];
 ---
 
-<div class:list={["flex flex-wrap items-center gap-2", className]}>
+<div class:list={["social-share flex flex-wrap items-center gap-2", className]}>
 	<span id={labelId} class="text-subtitle text-sm">{t("share.label")}</span>
 	<div
 		role="group"
@@ -99,7 +99,7 @@ const shareLinks = [
 					href={url}
 					{...newTabAttributes}
 					aria-label={label}
-					class="press-feedback text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background flex size-8 items-center justify-center rounded-lg hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+					class="press-feedback text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background hover:bg-title/5 flex size-8 items-center justify-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
 				>
 					<Icon class="size-4" aria-hidden="true" />
 					<span class="sr-only">{t("a11y.opensInNewTab")}</span>
@@ -108,7 +108,7 @@ const shareLinks = [
 		}
 		<button
 			type="button"
-			class="copy-link press-feedback text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background flex size-8 cursor-pointer items-center justify-center rounded-lg hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+			class="copy-link press-feedback text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background hover:bg-title/5 flex size-8 cursor-pointer items-center justify-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
 			aria-label={t("share.copyLink")}
 			data-url={url}
 		>
@@ -116,11 +116,9 @@ const shareLinks = [
 		</button>
 	</div>
 	<span
-		class="copy-feedback text-accent text-sm opacity-0 transition-opacity"
+		class="copy-feedback text-accent text-sm opacity-0 transition-opacity motion-reduce:transition-none"
 		aria-live="polite"
-	>
-		{t("share.copied")}
-	</span>
+		data-copied-text={t("share.copied")}></span>
 </div>
 
 <script>
@@ -131,20 +129,30 @@ const shareLinks = [
 				if (btn.dataset.init) return;
 				btn.dataset.init = "true";
 
+				const feedback = btn
+					.closest(".social-share")
+					?.querySelector<HTMLElement>(".copy-feedback");
+				let hideTimer: number | undefined;
+
 				btn.addEventListener("click", async () => {
 					const url = btn.dataset.url;
 					if (!url) return;
 
-					await navigator.clipboard.writeText(url);
-					const feedback = btn
-						.closest("div")
-						?.parentElement?.querySelector(".copy-feedback");
-					if (feedback) {
-						feedback.classList.remove("opacity-0");
-						setTimeout(() => {
-							feedback.classList.add("opacity-0");
-						}, 2000);
+					try {
+						await navigator.clipboard.writeText(url);
+					} catch {
+						return; // Clipboard unavailable (insecure context or permission denied)
 					}
+					if (!feedback) return;
+
+					// Live regions announce content changes, not opacity changes
+					feedback.textContent = feedback.dataset.copiedText ?? "";
+					feedback.classList.remove("opacity-0");
+					window.clearTimeout(hideTimer);
+					hideTimer = window.setTimeout(() => {
+						feedback.classList.add("opacity-0");
+						feedback.textContent = "";
+					}, 2000);
 				});
 			});
 	}

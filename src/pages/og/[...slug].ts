@@ -1,8 +1,8 @@
 import { getCollection } from "astro:content";
 import { OGImageRoute } from "astro-og-canvas";
 
-// Get all blog entries
-const entries = await getCollection("blog");
+// Drafts are not published as pages, so they get no public OG image either.
+const entries = await getCollection("blog", ({ data }) => !data.draft);
 
 // Map entries to an object with the page ID as key
 // The ID format is like "en/git-worktree-interruption-proof-workflow"

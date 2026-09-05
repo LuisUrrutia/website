@@ -1,8 +1,9 @@
 ---
-import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Navbar from "@/components/Navbar.astro";
 import { HomePageJsonLd } from "@/components/seo";
+import { getBlogPostPath, getBlogPosts } from "@/data/blog";
+import { siteOwner } from "@/data/seo";
 import { socials } from "@/data/socials";
 import { technologies } from "@/data/technologies";
 import { testimonials } from "@/data/testimonials";
@@ -14,38 +15,46 @@ import TestimonialsSection from "@/sections/TestimonialsSection.astro";
 import ContactSection from "@/sections/ContactSection.astro";
 import { getLocalizedPath, getSiteUrl, getSlugWithoutLocale } from "@/i18n";
 
+const STACK_INITIAL_VISIBLE = 6;
+const LATEST_POSTS_COUNT = 3;
+
 const { t, lang } = Astro.locals;
 
 const siteUrl = getSiteUrl({ site: Astro.site, origin: Astro.url.origin });
 const description = t("meta.description");
+const contactHref = `mailto:${siteOwner.email}`;
 
-// Get latest posts for current locale
-const allPosts = await getCollection("blog", ({ data, id }) => {
-	return id.startsWith(`${lang}/`) && data.draft !== true;
-});
+const posts = (await getBlogPosts(lang))
+	.slice(0, LATEST_POSTS_COUNT)
+	.map((post) => ({
+		title: post.data.title,
+		category: post.data.category,
+		date: post.data.date,
+		href: getBlogPostPath(post, lang),
+		slug: getSlugWithoutLocale(post.id),
+	}));
 
-const posts = allPosts
-	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-	.slice(0, 3)
-	.map((post) => {
-		const slug = getSlugWithoutLocale(post.id);
-		return {
-			title: post.data.title,
-			category: post.data.category,
-			date: post.data.date,
-			href: getLocalizedPath(`/blog/${slug}`, lang),
-			slug,
-		};
-	});
+// Icons behind "View more" are fetched ahead of the click so expanding is instant.
+const hiddenTechIcons = technologies
+	.slice(STACK_INITIAL_VISIBLE)
+	.flatMap(({ icon }) =>
+		typeof icon === "string" ? [icon] : [icon.light, icon.dark],
+	);
 ---
 
 <Layout ogImageAlt={t("meta.ogImageAlt")}>
-	<HomePageJsonLd
-		slot="head"
-		siteUrl={siteUrl}
-		jobTitle={t("meta.jobTitle")}
-		description={description}
-	/>
+	<Fragment slot="head">
+		<HomePageJsonLd
+			siteUrl={siteUrl}
+			jobTitle={t("meta.jobTitle")}
+			description={description}
+		/>
+		{
+			hiddenTechIcons.map((href) => (
+				<link rel="prefetch" href={href} as="image" />
+			))
+		}
+	</Fragment>
 	<Navbar />
 	<Container
 		as="main"
@@ -53,8 +62,15 @@ const posts = allPosts
 		class="flex flex-col gap-8"
 		data-page-transition="fade"
 	>
-		<HeroSection socials={socials} workStatus="open" />
-		<StackSection technologies={technologies} />
+		<HeroSection
+			socials={socials}
+			workStatus="open"
+			contactHref={contactHref}
+		/>
+		<StackSection
+			technologies={technologies}
+			initialVisible={STACK_INITIAL_VISIBLE}
+		/>
 		{
 			posts.length > 0 && (
 				<LatestPostsSection
@@ -64,6 +80,6 @@ const posts = allPosts
 			)
 		}
 		<TestimonialsSection testimonials={testimonials} />
-		<ContactSection contactHref="mailto:hello@urrutia.me" socials={socials} />
+		<ContactSection contactHref={contactHref} socials={socials} />
 	</Container>
 </Layout>

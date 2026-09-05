@@ -45,10 +45,16 @@ export function getLinkPolicy(
 	return {
 		href: getHrefString(href),
 		isExternal,
-		newTabAttributes: shouldOpenInNewTab ? newTabLinkAttributes : {},
+		newTabAttributes: shouldOpenInNewTab ? { ...newTabLinkAttributes } : {},
 	};
 }
 
+/**
+ * Astro writes a component's scoped-style class onto the object passed to a
+ * spread. Returning the shared module constant would let that class accumulate
+ * on it across renders and shadow the element's own `class` attribute, so every
+ * caller gets its own copy.
+ */
 export function getNewTabLinkAttributes(): typeof newTabLinkAttributes {
-	return newTabLinkAttributes;
+	return { ...newTabLinkAttributes };
 }

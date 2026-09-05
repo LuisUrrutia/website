@@ -67,10 +67,13 @@ const { t } = Astro.locals;
 		viewMoreHref && (
 			<a
 				href={viewMoreHref}
-				class="group text-subtitle hover:text-title mx-auto flex cursor-pointer items-center gap-2 px-4 py-6 text-sm transition-colors"
+				class="group text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-card mx-auto flex cursor-pointer items-center gap-2 rounded-lg px-4 py-6 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
 			>
 				<span>{t("blog.viewMore")}</span>
-				<span class="size-4 transition-transform group-hover:translate-x-1">
+				<span
+					class="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
+					aria-hidden="true"
+				>
 					<IconArrowRight class="size-full" />
 				</span>
 			</a>

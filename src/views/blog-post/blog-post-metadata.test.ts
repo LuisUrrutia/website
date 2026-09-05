@@ -49,14 +49,14 @@ describe("prepareBlogPostPageMetadata", () => {
 		expect(metadata.formattedUpdatedDate).toBeNull();
 		expect(metadata.alternateLang).toBe("es");
 		expect(metadata.alternateUrl).toBe(
-			"/es/blog/tu-repo-deberia-hacerse-cargo-del-setup",
+			"/es/blog/tu-repo-deberia-hacerse-cargo-del-setup/",
 		);
 		expect(metadata.alternateUrls).toEqual({
-			en: "/blog/your-repo-should-own-the-setup",
-			es: "/es/blog/tu-repo-deberia-hacerse-cargo-del-setup",
+			en: "/blog/your-repo-should-own-the-setup/",
+			es: "/es/blog/tu-repo-deberia-hacerse-cargo-del-setup/",
 		});
 		expect(metadata.postUrl).toBe(
-			"https://urrutia.me/blog/your-repo-should-own-the-setup",
+			"https://urrutia.me/blog/your-repo-should-own-the-setup/",
 		);
 		expect(metadata.ogImage).toBe("/og/en/your-repo-should-own-the-setup.png");
 		expect(metadata.absoluteOgImage).toBe(
@@ -70,10 +70,10 @@ describe("prepareBlogPostPageMetadata", () => {
 		);
 		expect(metadata.breadcrumbItems).toEqual([
 			{ name: "Home", url: "https://urrutia.me/" },
-			{ name: "Engineering Notes", url: "https://urrutia.me/blog" },
+			{ name: "Engineering Notes", url: "https://urrutia.me/blog/" },
 			{
 				name: "Your Repo Should Own the Setup",
-				url: "https://urrutia.me/blog/your-repo-should-own-the-setup",
+				url: "https://urrutia.me/blog/your-repo-should-own-the-setup/",
 			},
 		]);
 	});
@@ -91,12 +91,12 @@ describe("prepareBlogPostPageMetadata", () => {
 		expect(metadata.formattedDate).toBe("17 de mayo de 2026");
 		expect(metadata.formattedUpdatedDate).toBe("18 de mayo de 2026");
 		expect(metadata.alternateLang).toBe("en");
-		expect(metadata.alternateUrl).toBe("/blog/your-repo-should-own-the-setup");
+		expect(metadata.alternateUrl).toBe("/blog/your-repo-should-own-the-setup/");
 		expect(metadata.currentPostUrl).toBe(
-			"/es/blog/tu-repo-deberia-hacerse-cargo-del-setup",
+			"/es/blog/tu-repo-deberia-hacerse-cargo-del-setup/",
 		);
 		expect(metadata.postUrl).toBe(
-			"https://urrutia.me/es/blog/tu-repo-deberia-hacerse-cargo-del-setup",
+			"https://urrutia.me/es/blog/tu-repo-deberia-hacerse-cargo-del-setup/",
 		);
 		expect(metadata.breadcrumbItems[0]).toEqual({
 			name: "Inicio",
@@ -104,7 +104,7 @@ describe("prepareBlogPostPageMetadata", () => {
 		});
 	});
 
-	it("omits alternate URLs when no translation exists", () => {
+	it("lists only the current locale when no translation exists", () => {
 		const metadata = prepareBlogPostPageMetadata({
 			post: englishPost,
 			lang: "en",
@@ -113,6 +113,8 @@ describe("prepareBlogPostPageMetadata", () => {
 		});
 
 		expect(metadata.alternateUrl).toBeNull();
-		expect(metadata.alternateUrls).toBeUndefined();
+		expect(metadata.alternateUrls).toEqual({
+			en: "/blog/your-repo-should-own-the-setup/",
+		});
 	});
 });

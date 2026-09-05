@@ -1,10 +1,13 @@
-import { calculateReadingTime, formatReadingTime } from "@/lib/formatters";
+import {
+	calculateReadingTime,
+	formatPostDate,
+	formatReadingTime,
+} from "@/lib/formatters";
 import {
 	getAlternateLocale,
 	getLocalizedPath,
 	getLocalizedSiteUrl,
 	getSlugWithoutLocale,
-	intlLocales,
 	joinSiteUrl,
 	type Locale,
 	type TranslationKey,
@@ -40,7 +43,8 @@ export interface BlogPostPageMetadata {
 	alternateLang: Locale;
 	alternateUrl: string | null;
 	currentPostUrl: string;
-	alternateUrls: Partial<Record<Locale, string>> | undefined;
+	/** Locales this post exists in; drives canonical and hreflang tags. */
+	alternateUrls: Partial<Record<Locale, string>>;
 	titleTransitionName: string;
 	pillTransitionName: string;
 	siteUrl: string;
@@ -58,12 +62,6 @@ interface PrepareBlogPostPageMetadataOptions {
 	siteUrl: string;
 }
 
-const dateFormat: Intl.DateTimeFormatOptions = {
-	day: "numeric",
-	month: "long",
-	year: "numeric",
-};
-
 export function prepareBlogPostPageMetadata({
 	post,
 	translatedPost,
@@ -73,13 +71,10 @@ export function prepareBlogPostPageMetadata({
 }: PrepareBlogPostPageMetadataOptions): BlogPostPageMetadata {
 	const readingTime = calculateReadingTime(post.body ?? "");
 	const formattedReadingTime = formatReadingTime(readingTime, t);
-	const formattedDate = post.data.date.toLocaleDateString(
-		intlLocales[lang],
-		dateFormat,
-	);
+	const formattedDate = formatPostDate(post.data.date, lang);
 	const isoDate = post.data.date.toISOString().split("T")[0];
 	const formattedUpdatedDate = post.data.updatedDate
-		? post.data.updatedDate.toLocaleDateString(intlLocales[lang], dateFormat)
+		? formatPostDate(post.data.updatedDate, lang)
 		: null;
 
 	const slug = getSlugWithoutLocale(post.id);
@@ -91,13 +86,11 @@ export function prepareBlogPostPageMetadata({
 			)
 		: null;
 	const currentPostUrl = getLocalizedPath(`/blog/${slug}`, lang);
-	const alternateUrls = alternateUrl
-		? {
-				[lang]: currentPostUrl,
-				[alternateLang]: alternateUrl,
-			}
-		: undefined;
-	const postUrl = getLocalizedSiteUrl(siteUrl, `/blog/${slug}`, lang);
+	const alternateUrls: Partial<Record<Locale, string>> = {
+		[lang]: currentPostUrl,
+		...(alternateUrl && { [alternateLang]: alternateUrl }),
+	};
+	const postUrl = joinSiteUrl(siteUrl, currentPostUrl);
 	const ogImage = `/og/${post.id}.png`;
 
 	return {

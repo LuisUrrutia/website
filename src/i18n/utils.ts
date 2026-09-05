@@ -2,26 +2,16 @@ import { ui, type TranslationKey } from "./ui";
 import { defaultLocale, isValidLocale, type Locale } from "./locales";
 export { isValidLocale } from "./locales";
 export {
-	getCanonicalPath,
 	getCanonicalUrl,
 	getLocalizedPath,
 	getLocalizedSiteUrl,
 	getLocalizedUrls,
-	getLocaleRedirectPath,
 	getPathWithoutLocale,
 	getSiteUrl,
 	getSlugWithoutLocale,
-	getUrlForLocale,
-	getXDefaultUrl,
 	joinSiteUrl,
+	withTrailingSlash,
 } from "./url-paths";
-
-/**
- * Check if the given locale is the default locale.
- */
-export function isDefaultLocale(locale: Locale): boolean {
-	return locale === defaultLocale;
-}
 
 /**
  * Get the alternate locale (for language toggle).

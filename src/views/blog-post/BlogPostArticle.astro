@@ -20,18 +20,14 @@ interface Props {
 const { post, metadata, lang, t } = Astro.props;
 ---
 
-<Card
-	as="article"
-	class="prose prose-neutral dark:prose-invert max-w-none"
-	style="view-transition-name: post-card"
->
+<Card as="article" class="max-w-none" style="view-transition-name: post-card">
 	<BlogPostHeader post={post} metadata={metadata} t={t} />
 
 	<div class="blog-content">
 		<slot />
 	</div>
 
-	<footer class="not-prose border-border mt-8 border-t pt-6">
+	<footer class="border-border mt-8 border-t pt-6">
 		<SocialShare url={metadata.postUrl} title={post.data.title} id={post.id} />
 	</footer>
 

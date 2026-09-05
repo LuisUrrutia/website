@@ -2,37 +2,88 @@ import { describe, expect, it } from "vitest";
 
 import {
 	getAlternateLocale,
-	getCanonicalPath,
 	getCanonicalUrl,
+	getLangFromUrl,
 	getLocalizedPath,
 	getLocalizedSiteUrl,
 	getLocalizedUrls,
-	getLocaleRedirectPath,
 	getPathWithoutLocale,
 	getSiteUrl,
 	getSlugWithoutLocale,
 	joinSiteUrl,
-	isDefaultLocale,
+	matchesLocale,
+	useTranslations,
+	withTrailingSlash,
 } from "@/i18n/utils";
 
 describe("i18n utils", () => {
-	it("detects the default locale", () => {
-		expect(isDefaultLocale("en")).toBe(true);
-		expect(isDefaultLocale("es")).toBe(false);
-	});
-
 	it("returns the alternate locale", () => {
 		expect(getAlternateLocale("en")).toBe("es");
 		expect(getAlternateLocale("es")).toBe("en");
 	});
 
-	it("builds localized paths", () => {
+	it("detects the locale from a URL", () => {
+		expect(getLangFromUrl(new URL("https://urrutia.me/"))).toBe("en");
+		expect(getLangFromUrl(new URL("https://urrutia.me/blog/"))).toBe("en");
+		expect(getLangFromUrl(new URL("https://urrutia.me/es"))).toBe("es");
+		expect(getLangFromUrl(new URL("https://urrutia.me/es/blog/"))).toBe("es");
+		expect(getLangFromUrl(new URL("https://urrutia.me/estonia/"))).toBe("en");
+	});
+
+	it("filters content by locale and excludes drafts", () => {
+		const isSpanish = matchesLocale("es");
+
+		expect(isSpanish({ lang: "es" })).toBe(true);
+		expect(isSpanish({ lang: "es", draft: false })).toBe(true);
+		expect(isSpanish({ lang: "es", draft: true })).toBe(false);
+		expect(isSpanish({ lang: "en" })).toBe(false);
+	});
+
+	it("translates with a fallback to the default locale", () => {
+		expect(useTranslations("es")("blog.title")).not.toBe(
+			useTranslations("en")("blog.title"),
+		);
+		expect(useTranslations("es")("stack.title")).toBe("Stack");
+	});
+
+	it("appends a trailing slash to page paths only", () => {
+		expect(withTrailingSlash("/")).toBe("/");
+		expect(withTrailingSlash("/blog")).toBe("/blog/");
+		expect(withTrailingSlash("/blog/")).toBe("/blog/");
+		expect(withTrailingSlash("/blog?page=2")).toBe("/blog/?page=2");
+		expect(withTrailingSlash("/blog#latest")).toBe("/blog/#latest");
+		expect(withTrailingSlash("/blog/release-v1.0")).toBe("/blog/release-v1.0/");
+		expect(withTrailingSlash("/blog/release-v1.0?source=rss#changes")).toBe(
+			"/blog/release-v1.0/?source=rss#changes",
+		);
+	});
+
+	it("localizes explicit file paths without adding a trailing slash", () => {
+		expect(getLocalizedPath("/rss.xml", "en", { kind: "file" })).toBe(
+			"/rss.xml",
+		);
+		expect(getLocalizedPath("/rss.xml", "es", { kind: "file" })).toBe(
+			"/es/rss.xml",
+		);
+		expect(
+			getLocalizedPath("/og/en/post.png?v=2", "en", { kind: "file" }),
+		).toBe("/og/en/post.png?v=2");
+		expect(getLocalizedPath("/blog/release-v1.0", "es")).toBe(
+			"/es/blog/release-v1.0/",
+		);
+	});
+
+	it("builds localized paths with a trailing slash", () => {
 		expect(getLocalizedPath("/", "en")).toBe("/");
 		expect(getLocalizedPath("/", "es")).toBe("/es/");
-		expect(getLocalizedPath("/blog", "en")).toBe("/blog");
-		expect(getLocalizedPath("/blog", "es")).toBe("/es/blog");
+		expect(getLocalizedPath("/blog", "en")).toBe("/blog/");
+		expect(getLocalizedPath("/blog", "es")).toBe("/es/blog/");
+		expect(getLocalizedPath("/blog/", "es")).toBe("/es/blog/");
 		expect(getLocalizedPath("/blog/your-repo-should-own-the-setup", "es")).toBe(
-			"/es/blog/your-repo-should-own-the-setup",
+			"/es/blog/your-repo-should-own-the-setup/",
+		);
+		expect(getLocalizedPath("https://urrutia.me/blog?page=2", "es")).toBe(
+			"/es/blog/?page=2",
 		);
 	});
 
@@ -42,6 +93,7 @@ describe("i18n utils", () => {
 		expect(getPathWithoutLocale("/es/blog")).toBe("/blog");
 		expect(getPathWithoutLocale("/es")).toBe("/");
 		expect(getPathWithoutLocale("/en/blog")).toBe("/blog");
+		expect(getPathWithoutLocale("https://urrutia.me/es/blog/")).toBe("/blog/");
 		expect(getPathWithoutLocale("/blog/your-repo-should-own-the-setup")).toBe(
 			"/blog/your-repo-should-own-the-setup",
 		);
@@ -56,13 +108,6 @@ describe("i18n utils", () => {
 		).toBe("tu-repo-deberia-hacerse-cargo-del-setup");
 	});
 
-	it("builds canonical paths without introducing an English prefix", () => {
-		expect(getCanonicalPath("/", "en")).toBe("/");
-		expect(getCanonicalPath("/", "es")).toBe("/es/");
-		expect(getCanonicalPath("/blog", "en")).toBe("/blog");
-		expect(getCanonicalPath("/blog", "es")).toBe("/es/blog");
-	});
-
 	it("normalizes and joins site URLs", () => {
 		expect(
 			getSiteUrl({
@@ -73,15 +118,15 @@ describe("i18n utils", () => {
 		expect(getSiteUrl({ origin: "http://localhost:4321" })).toBe(
 			"http://localhost:4321",
 		);
-		expect(joinSiteUrl("https://urrutia.me", "/blog")).toBe(
-			"https://urrutia.me/blog",
+		expect(joinSiteUrl("https://urrutia.me", "/blog/")).toBe(
+			"https://urrutia.me/blog/",
 		);
 		expect(joinSiteUrl("https://urrutia.me", "og/en/post.png")).toBe(
 			"https://urrutia.me/og/en/post.png",
 		);
 		expect(
-			joinSiteUrl("https://urrutia.me", "https://urrutia.me/es/blog"),
-		).toBe("https://urrutia.me/es/blog");
+			joinSiteUrl("https://urrutia.me", "https://urrutia.me/es/blog/"),
+		).toBe("https://urrutia.me/es/blog/");
 	});
 
 	it("builds localized site URLs", () => {
@@ -92,104 +137,122 @@ describe("i18n utils", () => {
 			"https://urrutia.me/es/",
 		);
 		expect(getLocalizedSiteUrl("https://urrutia.me", "/blog", "en")).toBe(
-			"https://urrutia.me/blog",
+			"https://urrutia.me/blog/",
 		);
 		expect(getLocalizedSiteUrl("https://urrutia.me", "/blog", "es")).toBe(
-			"https://urrutia.me/es/blog",
+			"https://urrutia.me/es/blog/",
 		);
+	});
+
+	it("derives every locale for shared-slug pages", () => {
+		const urls = getLocalizedUrls({
+			siteUrl: "https://urrutia.me",
+			pathWithoutLocale: "/blog/",
+			locale: "es",
+		});
+
+		expect(urls).toEqual({
+			canonicalUrl: "https://urrutia.me/es/blog/",
+			alternateUrls: {
+				en: "https://urrutia.me/blog/",
+				es: "https://urrutia.me/es/blog/",
+			},
+			xDefaultUrl: "https://urrutia.me/blog/",
+		});
 	});
 
 	it("builds canonical and hreflang URLs with translated slug overrides", () => {
 		const input = {
 			siteUrl: "https://urrutia.me",
-			pathWithoutLocale: "/blog/your-repo-should-own-the-setup",
+			pathWithoutLocale: "/blog/your-repo-should-own-the-setup/",
 			locale: "en" as const,
 			alternateUrls: {
-				en: "/blog/your-repo-should-own-the-setup",
-				es: "/es/blog/tu-repo-deberia-hacerse-cargo-del-setup",
+				en: "/blog/your-repo-should-own-the-setup/",
+				es: "/es/blog/tu-repo-deberia-hacerse-cargo-del-setup/",
 			},
 		};
 		const urls = getLocalizedUrls(input);
 
 		expect(getCanonicalUrl(input)).toBe(
-			"https://urrutia.me/blog/your-repo-should-own-the-setup",
+			"https://urrutia.me/blog/your-repo-should-own-the-setup/",
 		);
-		expect(
-			getCanonicalUrl({
-				...input,
-				locale: "es",
-			}),
-		).toBe(
-			"https://urrutia.me/es/blog/tu-repo-deberia-hacerse-cargo-del-setup",
+		expect(getCanonicalUrl({ ...input, locale: "es" })).toBe(
+			"https://urrutia.me/es/blog/tu-repo-deberia-hacerse-cargo-del-setup/",
 		);
 		expect(urls.canonicalUrl).toBe(
-			"https://urrutia.me/blog/your-repo-should-own-the-setup",
+			"https://urrutia.me/blog/your-repo-should-own-the-setup/",
 		);
 		expect(urls.alternateUrls.en).toBe(
-			"https://urrutia.me/blog/your-repo-should-own-the-setup",
+			"https://urrutia.me/blog/your-repo-should-own-the-setup/",
 		);
 		expect(urls.alternateUrls.es).toBe(
-			"https://urrutia.me/es/blog/tu-repo-deberia-hacerse-cargo-del-setup",
+			"https://urrutia.me/es/blog/tu-repo-deberia-hacerse-cargo-del-setup/",
 		);
 		expect(urls.xDefaultUrl).toBe(
-			"https://urrutia.me/blog/your-repo-should-own-the-setup",
+			"https://urrutia.me/blog/your-repo-should-own-the-setup/",
 		);
+	});
+
+	it("omits locales that have no translation and points x-default at the canonical", () => {
+		const urls = getLocalizedUrls({
+			siteUrl: "https://urrutia.me",
+			pathWithoutLocale: "/blog/solo-en-espanol/",
+			locale: "es",
+			alternateUrls: { es: "/es/blog/solo-en-espanol/" },
+		});
+
+		expect(urls).toEqual({
+			canonicalUrl: "https://urrutia.me/es/blog/solo-en-espanol/",
+			alternateUrls: { es: "https://urrutia.me/es/blog/solo-en-espanol/" },
+			xDefaultUrl: "https://urrutia.me/es/blog/solo-en-espanol/",
+		});
 	});
 
 	it("preserves absolute alternate URLs", () => {
 		expect(
 			getCanonicalUrl({
 				siteUrl: "https://urrutia.me",
-				pathWithoutLocale: "/blog",
+				pathWithoutLocale: "/blog/",
 				locale: "es",
-				alternateUrls: { es: "https://urrutia.me/es/blog" },
+				alternateUrls: { es: "https://urrutia.me/es/blog/" },
 			}),
-		).toBe("https://urrutia.me/es/blog");
+		).toBe("https://urrutia.me/es/blog/");
 	});
 
-	it("computes first-visit locale redirect paths", () => {
-		expect(
-			getLocaleRedirectPath({
-				pathname: "/",
-				currentLocale: "en",
-				browserLocale: "es",
-			}),
-		).toBe("/es/");
-		expect(
-			getLocaleRedirectPath({
-				pathname: "/blog",
-				search: "?page=2",
-				currentLocale: "en",
-				browserLocale: "es",
-			}),
-		).toBe("/es/blog?page=2");
-		expect(
-			getLocaleRedirectPath({
-				pathname: "/es/blog",
-				currentLocale: "es",
-				browserLocale: "en",
-			}),
-		).toBe("/blog");
-		expect(
-			getLocaleRedirectPath({
-				pathname: "/es/blog/tu-repo-deberia-hacerse-cargo-del-setup",
-				currentLocale: "es",
-				browserLocale: "en",
-			}),
-		).toBe("/blog/tu-repo-deberia-hacerse-cargo-del-setup");
-		expect(
-			getLocaleRedirectPath({
-				pathname: "/es/blog",
-				currentLocale: "es",
-				browserLocale: "es",
-			}),
-		).toBeNull();
-		expect(
-			getLocaleRedirectPath({
-				pathname: "/blog",
-				currentLocale: "en",
-				browserLocale: "fr",
-			}),
-		).toBeNull();
+	it("normalizes path-like alternate URLs without duplicating locale prefixes", () => {
+		const urls = getLocalizedUrls({
+			siteUrl: "https://urrutia.me",
+			pathWithoutLocale: "/blog/release-v1.0",
+			locale: "es",
+			alternateUrls: {
+				en: "blog/release-v1.0?source=rss#changes",
+				es: "/es/blog/version-v1.0",
+			},
+		});
+
+		expect(urls).toEqual({
+			canonicalUrl: "https://urrutia.me/es/blog/version-v1.0/",
+			alternateUrls: {
+				en: "https://urrutia.me/blog/release-v1.0/?source=rss#changes",
+				es: "https://urrutia.me/es/blog/version-v1.0/",
+			},
+			xDefaultUrl: "https://urrutia.me/blog/release-v1.0/?source=rss#changes",
+		});
+	});
+
+	it("keeps absolute alternate URLs unchanged and omits missing locales", () => {
+		const url = "https://example.com/translated-post?source=rss#changes";
+		const urls = getLocalizedUrls({
+			siteUrl: "https://urrutia.me",
+			pathWithoutLocale: "/blog/post",
+			locale: "es",
+			alternateUrls: { es: url },
+		});
+
+		expect(urls).toEqual({
+			canonicalUrl: url,
+			alternateUrls: { es: url },
+			xDefaultUrl: url,
+		});
 	});
 });

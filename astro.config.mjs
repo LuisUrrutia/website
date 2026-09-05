@@ -15,6 +15,8 @@ const serializeSitemapItem = createSitemapSerializer({
 // https://astro.build/config
 export default defineConfig({
 	site: SITE_URL,
+	// Pages build as directories, so this is the URL form the host actually serves.
+	trailingSlash: "always",
 	// Keep Astro 6's whitespace behavior; Astro 7 defaults to JSX-style compression.
 	compressHTML: true,
 	fonts: [
