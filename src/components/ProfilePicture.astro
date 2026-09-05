@@ -13,7 +13,7 @@ const { alt, class: className } = Astro.props;
 const HEIGHT = 252;
 const VERTICAL_WIDTH = 205;
 
-// The fixed-height cover crop needs 252 source pixels even on narrow screens.
+// Cover cropping needs 252 source pixels per DPR, even when the visible width shrinks.
 const HORIZONTAL_WIDTH = 600;
 const HORIZONTAL_WIDTHS = [600, 1200, 1800];
 const HORIZONTAL_SIZES = "600px";

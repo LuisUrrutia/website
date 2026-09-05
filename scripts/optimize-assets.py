@@ -20,6 +20,7 @@ BRUSH_TARGET = ROOT / "public/images/brush-1.svg"
 
 
 def rasterize(source: Path, target: Path) -> None:
+    """Preserve intrinsic SVG dimensions and alpha for silhouette comparison."""
     subprocess.run([
         "bun", "-e",
         "import sharp from 'sharp'; await sharp(process.argv[1]).png().toFile(process.argv[2]);",
