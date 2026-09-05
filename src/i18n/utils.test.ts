@@ -52,8 +52,25 @@ describe("i18n utils", () => {
 		expect(withTrailingSlash("/blog/")).toBe("/blog/");
 		expect(withTrailingSlash("/blog?page=2")).toBe("/blog/?page=2");
 		expect(withTrailingSlash("/blog#latest")).toBe("/blog/#latest");
-		expect(withTrailingSlash("/rss.xml")).toBe("/rss.xml");
-		expect(withTrailingSlash("/og/en/post.png")).toBe("/og/en/post.png");
+		expect(withTrailingSlash("/blog/release-v1.0")).toBe("/blog/release-v1.0/");
+		expect(withTrailingSlash("/blog/release-v1.0?source=rss#changes")).toBe(
+			"/blog/release-v1.0/?source=rss#changes",
+		);
+	});
+
+	it("localizes explicit file paths without adding a trailing slash", () => {
+		expect(getLocalizedPath("/rss.xml", "en", { kind: "file" })).toBe(
+			"/rss.xml",
+		);
+		expect(getLocalizedPath("/rss.xml", "es", { kind: "file" })).toBe(
+			"/es/rss.xml",
+		);
+		expect(
+			getLocalizedPath("/og/en/post.png?v=2", "en", { kind: "file" }),
+		).toBe("/og/en/post.png?v=2");
+		expect(getLocalizedPath("/blog/release-v1.0", "es")).toBe(
+			"/es/blog/release-v1.0/",
+		);
 	});
 
 	it("builds localized paths with a trailing slash", () => {
@@ -200,5 +217,42 @@ describe("i18n utils", () => {
 				alternateUrls: { es: "https://urrutia.me/es/blog/" },
 			}),
 		).toBe("https://urrutia.me/es/blog/");
+	});
+
+	it("normalizes path-like alternate URLs without duplicating locale prefixes", () => {
+		const urls = getLocalizedUrls({
+			siteUrl: "https://urrutia.me",
+			pathWithoutLocale: "/blog/release-v1.0",
+			locale: "es",
+			alternateUrls: {
+				en: "blog/release-v1.0?source=rss#changes",
+				es: "/es/blog/version-v1.0",
+			},
+		});
+
+		expect(urls).toEqual({
+			canonicalUrl: "https://urrutia.me/es/blog/version-v1.0/",
+			alternateUrls: {
+				en: "https://urrutia.me/blog/release-v1.0/?source=rss#changes",
+				es: "https://urrutia.me/es/blog/version-v1.0/",
+			},
+			xDefaultUrl: "https://urrutia.me/blog/release-v1.0/?source=rss#changes",
+		});
+	});
+
+	it("keeps absolute alternate URLs unchanged and omits missing locales", () => {
+		const url = "https://example.com/translated-post?source=rss#changes";
+		const urls = getLocalizedUrls({
+			siteUrl: "https://urrutia.me",
+			pathWithoutLocale: "/blog/post",
+			locale: "es",
+			alternateUrls: { es: url },
+		});
+
+		expect(urls).toEqual({
+			canonicalUrl: url,
+			alternateUrls: { es: url },
+			xDefaultUrl: url,
+		});
 	});
 });

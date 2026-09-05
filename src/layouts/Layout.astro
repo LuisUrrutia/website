@@ -29,7 +29,7 @@ const {
 const alternateLang = getAlternateLocale(lang);
 const rssFeeds = [lang, alternateLang].map((locale) => ({
 	title: useTranslations(locale)("rss.title"),
-	href: getLocalizedPath("/rss.xml", locale),
+	href: getLocalizedPath("/rss.xml", locale, { kind: "file" }),
 }));
 ---
 

@@ -1,4 +1,4 @@
-import { defaultLocale, locales, type Locale } from "./locales";
+import { defaultLocale, locales, type Locale } from "@/i18n/locales";
 
 export interface SiteUrlContext {
 	site?: URL;
@@ -37,16 +37,13 @@ function getPathFromUrlLike(value: string): string {
  * Pages build as `<path>/index.html`, so the host serves them at the
  * slash-terminated URL. Emitting that form everywhere keeps canonical,
  * hreflang, sitemap and internal links in agreement and avoids a redirect
- * hop. Paths that point at a file (e.g. `/rss.xml`) are left untouched.
+ * hop. File paths must bypass this page-path normalization.
  */
 export function withTrailingSlash(path: string): string {
 	const match = pathnameSplitPattern.exec(path);
 	const pathname = match?.[1] ?? path;
 	const suffix = match?.[2] ?? "";
 	if (pathname === "" || pathname.endsWith("/")) return path;
-
-	const lastSegment = pathname.slice(pathname.lastIndexOf("/") + 1);
-	if (lastSegment.includes(".")) return path;
 
 	return `${pathname}/${suffix}`;
 }
@@ -60,8 +57,13 @@ export function joinSiteUrl(siteUrl: string, pathOrUrl: string): string {
 	return `${siteUrl}${pathOrUrl.startsWith("/") ? "" : "/"}${pathOrUrl}`;
 }
 
-export function getLocalizedPath(path: string, lang: Locale): string {
-	const pathname = withTrailingSlash(getPathFromUrlLike(path));
+export function getLocalizedPath(
+	path: string,
+	lang: Locale,
+	{ kind = "page" }: { kind?: "page" | "file" } = {},
+): string {
+	const urlPath = getPathFromUrlLike(path);
+	const pathname = kind === "file" ? urlPath : withTrailingSlash(urlPath);
 	if (lang === defaultLocale) return pathname;
 	return `/${lang}${pathname}`;
 }
@@ -98,7 +100,13 @@ function getUrlForLocale(
 ): string | undefined {
 	if (alternateUrls) {
 		const alternateUrl = alternateUrls[locale];
-		return alternateUrl ? joinSiteUrl(siteUrl, alternateUrl) : undefined;
+		if (!alternateUrl) return undefined;
+		return joinSiteUrl(
+			siteUrl,
+			absoluteUrlPattern.test(alternateUrl)
+				? alternateUrl
+				: withTrailingSlash(alternateUrl),
+		);
 	}
 	return getLocalizedSiteUrl(siteUrl, pathWithoutLocale, locale);
 }
