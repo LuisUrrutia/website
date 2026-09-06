@@ -36,7 +36,7 @@ export default defineConfig({
 			options: {
 				variants: [
 					{
-						src: ["./src/assets/fonts/InterVariable.woff2"],
+						src: ["./src/assets/fonts/InterVariable-latin.woff2"],
 						weight: "100 900",
 						style: "normal",
 						display: "swap",

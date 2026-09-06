@@ -28,6 +28,8 @@ I did this for years. Turns out there's been a better way since 2015, _hiding in
 
 <Image
 	src={twoBranchesFolder}
+	widths={[320, 640, 960, 1520, 2236]}
+	sizes="(max-width: 639px) calc(100vw - 72px), (max-width: 1023px) 600px, 760px"
 	alt="Split terminal showing two branches open simultaneously in separate directories"
 />
 
@@ -83,6 +85,8 @@ Worktrunk addresses worktrees by branch name instead of paths. It handles direct
 <Reveal>
 	<Image
 		src={worktreeComparison}
+		widths={[320, 640, 960, 1520, 2236]}
+		sizes="(max-width: 639px) calc(100vw - 72px), (max-width: 1023px) 600px, 760px"
 		alt="Side-by-side comparison of git worktree commands versus Worktrunk equivalents"
 	/>
 </Reveal>
