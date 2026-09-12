@@ -23,7 +23,10 @@
   },
   "overrides": {
     "deepmerge-ts": "8.0.2",
+    "js-yaml": "4.3.2",
     "nanoid": "3.3.18",
+    "sharp": "0.35.4",
+    "svgo": "4.1.0",
     "yaml": "2.9.0"
   },
   "dependencies": {
@@ -68,7 +71,10 @@
   },
   "x-securityOverrideNotes": {
     "deepmerge-ts": "Force a patched version until @playform/compress and @playform/pipe stop pinning vulnerable 7.1.5",
+    "js-yaml": "Keep YAML merge processing on the patched 4.x release for Astro and cosmiconfig",
     "nanoid": "Force the patched 3.x release required by PostCSS instead of vulnerable 3.3.17",
+    "sharp": "Force a patched version until @playform/compress stops pinning vulnerable 0.35.3",
+    "svgo": "Force a patched version until @playform/compress stops pinning vulnerable 4.0.2",
     "yaml": "Force a patched yaml version because yaml-language-server still pins 2.7.1"
   }
 }
