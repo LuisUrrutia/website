@@ -23,17 +23,20 @@
   },
   "overrides": {
     "deepmerge-ts": "8.0.2",
+    "js-yaml": "4.3.2",
     "nanoid": "3.3.18",
+    "sharp": "0.35.4",
+    "svgo": "4.1.0",
     "yaml": "2.9.0"
   },
   "dependencies": {
-    "@astrojs/mdx": "^7.0.8",
+    "@astrojs/mdx": "^8.0.0",
     "@astrojs/rss": "^4.0.19",
-    "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/sitemap": "^3.7.4",
     "@playform/compress": "^0.2.5",
     "@tailwindcss/vite": "^4.3.3",
-    "astro": "7.2.9",
-    "astro-og-canvas": "^0.13.0",
+    "astro": "7.3.1",
+    "astro-og-canvas": "^0.13.1",
     "canvaskit-wasm": "^0.42.0",
     "sharp": "^0.35.4",
     "tailwindcss": "^4.3.3"
@@ -52,7 +55,7 @@
     "badge-maker": "6.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.4.1",
-    "oxlint": "^1.80.0",
+    "oxlint": "^1.81.0",
     "oxlint-tsgolint": "^7.0.2001",
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",
@@ -60,7 +63,7 @@
     "prettier-plugin-tailwindcss": "^0.8.1",
     "semantic-release": "25.0.9",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.0"
   },
   "engines": {
     "bun": ">=1.3",
@@ -68,7 +71,10 @@
   },
   "x-securityOverrideNotes": {
     "deepmerge-ts": "Force a patched version until @playform/compress and @playform/pipe stop pinning vulnerable 7.1.5",
+    "js-yaml": "Keep YAML merge processing on the patched 4.x release for Astro and cosmiconfig",
     "nanoid": "Force the patched 3.x release required by PostCSS instead of vulnerable 3.3.17",
+    "sharp": "Force a patched version until @playform/compress stops pinning vulnerable 0.35.3",
+    "svgo": "Force a patched version until @playform/compress stops pinning vulnerable 4.0.2",
     "yaml": "Force a patched yaml version because yaml-language-server still pins 2.7.1"
   }
 }
