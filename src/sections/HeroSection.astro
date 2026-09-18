@@ -140,13 +140,12 @@ const statusDescriptionKey =
 		</div>
 	</div>
 
-	<div class="flex flex-col gap-3">
-		<p class="flex items-center gap-1.5 text-sm font-light">
+	<CompanyMarquee companies={companies} label={t("hero.companies")}>
+		<p slot="label" class="flex items-center gap-1.5 text-sm font-light">
 			<IconRocket aria-hidden="true" />
 			{t("hero.companies")}
 		</p>
-		<CompanyMarquee companies={companies} label={t("hero.companies")} />
-	</div>
+	</CompanyMarquee>
 </Card>
 
 <style>

@@ -97,6 +97,33 @@ test("company animation pauses while hovered", async ({ page }) => {
 	await expect(track).toHaveCSS("animation-play-state", "running");
 });
 
+test("company animation stays paused until the toggle resumes it", async ({
+	page,
+}) => {
+	await page.goto("/");
+	const pause = page.getByRole("button", { name: "Pause company animation" });
+	const track = page.locator(".marquee-track");
+	const box = await page.locator(".marquee-container").boundingBox();
+	if (!box) throw new Error("The company marquee has no layout box");
+
+	await pause.click();
+	await expect(pause).toHaveAttribute("aria-pressed", "true");
+	await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+	await page.mouse.down();
+	await page.mouse.move(box.x + box.width / 4, box.y + box.height / 2, {
+		steps: 5,
+	});
+	await page.mouse.up();
+	await page.mouse.move(0, 0);
+
+	await expect(track).not.toHaveClass(/is-dragging/);
+	await expect(track).toHaveCSS("animation-play-state", "paused");
+
+	await pause.click();
+	await expect(pause).toHaveAttribute("aria-pressed", "false");
+	await expect(track).toHaveCSS("animation-play-state", "running");
+});
+
 test("reduced motion exposes every company without animation", async ({
 	page,
 }) => {
@@ -105,6 +132,7 @@ test("reduced motion exposes every company without animation", async ({
 	await expect(page.locator(".marquee-track")).toBeHidden();
 	await expect(page.locator(".company-list")).toHaveCSS("clip-path", "none");
 	await expect(page.locator(".company-list a")).toHaveCount(6);
+	await expect(page.locator(".marquee-pause")).toBeHidden();
 });
 
 test("Spanish routes render without overflow", async ({ page }) => {
