@@ -1,6 +1,8 @@
 ---
 import type { Company } from "@/types/company";
 import IconGitCommit from "@/assets/icons/git-commit.svg";
+import IconPause from "@/assets/icons/pause.svg";
+import IconPlay from "@/assets/icons/play.svg";
 import { getNewTabLinkAttributes } from "@/lib/link-policy";
 
 type Direction = "left" | "right";
@@ -17,7 +19,19 @@ const { t } = Astro.locals;
 const newTabAttributes = getNewTabLinkAttributes();
 ---
 
-<div class="company-marquee flex flex-col gap-2">
+<div class="company-marquee flex flex-col gap-3">
+	<div class="flex items-center justify-between gap-2">
+		<slot name="label" />
+		<button
+			type="button"
+			aria-pressed="false"
+			aria-label={t("a11y.pauseCompanyAnimation")}
+			class="marquee-pause press-feedback text-subtitle hover:text-title focus-visible:ring-accent -my-3 -mr-3.5 grid size-11 shrink-0 cursor-pointer place-items-center rounded-lg focus:outline-none focus-visible:ring-2"
+		>
+			<IconPause class="marquee-pause-icon--pause" />
+			<IconPlay class="marquee-pause-icon--play" />
+		</button>
+	</div>
 	<div class="marquee-container" style={`--marquee-duration: ${duration}s`}>
 		<!-- Keyboard focus reveals the complete, stationary company list. -->
 		<ul class="company-list sr-only" aria-label={label}>
@@ -84,14 +98,6 @@ const newTabAttributes = getNewTabLinkAttributes();
 			}
 		</div>
 	</div>
-	<button
-		type="button"
-		aria-pressed="false"
-		class="marquee-pause text-subtitle focus-visible:ring-accent min-h-11 cursor-pointer self-end rounded-lg px-3 text-sm underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-		aria-label={t("a11y.pauseCompanyAnimation")}
-	>
-		{t("hero.pauseAnimation")}
-	</button>
 </div>
 
 <style>
@@ -128,10 +134,7 @@ const newTabAttributes = getNewTabLinkAttributes();
 		animation-direction: reverse;
 	}
 
-	.marquee-container:hover .marquee-track {
-		animation-play-state: paused;
-	}
-
+	.marquee-container:hover .marquee-track,
 	.company-marquee:has(.marquee-pause[aria-pressed="true"]) .marquee-track,
 	.marquee-container:has(.company-list:focus-within) .marquee-track {
 		animation-play-state: paused;
@@ -160,9 +163,13 @@ const newTabAttributes = getNewTabLinkAttributes();
 		display: none;
 	}
 
-	.marquee-pause[aria-pressed="true"] {
-		background: var(--color-pill);
-		color: var(--color-pill-foreground);
+	.marquee-pause-icon--play,
+	.marquee-pause[aria-pressed="true"] .marquee-pause-icon--pause {
+		display: none;
+	}
+
+	.marquee-pause[aria-pressed="true"] .marquee-pause-icon--play {
+		display: block;
 	}
 
 	.marquee-content {
@@ -285,10 +292,9 @@ const newTabAttributes = getNewTabLinkAttributes();
 					container.querySelector<HTMLElement>(".marquee-track");
 				if (!trackElement) return;
 				const track: HTMLElement = trackElement;
-				const pauseButton =
-					container.parentElement?.querySelector<HTMLButtonElement>(
-						".marquee-pause",
-					);
+				const pauseButton = container
+					.closest(".company-marquee")
+					?.querySelector<HTMLButtonElement>(".marquee-pause");
 				pauseButton?.addEventListener("click", () => {
 					const offset = getTranslateX();
 					inertiaAnimation?.cancel();
