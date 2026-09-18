@@ -87,17 +87,14 @@ test("company links expose visible keyboard focus", async ({ page }) => {
 	);
 });
 
-test("company animation can be paused", async ({ page }) => {
+test("company animation pauses while hovered", async ({ page }) => {
 	await page.goto("/");
-	const pause = page.getByRole("button", { name: "Pause company animation" });
-	await pause.click();
-	await expect(pause).toHaveAttribute("aria-pressed", "true");
-	await expect(page.locator(".marquee-track")).toHaveCSS(
-		"animation-play-state",
-		"paused",
-	);
-	await pause.click();
-	await expect(pause).toHaveAttribute("aria-pressed", "false");
+	const track = page.locator(".marquee-track");
+	await expect(track).toHaveCSS("animation-play-state", "running");
+	await page.locator(".marquee-container").hover();
+	await expect(track).toHaveCSS("animation-play-state", "paused");
+	await page.mouse.move(0, 0);
+	await expect(track).toHaveCSS("animation-play-state", "running");
 });
 
 test("reduced motion exposes every company without animation", async ({
