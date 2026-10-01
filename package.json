@@ -30,13 +30,13 @@
     "yaml": "2.9.0"
   },
   "dependencies": {
-    "@astrojs/mdx": "^8.0.1",
+    "@astrojs/mdx": "^8.0.2",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@playform/compress": "^0.2.5",
     "@tailwindcss/vite": "^4.3.3",
-    "astro": "7.3.2",
-    "astro-og-canvas": "^0.13.1",
+    "astro": "7.3.5",
+    "astro-og-canvas": "^0.13.2",
     "canvaskit-wasm": "^0.42.0",
     "sharp": "^0.35.4",
     "tailwindcss": "^4.3.3"
