@@ -43,10 +43,10 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@commitlint/cli": "^21.2.2",
-    "@commitlint/config-conventional": "^21.2.2",
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
     "@playwright/test": "1.63.0",
-    "@prettier/plugin-oxc": "0.2.2",
+    "@prettier/plugin-oxc": "0.2.3",
     "@semantic-release/commit-analyzer": "13.0.1",
     "@semantic-release/exec": "7.1.0",
     "@semantic-release/github": "12.0.9",
@@ -55,15 +55,15 @@
     "badge-maker": "6.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.5.1",
-    "oxlint": "^1.82.0",
-    "oxlint-tsgolint": "^7.0.2001",
-    "prettier": "^3.9.6",
+    "oxlint": "^1.85.0",
+    "oxlint-tsgolint": "^7.0.2002",
+    "prettier": "^3.9.9",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-packagejson": "^3.0.2",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "semantic-release": "25.0.9",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.1"
   },
   "engines": {
     "bun": ">=1.3",
