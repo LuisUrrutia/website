@@ -58,6 +58,7 @@ interface BunPackage {
 	name: string;
 	version: string;
 	dependencyNames: string[];
+	optionalDependencyNames: string[];
 	requiredPeerDependencyNames: string[];
 	optionalPeerDependencyNames: string[];
 }
@@ -171,7 +172,6 @@ function parseBunLock(
 		...requireRecord(lock.packages, "bun.lock.packages"),
 	};
 	const bundledValues: Record<string, unknown> = {};
-	const bundleParents = new Set<string>();
 	for (const [key, value] of Object.entries(bundledPackages)) {
 		const metadata = requireRecord(value, `bundled package ${key}`);
 		if (
@@ -184,11 +184,15 @@ function parseBunLock(
 		if (!key.endsWith(suffix)) {
 			throw new Error(`bundled package key ${key} does not match its name`);
 		}
-		bundleParents.add(key.slice(0, -suffix.length));
 		bundledValues[key] = [`${metadata.name}@${metadata.version}`, "", metadata];
 	}
+	const bundledKeys = Object.keys(bundledValues);
 	for (const key of Object.keys(packageValues)) {
-		if ([...bundleParents].some((parent) => key.startsWith(`${parent}/`))) {
+		if (
+			bundledKeys.some(
+				(bundle) => key === bundle || key.startsWith(`${bundle}/`),
+			)
+		) {
 			delete packageValues[key];
 		}
 	}
@@ -217,27 +221,45 @@ function parseBunLock(
 			packageMetadata.peerDependencies,
 			`bun.lock.packages.${key}[2].peerDependencies`,
 		);
-		const optionalPeerDependencyNames = parseStringArray(
-			packageMetadata.optionalPeers,
-			`bun.lock.packages.${key}[2].optionalPeers`,
+		const optionalPeerDependencies = new Set(
+			parseStringArray(
+				packageMetadata.optionalPeers,
+				`bun.lock.packages.${key}[2].optionalPeers`,
+			),
 		);
-		const optionalPeerDependencies = new Set(optionalPeerDependencyNames);
+		const peerDependencyMetadata =
+			packageMetadata.peerDependenciesMeta === undefined
+				? {}
+				: requireRecord(
+						packageMetadata.peerDependenciesMeta,
+						`bun.lock.packages.${key}[2].peerDependenciesMeta`,
+					);
+		for (const [name, value] of Object.entries(peerDependencyMetadata)) {
+			const metadata = requireRecord(
+				value,
+				`bun.lock.packages.${key}[2].peerDependenciesMeta.${name}`,
+			);
+			if (
+				metadata.optional === true &&
+				Object.hasOwn(packagePeerDependencies, name)
+			) {
+				optionalPeerDependencies.add(name);
+			}
+		}
 
 		packages.set(key, {
 			name,
 			version,
-			dependencyNames: [
-				...new Set([
-					...Object.keys(packageDependencies),
-					...Object.keys(packageOptionalDependencies),
-				]),
-			].sort(),
+			dependencyNames: Object.keys(packageDependencies)
+				.filter((name) => !Object.hasOwn(packageOptionalDependencies, name))
+				.sort(),
+			optionalDependencyNames: Object.keys(packageOptionalDependencies).sort(),
 			requiredPeerDependencyNames: Object.keys(packagePeerDependencies)
 				.filter(
 					(dependencyName) => !optionalPeerDependencies.has(dependencyName),
 				)
 				.sort(),
-			optionalPeerDependencyNames,
+			optionalPeerDependencyNames: [...optionalPeerDependencies].sort(),
 		});
 	}
 
@@ -277,11 +299,11 @@ function getParentPackageKey(
 	return parentKey;
 }
 
-function resolveDependencyKey(
+function findDependencyKey(
 	packages: Map<string, BunPackage>,
 	parentKey: string,
 	dependencyName: string,
-): string {
+): string | undefined {
 	let packageKey: string | undefined = parentKey;
 	while (packageKey !== undefined) {
 		const nestedKey = `${packageKey}/${dependencyName}`;
@@ -292,7 +314,7 @@ function resolveDependencyKey(
 	if (packages.get(dependencyName)?.name === dependencyName) {
 		return dependencyName;
 	}
-	throw new Error(`${parentKey} depends on missing package ${dependencyName}`);
+	return undefined;
 }
 
 function findPeerDependencyKey(
@@ -332,9 +354,19 @@ function resolvePackageDependencyKeys(
 	const packageRecord = lock.packages.get(packageKey);
 	if (!packageRecord) throw new Error(`missing package ${packageKey}`);
 
-	const dependencyKeys = packageRecord.dependencyNames.map((dependencyName) =>
-		resolveDependencyKey(lock.packages, packageKey, dependencyName),
-	);
+	const dependencyKeys = packageRecord.dependencyNames.map((dependencyName) => {
+		const key = findDependencyKey(lock.packages, packageKey, dependencyName);
+		if (!key) {
+			throw new Error(
+				`${packageKey} depends on missing package ${dependencyName}`,
+			);
+		}
+		return key;
+	});
+	for (const dependencyName of packageRecord.optionalDependencyNames) {
+		const key = findDependencyKey(lock.packages, packageKey, dependencyName);
+		if (key) dependencyKeys.push(key);
+	}
 	for (const dependencyName of packageRecord.requiredPeerDependencyNames) {
 		const peerKey = findPeerDependencyKey(
 			lock.packages,

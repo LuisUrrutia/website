@@ -19,6 +19,116 @@ const metadata = {
 };
 
 describe("createBunDependencySnapshot", () => {
+	it.each([false, true])(
+		"preserves non-bundled nested dependencies with conflicting root copy: %s",
+		(conflictingRoot) => {
+			const snapshot = createBunDependencySnapshot(
+				{
+					workspaces: { "": { dependencies: { app: "1.0.0" } } },
+					packages: {
+						app: [
+							"app@1.0.0",
+							"",
+							{ dependencies: { bundled: "^1.0.0", regular: "^2.0.0" } },
+						],
+						"app/bundled": ["bundled@1.2.0", "", {}],
+						"app/regular": ["regular@2.1.0", "", {}],
+						...(conflictingRoot ? { regular: ["regular@3.0.0", "", {}] } : {}),
+					},
+				},
+				metadata,
+				{ "app/bundled": { name: "bundled", version: "1.1.0" } },
+			);
+			const resolved = snapshot.manifests["bun.lock"].resolved;
+
+			expect(resolved["pkg:npm/app@1.0.0"].dependencies).toEqual([
+				"pkg:npm/bundled@1.1.0",
+				"pkg:npm/regular@2.1.0",
+			]);
+			expect(resolved["pkg:npm/regular@3.0.0"]).toBeUndefined();
+		},
+	);
+
+	it("includes available bundled optional dependencies and skips absent ones", () => {
+		const snapshot = createBunDependencySnapshot(
+			{
+				workspaces: { "": { dependencies: { app: "1.0.0" } } },
+				packages: {
+					app: ["app@1.0.0", "", { dependencies: { parser: "1.0.0" } }],
+				},
+			},
+			metadata,
+			{
+				"app/parser": {
+					name: "parser",
+					version: "1.0.0",
+					dependencies: { absent: "1.0.0" },
+					optionalDependencies: { available: "1.0.0", absent: "1.0.0" },
+				},
+				"app/available": { name: "available", version: "1.0.0" },
+			},
+		);
+		const resolved = snapshot.manifests["bun.lock"].resolved;
+
+		expect(resolved["pkg:npm/parser@1.0.0"].dependencies).toEqual([
+			"pkg:npm/available@1.0.0",
+		]);
+		expect(resolved["pkg:npm/available@1.0.0"].scope).toBe("runtime");
+	});
+
+	it("honors optional peer metadata from bundled package manifests", () => {
+		const snapshot = createBunDependencySnapshot(
+			{
+				workspaces: { "": { dependencies: { app: "1.0.0" } } },
+				packages: {
+					app: ["app@1.0.0", "", { dependencies: { parser: "1.0.0" } }],
+				},
+			},
+			metadata,
+			{
+				"app/parser": {
+					name: "parser",
+					version: "1.0.0",
+					peerDependencies: { host: "2.0.0", addon: "1.0.0" },
+					peerDependenciesMeta: { addon: { optional: true } },
+				},
+				"app/host": { name: "host", version: "2.0.0" },
+			},
+		);
+		const resolved = snapshot.manifests["bun.lock"].resolved;
+
+		expect(resolved["pkg:npm/parser@1.0.0"].dependencies).toEqual([
+			"pkg:npm/host@2.0.0",
+		]);
+	});
+
+	it.each([
+		{
+			name: "regular dependency",
+			declarations: { dependencies: { missing: "1.0.0" } },
+			error: "app/parser depends on missing package missing",
+		},
+		{
+			name: "required peer",
+			declarations: { peerDependencies: { missing: "1.0.0" } },
+			error: "app/parser depends on missing peer package missing",
+		},
+	])("rejects a missing bundled $name", ({ declarations, error }) => {
+		const lock = {
+			workspaces: { "": { dependencies: { app: "1.0.0" } } },
+			packages: {
+				app: ["app@1.0.0", "", { dependencies: { parser: "1.0.0" } }],
+			},
+		};
+		const bundledPackages = {
+			"app/parser": { name: "parser", version: "1.0.0", ...declarations },
+		};
+
+		expect(() =>
+			createBunDependencySnapshot(lock, metadata, bundledPackages),
+		).toThrow(error);
+	});
+
 	it("reports shipped bundled versions instead of lockfile resolutions", () => {
 		const lock = {
 			workspaces: { "": { devDependencies: { npm: "11.21.0" } } },
