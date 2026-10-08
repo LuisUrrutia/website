@@ -10,6 +10,12 @@ updates:
       default-days: 7
       semver-major-days: 7
     ignore:
+      # These releases require Node 24 and ship invalid #/ imports.
+      # Keep gzip/Brotli on 1.x. Owner: @LuisUrrutia. Review by 2026-11-08.
+      - dependency-name: "astro-compressor"
+        versions:
+          - "2.0.0"
+          - "2.0.1"
       # @astrojs/check 0.9.10 supports TypeScript 5 and 6 only.
       # Owner: @LuisUrrutia. Review by 2026-11-28 or when its peer range expands.
       - dependency-name: "typescript"
