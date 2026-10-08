@@ -20,15 +20,13 @@ const linkPolicy = getLinkPolicy(href);
 
 <a href={href} class={className} {...linkPolicy.newTabAttributes} {...rest}>
 	<slot />
-	{
-		linkPolicy.isExternal && (
-			<>
-				<span class="sr-only">{t("a11y.opensInNewTab")}</span>
-				<IconExternalLink
-					class="ml-0.5 inline-block size-3 align-baseline opacity-70"
-					aria-hidden="true"
-				/>
-			</>
-		)
-	}
+	{linkPolicy.isExternal && (
+		<>
+			<span class="sr-only">{t("a11y.opensInNewTab")}</span>
+			<IconExternalLink
+				class="ml-0.5 inline-block size-3 align-baseline opacity-70"
+				aria-hidden="true"
+			/>
+		</>
+	)}
 </a>

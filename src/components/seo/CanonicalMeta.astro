@@ -36,9 +36,7 @@ const localizedUrls = getLocalizedUrls({
 ---
 
 <link rel="canonical" href={localizedUrls.canonicalUrl} />
-{
-	Object.entries(localizedUrls.alternateUrls).map(([hreflang, href]) => (
-		<link rel="alternate" hreflang={hreflang} href={href} />
-	))
-}
+{Object.entries(localizedUrls.alternateUrls).map(([hreflang, href]) => (
+	<link rel="alternate" hreflang={hreflang} href={href} />
+))}
 <link rel="alternate" hreflang="x-default" href={localizedUrls.xDefaultUrl} />

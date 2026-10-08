@@ -77,14 +77,9 @@ const statusDescriptionKey =
 					description={t(statusDescriptionKey)}
 				/>
 				<div class="flex items-center gap-3">
-					{
-						socials && (
-							<SocialLinks
-								ariaLabel={t("a11y.socialLinksHeader")}
-								{...socials}
-							/>
-						)
-					}
+					{socials && (
+						<SocialLinks ariaLabel={t("a11y.socialLinksHeader")} {...socials} />
+					)}
 				</div>
 			</div>
 
@@ -102,7 +97,8 @@ const statusDescriptionKey =
 							>{employer.name}<span class="sr-only">
 								{t("a11y.opensInNewTab")}
 							</span></a
-						> · {t("hero.tagline.tech")}
+						>
+						· {t("hero.tagline.tech")}
 					</p>
 				</div>
 				<p class="relative text-base font-light text-pretty">
@@ -121,21 +117,17 @@ const statusDescriptionKey =
 					<IconLocation class="size-4" aria-hidden="true" />
 					<span>{t("hero.location")}</span>
 				</div>
-				{
-					contactHref && (
-						<a
-							href={contactHref}
-							aria-label={contactAriaLabel}
-							class="group text-accent focus-visible:ring-accent focus-visible:ring-offset-card inline-flex min-h-11 items-center gap-1.5 rounded-lg px-1 text-sm font-medium underline-offset-4 transition-colors hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:min-h-0 sm:translate-y-px"
-						>
-							<span>{t("contact.cta")}</span>
-							<IconArrowRight
-								class="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
-								aria-hidden="true"
-							/>
-						</a>
-					)
-				}
+				{contactHref && <a
+					href={contactHref}
+					aria-label={contactAriaLabel}
+					class="group text-accent focus-visible:ring-accent focus-visible:ring-offset-card inline-flex min-h-11 items-center gap-1.5 rounded-lg px-1 text-sm font-medium underline-offset-4 transition-colors hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:min-h-0 sm:translate-y-px"
+				>
+					<span>{t("contact.cta")}</span>
+					<IconArrowRight
+						class="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
+						aria-hidden="true"
+					/>
+				</a>}
 			</div>
 		</div>
 	</div>

@@ -58,31 +58,33 @@ const Tag = href ? "a" : "div";
 	<div class:list={["flex-1 pb-8", !hideBorder && "border-border border-b"]}>
 		<div class="flex flex-col gap-3">
 			<Pill
-				style={!lazyTransition && pillTransitionName
-					? `view-transition-name: ${pillTransitionName}`
-					: undefined}
+				style={
+					!lazyTransition && pillTransitionName
+						? `view-transition-name: ${pillTransitionName}`
+						: undefined
+				}
 				data-transition-name={lazyTransition ? pillTransitionName : undefined}
 				>{category}</Pill
 			>
 			<Heading
 				class="text-title text-lg font-medium underline decoration-transparent decoration-1 underline-offset-2 transition-colors duration-200 group-hover:decoration-current motion-reduce:transition-none md:text-xl"
-				style={!lazyTransition && titleTransitionName
-					? `view-transition-name: ${titleTransitionName}`
-					: undefined}
+				style={
+					!lazyTransition && titleTransitionName
+						? `view-transition-name: ${titleTransitionName}`
+						: undefined
+				}
 				data-transition-name={lazyTransition ? titleTransitionName : undefined}
 			>
 				{title}
 			</Heading>
 		</div>
 	</div>
-	{
-		href && (
-			<IconArrowRight
-				class="text-subtitle absolute top-1/2 right-0 size-5 shrink-0 translate-x-2 -translate-y-1/2 opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100 motion-reduce:transition-none"
-				aria-hidden="true"
-			/>
-		)
-	}
+	{href && (
+		<IconArrowRight
+			class="text-subtitle absolute top-1/2 right-0 size-5 shrink-0 translate-x-2 -translate-y-1/2 opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100 motion-reduce:transition-none"
+			aria-hidden="true"
+		/>
+	)}
 </Tag>
 
 <script>

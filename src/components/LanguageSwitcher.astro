@@ -39,13 +39,9 @@ const homeUrls = Object.fromEntries(
 		id="language-select"
 		class="bg-card text-foreground hover:bg-card/80 focus:ring-accent min-h-11 cursor-pointer appearance-none rounded px-2 py-1 pr-7 text-sm transition-colors focus:ring-2 focus:outline-none sm:min-h-0"
 	>
-		{
-			locales.map((locale) => (
-				<option value={locale} selected={locale === lang}>
-					{localeNames[locale]}
-				</option>
-			))
-		}
+		{locales.map((locale) => <option value={locale} selected={locale === lang}>
+			{localeNames[locale]}
+		</option>)}
 	</select>
 	<svg
 		class="text-subtitle pointer-events-none absolute top-1/2 right-1.5 size-4 -translate-y-1/2"
@@ -57,7 +53,8 @@ const homeUrls = Object.fromEntries(
 		<path
 			fill-rule="evenodd"
 			d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-			clip-rule="evenodd"></path>
+			clip-rule="evenodd"
+		></path>
 	</svg>
 </div>
 

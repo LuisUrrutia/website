@@ -49,11 +49,9 @@ const hiddenTechIcons = technologies
 			jobTitle={t("meta.jobTitle")}
 			description={description}
 		/>
-		{
-			hiddenTechIcons.map((href) => (
-				<link rel="prefetch" href={href} as="image" />
-			))
-		}
+		{hiddenTechIcons.map((href) => (
+			<link rel="prefetch" href={href} as="image" />
+		))}
 	</Fragment>
 	<Navbar />
 	<Container
@@ -71,14 +69,12 @@ const hiddenTechIcons = technologies
 			technologies={technologies}
 			initialVisible={STACK_INITIAL_VISIBLE}
 		/>
-		{
-			posts.length > 0 && (
-				<LatestPostsSection
-					posts={posts}
-					viewMoreHref={getLocalizedPath("/blog", lang)}
-				/>
-			)
-		}
+		{posts.length > 0 && (
+			<LatestPostsSection
+				posts={posts}
+				viewMoreHref={getLocalizedPath("/blog", lang)}
+			/>
+		)}
 		<TestimonialsSection testimonials={testimonials} />
 		<ContactSection contactHref={contactHref} socials={socials} />
 	</Container>

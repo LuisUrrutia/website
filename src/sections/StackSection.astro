@@ -74,11 +74,9 @@ technologies.forEach((technology, index) => {
 					class="stack-clear absolute top-0 right-0 min-[465px]:static min-[465px]:order-last sm:order-first"
 					aria-label={t("common.clearFilters")}
 				/>
-				{
-					categories.map(({ id, label }) => (
-						<FilterChip class="stack-filter" category={id} label={label} />
-					))
-				}
+				{categories.map(({ id, label }) => (
+					<FilterChip class="stack-filter" category={id} label={label} />
+				))}
 			</div>
 		</header>
 
@@ -87,19 +85,17 @@ technologies.forEach((technology, index) => {
 			class="stack-grid grid list-none grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
 			role="list"
 		>
-			{
-				technologies.map((tech, index) => (
-					<li class:list={["stack-item", { hidden: index >= initialVisible }]}>
-						<TechItem
-							name={tech.name}
-							icon={tech.icon}
-							colorMode={tech.colorMode}
-							experienceText={formatExperience(tech.experience, t)}
-							loading={index < initialVisible ? "eager" : "lazy"}
-						/>
-					</li>
-				))
-			}
+			{technologies.map((tech, index) => <li
+				class:list={["stack-item", { hidden: index >= initialVisible }]}
+			>
+				<TechItem
+					name={tech.name}
+					icon={tech.icon}
+					colorMode={tech.colorMode}
+					experienceText={formatExperience(tech.experience, t)}
+					loading={index < initialVisible ? "eager" : "lazy"}
+				/>
+			</li>)}
 		</ul>
 
 		<ExpandButton
@@ -113,8 +109,11 @@ technologies.forEach((technology, index) => {
 			]}
 		/>
 
-		<div class="stack-status sr-only" aria-live="polite" aria-atomic="true">
-		</div>
+		<div
+			class="stack-status sr-only"
+			aria-live="polite"
+			aria-atomic="true"
+		></div>
 	</div>
 </Card>
 

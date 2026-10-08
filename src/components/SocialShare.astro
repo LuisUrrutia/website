@@ -93,19 +93,15 @@ const shareLinks = [
 		aria-labelledby={labelId}
 		class="flex flex-wrap items-center gap-1"
 	>
-		{
-			shareLinks.map(({ url, label, Icon }) => (
-				<a
-					href={url}
-					{...newTabAttributes}
-					aria-label={label}
-					class="press-feedback text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background hover:bg-title/5 flex size-8 items-center justify-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-				>
-					<Icon class="size-4" aria-hidden="true" />
-					<span class="sr-only">{t("a11y.opensInNewTab")}</span>
-				</a>
-			))
-		}
+		{shareLinks.map(({ url, label, Icon }) => <a
+			href={url}
+			{...newTabAttributes}
+			aria-label={label}
+			class="press-feedback text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background hover:bg-title/5 flex size-8 items-center justify-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+		>
+			<Icon class="size-4" aria-hidden="true" />
+			<span class="sr-only">{t("a11y.opensInNewTab")}</span>
+		</a>)}
 		<button
 			type="button"
 			class="copy-link press-feedback text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background hover:bg-title/5 flex size-8 cursor-pointer items-center justify-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
@@ -118,7 +114,8 @@ const shareLinks = [
 	<span
 		class="copy-feedback text-accent text-sm opacity-0 transition-opacity motion-reduce:transition-none"
 		aria-live="polite"
-		data-copied-text={t("share.copied")}></span>
+		data-copied-text={t("share.copied")}
+	></span>
 </div>
 
 <script>

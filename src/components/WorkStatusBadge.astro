@@ -29,24 +29,18 @@ const descriptionId = description ? "work-status-description" : undefined;
 		role="status"
 		aria-describedby={descriptionId}
 	>
-		{
-			isOpen ? (
-				<span class="ripple size-1.5 rounded-full" aria-hidden="true">
-					<IconCircle class="size-full rounded-full" />
-				</span>
-			) : (
-				<IconLaptop class="text-title size-3" aria-hidden="true" />
-			)
-		}
+		{isOpen ? (
+			<span class="ripple size-1.5 rounded-full" aria-hidden="true">
+				<IconCircle class="size-full rounded-full" />
+			</span>
+		) : (
+			<IconLaptop class="text-title size-3" aria-hidden="true" />
+		)}
 		{statusText}
 	</div>
-	{
-		description && (
-			<span id={descriptionId} class="sr-only">
-				{description}
-			</span>
-		)
-	}
+	{description && <span id={descriptionId} class="sr-only">
+		{description}
+	</span>}
 </div>
 
 <style>
