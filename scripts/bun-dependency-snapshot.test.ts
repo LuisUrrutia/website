@@ -1,5 +1,11 @@
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { createBunDependencySnapshot } from "./bun-dependency-snapshot";
+import {
+	createBunDependencySnapshot,
+	readBundledPackages,
+} from "./bun-dependency-snapshot";
 
 const metadata = {
 	sha: "0123456789abcdef0123456789abcdef01234567",
@@ -13,6 +19,153 @@ const metadata = {
 };
 
 describe("createBunDependencySnapshot", () => {
+	it.each([false, true])(
+		"preserves non-bundled nested dependencies with conflicting root copy: %s",
+		(conflictingRoot) => {
+			const snapshot = createBunDependencySnapshot(
+				{
+					workspaces: { "": { dependencies: { app: "1.0.0" } } },
+					packages: {
+						app: [
+							"app@1.0.0",
+							"",
+							{ dependencies: { bundled: "^1.0.0", regular: "^2.0.0" } },
+						],
+						"app/bundled": ["bundled@1.2.0", "", {}],
+						"app/regular": ["regular@2.1.0", "", {}],
+						...(conflictingRoot ? { regular: ["regular@3.0.0", "", {}] } : {}),
+					},
+				},
+				metadata,
+				{ "app/bundled": { name: "bundled", version: "1.1.0" } },
+			);
+			const resolved = snapshot.manifests["bun.lock"].resolved;
+
+			expect(resolved["pkg:npm/app@1.0.0"].dependencies).toEqual([
+				"pkg:npm/bundled@1.1.0",
+				"pkg:npm/regular@2.1.0",
+			]);
+			expect(resolved["pkg:npm/regular@3.0.0"]).toBeUndefined();
+		},
+	);
+
+	it("includes available bundled optional dependencies and skips absent ones", () => {
+		const snapshot = createBunDependencySnapshot(
+			{
+				workspaces: { "": { dependencies: { app: "1.0.0" } } },
+				packages: {
+					app: ["app@1.0.0", "", { dependencies: { parser: "1.0.0" } }],
+				},
+			},
+			metadata,
+			{
+				"app/parser": {
+					name: "parser",
+					version: "1.0.0",
+					dependencies: { absent: "1.0.0" },
+					optionalDependencies: { available: "1.0.0", absent: "1.0.0" },
+				},
+				"app/available": { name: "available", version: "1.0.0" },
+			},
+		);
+		const resolved = snapshot.manifests["bun.lock"].resolved;
+
+		expect(resolved["pkg:npm/parser@1.0.0"].dependencies).toEqual([
+			"pkg:npm/available@1.0.0",
+		]);
+		expect(resolved["pkg:npm/available@1.0.0"].scope).toBe("runtime");
+	});
+
+	it("honors optional peer metadata from bundled package manifests", () => {
+		const snapshot = createBunDependencySnapshot(
+			{
+				workspaces: { "": { dependencies: { app: "1.0.0" } } },
+				packages: {
+					app: ["app@1.0.0", "", { dependencies: { parser: "1.0.0" } }],
+				},
+			},
+			metadata,
+			{
+				"app/parser": {
+					name: "parser",
+					version: "1.0.0",
+					peerDependencies: { host: "2.0.0", addon: "1.0.0" },
+					peerDependenciesMeta: { addon: { optional: true } },
+				},
+				"app/host": { name: "host", version: "2.0.0" },
+			},
+		);
+		const resolved = snapshot.manifests["bun.lock"].resolved;
+
+		expect(resolved["pkg:npm/parser@1.0.0"].dependencies).toEqual([
+			"pkg:npm/host@2.0.0",
+		]);
+	});
+
+	it.each([
+		{
+			name: "regular dependency",
+			declarations: { dependencies: { missing: "1.0.0" } },
+			error: "app/parser depends on missing package missing",
+		},
+		{
+			name: "required peer",
+			declarations: { peerDependencies: { missing: "1.0.0" } },
+			error: "app/parser depends on missing peer package missing",
+		},
+	])("rejects a missing bundled $name", ({ declarations, error }) => {
+		const lock = {
+			workspaces: { "": { dependencies: { app: "1.0.0" } } },
+			packages: {
+				app: ["app@1.0.0", "", { dependencies: { parser: "1.0.0" } }],
+			},
+		};
+		const bundledPackages = {
+			"app/parser": { name: "parser", version: "1.0.0", ...declarations },
+		};
+
+		expect(() =>
+			createBunDependencySnapshot(lock, metadata, bundledPackages),
+		).toThrow(error);
+	});
+
+	it("reports shipped bundled versions instead of lockfile resolutions", () => {
+		const lock = {
+			workspaces: { "": { devDependencies: { npm: "11.21.0" } } },
+			packages: {
+				npm: ["npm@11.21.0", "", { dependencies: { parser: "^1.0.0" } }],
+				"npm/parser": ["parser@1.2.0", "", {}],
+				"npm/parser/tokenizer": ["tokenizer@2.2.0", "", {}],
+			},
+		};
+		const bundledPackages = {
+			"npm/parser": {
+				name: "parser",
+				version: "1.1.0",
+				dependencies: { tokenizer: "^2.0.0" },
+			},
+			"npm/tokenizer": { name: "tokenizer", version: "2.1.0" },
+		};
+
+		const snapshot = createBunDependencySnapshot(
+			lock,
+			metadata,
+			bundledPackages,
+		);
+		const resolved = snapshot.manifests["bun.lock"].resolved;
+
+		expect(resolved["pkg:npm/parser@1.2.0"]).toBeUndefined();
+		expect(resolved["pkg:npm/tokenizer@2.2.0"]).toBeUndefined();
+		expect(resolved["pkg:npm/npm@11.21.0"].dependencies).toEqual([
+			"pkg:npm/parser@1.1.0",
+		]);
+		expect(resolved["pkg:npm/parser@1.1.0"]).toMatchObject({
+			scope: "development",
+			relationship: "indirect",
+			dependencies: ["pkg:npm/tokenizer@2.1.0"],
+		});
+	});
+
 	it("preserves direct, transitive, runtime, and development relationships", () => {
 		const snapshot = createBunDependencySnapshot(
 			{
@@ -122,5 +275,74 @@ describe("createBunDependencySnapshot", () => {
 				metadata,
 			),
 		).toThrow("app depends on missing peer package missing");
+	});
+});
+
+describe("readBundledPackages", () => {
+	it("fails when an installed dependency declares missing bundled files", async () => {
+		const root = await mkdtemp(join(tmpdir(), "bun-dependency-snapshot-"));
+		try {
+			const directory = join(root, "node_modules", "npm");
+			await mkdir(directory, { recursive: true });
+			await writeFile(
+				join(directory, "package.json"),
+				JSON.stringify({
+					name: "npm",
+					version: "11.21.0",
+					bundleDependencies: ["parser"],
+				}),
+			);
+			const lock = {
+				workspaces: { "": { devDependencies: { npm: "11.21.0" } } },
+				packages: { npm: ["npm@11.21.0", "", {}] },
+			};
+
+			await expect(readBundledPackages(lock, root)).rejects.toMatchObject({
+				code: "ENOENT",
+			});
+		} finally {
+			await rm(root, { recursive: true });
+		}
+	});
+
+	it("reads scoped and nested packages shipped inside a dependency", async () => {
+		const root = await mkdtemp(join(tmpdir(), "bun-dependency-snapshot-"));
+		const manifests = {
+			npm: { name: "npm", version: "11.21.0", bundleDependencies: ["parser"] },
+			"npm/node_modules/parser": { name: "parser", version: "1.1.0" },
+			"npm/node_modules/parser/node_modules/nested": {
+				name: "nested",
+				version: "2.1.0",
+			},
+			"npm/node_modules/@scope/tokenizer": {
+				name: "@scope/tokenizer",
+				version: "3.1.0",
+			},
+		};
+		try {
+			for (const [path, manifest] of Object.entries(manifests)) {
+				const directory = join(root, "node_modules", path);
+				await mkdir(directory, { recursive: true });
+				await writeFile(
+					join(directory, "package.json"),
+					JSON.stringify(manifest),
+				);
+			}
+			const lock = {
+				workspaces: { "": { devDependencies: { npm: "11.21.0" } } },
+				packages: { npm: ["npm@11.21.0", "", {}] },
+			};
+
+			const packages = await readBundledPackages(lock, root);
+
+			expect(packages).toEqual({
+				"npm/parser": manifests["npm/node_modules/parser"],
+				"npm/parser/nested":
+					manifests["npm/node_modules/parser/node_modules/nested"],
+				"npm/@scope/tokenizer": manifests["npm/node_modules/@scope/tokenizer"],
+			});
+		} finally {
+			await rm(root, { recursive: true });
+		}
 	});
 });

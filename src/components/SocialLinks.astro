@@ -67,29 +67,20 @@ const links = socialConfig
 	.filter((link) => link !== null);
 ---
 
-{
-	links.length > 0 && (
-		<Wrapper
-			aria-label={Wrapper === "nav" ? ariaLabel : undefined}
-			class:list={[
-				"flex gap-0 sm:gap-3.5",
-				vertical ? "flex-col" : "items-center",
-			]}
-		>
-			{links.map(({ key, icon: Icon, url, label }) => (
-				<a
-					href={url}
-					{...newTabAttributes}
-					class:list={["social-link", `social-link--${key}`]}
-					aria-label={label}
-				>
-					<Icon class={iconClass} aria-hidden="true" />
-					<span class="sr-only">{t("a11y.opensInNewTab")}</span>
-				</a>
-			))}
-		</Wrapper>
-	)
-}
+{links.length > 0 && <Wrapper
+	aria-label={Wrapper === "nav" ? ariaLabel : undefined}
+	class:list={["flex gap-0 sm:gap-3.5", vertical ? "flex-col" : "items-center"]}
+>
+	{links.map(({ key, icon: Icon, url, label }) => <a
+		href={url}
+		{...newTabAttributes}
+		class:list={["social-link", `social-link--${key}`]}
+		aria-label={label}
+	>
+		<Icon class={iconClass} aria-hidden="true" />
+		<span class="sr-only">{t("a11y.opensInNewTab")}</span>
+	</a>)}
+</Wrapper>}
 
 <style>
 	.social-link {

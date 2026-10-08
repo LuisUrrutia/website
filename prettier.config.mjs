@@ -5,6 +5,7 @@ import * as prettierPluginOxc from "@prettier/plugin-oxc";
  * @type {import("prettier").Config}
  */
 const config = {
+	astroCompressHTML: "html",
 	plugins: [
 		prettierPluginOxc,
 		"prettier-plugin-astro",

@@ -38,6 +38,9 @@ jobs:
         with:
           bun-version-file: ".bun-version"
 
+      - name: Install dependencies for bundled package inventory
+        run: bun install --frozen-lockfile --ignore-scripts
+
       - name: Prepare dependency snapshot
         env:
           SNAPSHOT_PATH: ${{ runner.temp }}/bun-dependency-snapshot.json

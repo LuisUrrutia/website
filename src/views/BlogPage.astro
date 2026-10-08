@@ -57,27 +57,23 @@ const baseUrl = getLocalizedPath("/blog", lang);
 				<p class="text-subtitle mt-2">{t("blog.pageDescription")}</p>
 			</header>
 
-			{
-				posts.length === 0 ? (
-					<p class="text-subtitle py-8 text-center">{t("blog.empty")}</p>
-				) : (
-					<ul class="m-0 flex list-none flex-col p-0">
-						{posts.map((post, index) => (
-							<li>
-								<BlogEntry
-									title={post.data.title}
-									category={post.data.category}
-									date={post.data.date}
-									href={getBlogPostPath(post, lang)}
-									slug={getSlugWithoutLocale(post.id)}
-									headingLevel="h2"
-									hideBorder={index === posts.length - 1}
-								/>
-							</li>
-						))}
-					</ul>
-				)
-			}
+			{posts.length === 0 ? (
+				<p class="text-subtitle py-8 text-center">{t("blog.empty")}</p>
+			) : (
+				<ul class="m-0 flex list-none flex-col p-0">
+					{posts.map((post, index) => <li>
+						<BlogEntry
+							title={post.data.title}
+							category={post.data.category}
+							date={post.data.date}
+							href={getBlogPostPath(post, lang)}
+							slug={getSlugWithoutLocale(post.id)}
+							headingLevel="h2"
+							hideBorder={index === posts.length - 1}
+						/>
+					</li>)}
+				</ul>
+			)}
 
 			<Pagination
 				currentPage={currentPage}

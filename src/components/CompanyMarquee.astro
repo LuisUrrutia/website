@@ -35,20 +35,16 @@ const newTabAttributes = getNewTabLinkAttributes();
 	<div class="marquee-container" style={`--marquee-duration: ${duration}s`}>
 		<!-- Keyboard focus reveals the complete, stationary company list. -->
 		<ul class="company-list sr-only" aria-label={label}>
-			{
-				companies.map((company) => (
-					<li>
-						<a
-							href={company.url}
-							{...newTabAttributes}
-							class="text-accent focus-visible:ring-accent inline-flex min-h-11 items-center rounded-sm px-2 underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-						>
-							{company.name}
-							<span class="sr-only">{t("a11y.opensInNewTab")}</span>
-						</a>
-					</li>
-				))
-			}
+			{companies.map((company) => <li>
+				<a
+					href={company.url}
+					{...newTabAttributes}
+					class="text-accent focus-visible:ring-accent inline-flex min-h-11 items-center rounded-sm px-2 underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+				>
+					{company.name}
+					<span class="sr-only">{t("a11y.opensInNewTab")}</span>
+				</a>
+			</li>)}
 		</ul>
 
 		<!-- Visual marquee (hidden from screen readers) -->
@@ -59,43 +55,39 @@ const newTabAttributes = getNewTabLinkAttributes();
 			]}
 			aria-hidden="true"
 		>
-			{
-				[0, 1].map((iteration) => (
-					<div class="marquee-content">
-						{companies.map((company, index) => (
-							<>
-								{index > 0 && <IconGitCommit class="marquee-separator" />}
-								<a
-									href={company.url}
-									{...newTabAttributes}
-									tabindex="-1"
-									class="marquee-link"
-								>
-									<img
-										src={company.logo}
-										alt={`${company.name} logo`}
-										class="marquee-logo marquee-logo--light"
-										width={company.width}
-										height="28"
-										loading={iteration === 0 ? "eager" : "lazy"}
-										decoding="async"
-									/>
-									<img
-										src={company.logoDark}
-										alt=""
-										class="marquee-logo marquee-logo--dark"
-										width={company.width}
-										height="28"
-										loading="lazy"
-										decoding="async"
-									/>
-								</a>
-							</>
-						))}
-						<IconGitCommit class="marquee-separator" />
-					</div>
-				))
-			}
+			{[0, 1].map((iteration) => <div class="marquee-content">
+				{companies.map((company, index) => (
+					<>
+						{index > 0 && <IconGitCommit class="marquee-separator" />}
+						<a
+							href={company.url}
+							{...newTabAttributes}
+							tabindex="-1"
+							class="marquee-link"
+						>
+							<img
+								src={company.logo}
+								alt={`${company.name} logo`}
+								class="marquee-logo marquee-logo--light"
+								width={company.width}
+								height="28"
+								loading={iteration === 0 ? "eager" : "lazy"}
+								decoding="async"
+							/>
+							<img
+								src={company.logoDark}
+								alt=""
+								class="marquee-logo marquee-logo--dark"
+								width={company.width}
+								height="28"
+								loading="lazy"
+								decoding="async"
+							/>
+						</a>
+					</>
+				))}
+				<IconGitCommit class="marquee-separator" />
+			</div>)}
 		</div>
 	</div>
 </div>

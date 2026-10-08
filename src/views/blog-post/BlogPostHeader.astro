@@ -28,13 +28,9 @@ const { post, metadata, t } = Astro.props;
 		<span class="text-subtitle text-sm"
 			>&middot; {metadata.formattedReadingTime}</span
 		>
-		{
-			metadata.formattedUpdatedDate && (
-				<span class="text-subtitle text-sm">
-					&middot; {t("blog.updatedOn")} {metadata.formattedUpdatedDate}
-				</span>
-			)
-		}
+		{metadata.formattedUpdatedDate && <span class="text-subtitle text-sm">
+			&middot; {t("blog.updatedOn")} {metadata.formattedUpdatedDate}
+		</span>}
 	</div>
 
 	<h1
@@ -48,17 +44,13 @@ const { post, metadata, t } = Astro.props;
 		{post.data.description}
 	</p>
 
-	{
-		metadata.alternateUrl && (
-			<p class="text-subtitle mt-4 text-sm">
-				{t("blog.alsoAvailable")}{" "}
-				<a
-					href={metadata.alternateUrl}
-					class="text-accent focus-visible:ring-accent focus-visible:ring-offset-card rounded-sm underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-				>
-					{localeNames[metadata.alternateLang]}
-				</a>
-			</p>
-		)
-	}
+	{metadata.alternateUrl && <p class="text-subtitle mt-4 text-sm">
+		{t("blog.alsoAvailable")}{" "}
+		<a
+			href={metadata.alternateUrl}
+			class="text-accent focus-visible:ring-accent focus-visible:ring-offset-card rounded-sm underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+		>
+			{localeNames[metadata.alternateLang]}
+		</a>
+	</p>}
 </header>

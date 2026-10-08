@@ -58,74 +58,68 @@ function getPageUrl(page: number): string {
 }
 ---
 
-{
-	totalPages > 1 && (
-		<nav
-			class:list={["flex items-center justify-center gap-2", className]}
-			aria-label={t("a11y.pagination")}
+{totalPages > 1 && <nav
+	class:list={["flex items-center justify-center gap-2", className]}
+	aria-label={t("a11y.pagination")}
+>
+	{/* Previous button */}
+	{currentPage > 1 ? (
+		<a
+			href={getPageUrl(currentPage - 1)}
+			class="text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background hover:bg-title/5 rounded-lg px-3 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+			aria-label={t("pagination.previous")}
 		>
-			{/* Previous button */}
-			{currentPage > 1 ? (
-				<a
-					href={getPageUrl(currentPage - 1)}
-					class="text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background hover:bg-title/5 rounded-lg px-3 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-					aria-label={t("pagination.previous")}
-				>
-					<IconChevronLeft class="size-5" aria-hidden="true" />
-				</a>
-			) : (
-				<button
-					type="button"
-					disabled
-					class="text-subtitle/50 cursor-not-allowed px-3 py-2"
-					aria-label={t("pagination.previous")}
-				>
-					<IconChevronLeft class="size-5" aria-hidden="true" />
-				</button>
-			)}
+			<IconChevronLeft class="size-5" aria-hidden="true" />
+		</a>
+	) : (
+		<button
+			type="button"
+			disabled
+			class="text-subtitle/50 cursor-not-allowed px-3 py-2"
+			aria-label={t("pagination.previous")}
+		>
+			<IconChevronLeft class="size-5" aria-hidden="true" />
+		</button>
+	)}
 
-			{/* Page numbers */}
-			{pageNumbers.map((page) =>
-				page === "..." ? (
-					<span class="text-subtitle px-2" aria-hidden="true">
-						...
-					</span>
-				) : page === currentPage ? (
-					<span
-						class="bg-accent text-button-foreground min-w-[2.5rem] rounded-lg px-3 py-2 text-center font-medium"
-						aria-current="page"
-					>
-						{page}
-					</span>
-				) : (
-					<a
-						href={getPageUrl(page)}
-						class="text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background hover:bg-title/5 min-w-[2.5rem] rounded-lg px-3 py-2 text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-					>
-						{page}
-					</a>
-				),
-			)}
+	{/* Page numbers */}
+	{pageNumbers.map((page) =>
+		page === "..." ? (
+			<span class="text-subtitle px-2" aria-hidden="true"> ... </span>
+		) : page === currentPage ? (
+			<span
+				class="bg-accent text-button-foreground min-w-[2.5rem] rounded-lg px-3 py-2 text-center font-medium"
+				aria-current="page"
+			>
+				{page}
+			</span>
+		) : (
+			<a
+				href={getPageUrl(page)}
+				class="text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background hover:bg-title/5 min-w-[2.5rem] rounded-lg px-3 py-2 text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+			>
+				{page}
+			</a>
+		),
+	)}
 
-			{/* Next button */}
-			{currentPage < totalPages ? (
-				<a
-					href={getPageUrl(currentPage + 1)}
-					class="text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background hover:bg-title/5 rounded-lg px-3 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-					aria-label={t("pagination.next")}
-				>
-					<IconChevronRight class="size-5" aria-hidden="true" />
-				</a>
-			) : (
-				<button
-					type="button"
-					disabled
-					class="text-subtitle/50 cursor-not-allowed px-3 py-2"
-					aria-label={t("pagination.next")}
-				>
-					<IconChevronRight class="size-5" aria-hidden="true" />
-				</button>
-			)}
-		</nav>
-	)
-}
+	{/* Next button */}
+	{currentPage < totalPages ? (
+		<a
+			href={getPageUrl(currentPage + 1)}
+			class="text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-background hover:bg-title/5 rounded-lg px-3 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+			aria-label={t("pagination.next")}
+		>
+			<IconChevronRight class="size-5" aria-hidden="true" />
+		</a>
+	) : (
+		<button
+			type="button"
+			disabled
+			class="text-subtitle/50 cursor-not-allowed px-3 py-2"
+			aria-label={t("pagination.next")}
+		>
+			<IconChevronRight class="size-5" aria-hidden="true" />
+		</button>
+	)}
+</nav>}

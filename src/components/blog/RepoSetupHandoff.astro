@@ -34,13 +34,12 @@ const commands = [
 					<strong>{t("blog.setupHandoff.manualRitual")}</strong>
 				</header>
 				<div class="terminal-body">
-					{
-						commands.map((command, index) => (
-							<code class="manual-command" style={`--command-index: ${index}`}>
-								<i>$</i> {command}
-							</code>
-						))
-					}
+					{commands.map((command, index) => <code
+						class="manual-command"
+						style={`--command-index: ${index}`}
+					>
+						<i>$</i> {command}
+					</code>)}
 				</div>
 			</div>
 		</section>

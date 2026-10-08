@@ -41,42 +41,34 @@ const { t } = Astro.locals;
 		{t("blog.title")}
 	</h2>
 
-	{
-		posts.length === 0 ? (
-			<p class="text-secondary">{t("blog.empty")}</p>
-		) : (
-			<ul class="flex list-none flex-col">
-				{posts.map((post, index) => (
-					<li>
-						<BlogEntry
-							title={post.title}
-							category={post.category}
-							date={post.date}
-							href={post.href}
-							slug={post.slug}
-							hideBorder={index === posts.length - 1}
-							lazyTransition
-						/>
-					</li>
-				))}
-			</ul>
-		)
-	}
+	{posts.length === 0 ? (
+		<p class="text-secondary">{t("blog.empty")}</p>
+	) : (
+		<ul class="flex list-none flex-col">
+			{posts.map((post, index) => <li>
+				<BlogEntry
+					title={post.title}
+					category={post.category}
+					date={post.date}
+					href={post.href}
+					slug={post.slug}
+					hideBorder={index === posts.length - 1}
+					lazyTransition
+				/>
+			</li>)}
+		</ul>
+	)}
 
-	{
-		viewMoreHref && (
-			<a
-				href={viewMoreHref}
-				class="group text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-card mx-auto flex cursor-pointer items-center gap-2 rounded-lg px-4 py-6 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-			>
-				<span>{t("blog.viewMore")}</span>
-				<span
-					class="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
-					aria-hidden="true"
-				>
-					<IconArrowRight class="size-full" />
-				</span>
-			</a>
-		)
-	}
+	{viewMoreHref && <a
+		href={viewMoreHref}
+		class="group text-subtitle hover:text-title focus-visible:ring-accent focus-visible:ring-offset-card mx-auto flex cursor-pointer items-center gap-2 rounded-lg px-4 py-6 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+	>
+		<span>{t("blog.viewMore")}</span>
+		<span
+			class="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
+			aria-hidden="true"
+		>
+			<IconArrowRight class="size-full" />
+		</span>
+	</a>}
 </Card>
