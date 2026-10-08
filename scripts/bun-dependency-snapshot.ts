@@ -1,4 +1,4 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, readdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -141,7 +141,10 @@ function parseNpmResolution(
 	return { name, version };
 }
 
-function parseBunLock(value: unknown): BunLock {
+function parseBunLock(
+	value: unknown,
+	bundledPackages: Record<string, unknown>,
+): BunLock {
 	const lock = requireRecord(value, "bun.lock");
 	const workspaces = requireRecord(lock.workspaces, "bun.lock.workspaces");
 	const rootWorkspace = requireRecord(
@@ -164,7 +167,32 @@ function parseBunLock(value: unknown): BunLock {
 		rootWorkspace.devDependencies,
 		'bun.lock.workspaces[""].devDependencies',
 	);
-	const packageValues = requireRecord(lock.packages, "bun.lock.packages");
+	const packageValues = {
+		...requireRecord(lock.packages, "bun.lock.packages"),
+	};
+	const bundledValues: Record<string, unknown> = {};
+	const bundleParents = new Set<string>();
+	for (const [key, value] of Object.entries(bundledPackages)) {
+		const metadata = requireRecord(value, `bundled package ${key}`);
+		if (
+			typeof metadata.name !== "string" ||
+			typeof metadata.version !== "string"
+		) {
+			throw new Error(`bundled package ${key} has no name or version`);
+		}
+		const suffix = `/${metadata.name}`;
+		if (!key.endsWith(suffix)) {
+			throw new Error(`bundled package key ${key} does not match its name`);
+		}
+		bundleParents.add(key.slice(0, -suffix.length));
+		bundledValues[key] = [`${metadata.name}@${metadata.version}`, "", metadata];
+	}
+	for (const key of Object.keys(packageValues)) {
+		if ([...bundleParents].some((parent) => key.startsWith(`${parent}/`))) {
+			delete packageValues[key];
+		}
+	}
+	Object.assign(packageValues, bundledValues);
 	const packages = new Map<string, BunPackage>();
 
 	for (const [key, value] of Object.entries(packageValues)) {
@@ -435,6 +463,7 @@ function buildResolvedDependencies(
 export function createBunDependencySnapshot(
 	lockValue: unknown,
 	metadata: SnapshotMetadata,
+	bundledPackages: Record<string, unknown> = {},
 ): DependencySnapshot {
 	return {
 		version: 0,
@@ -447,7 +476,7 @@ export function createBunDependencySnapshot(
 		},
 		detector: {
 			name: "bun-lockfile",
-			version: "1.0.0",
+			version: "1.1.0",
 			url: metadata.detectorUrl,
 		},
 		scanned: metadata.scanned,
@@ -457,10 +486,92 @@ export function createBunDependencySnapshot(
 				file: {
 					source_location: "bun.lock",
 				},
-				resolved: buildResolvedDependencies(parseBunLock(lockValue)),
+				resolved: buildResolvedDependencies(
+					parseBunLock(lockValue, bundledPackages),
+				),
 			},
 		},
 	};
+}
+
+async function readInstalledPackage(
+	directory: string,
+): Promise<Record<string, unknown> | undefined> {
+	try {
+		const value: unknown = JSON.parse(
+			await readFile(resolve(directory, "package.json"), "utf8"),
+		);
+		return requireRecord(value, `${directory}/package.json`);
+	} catch (error: unknown) {
+		if (isRecord(error) && error.code === "ENOENT") return undefined;
+		throw error;
+	}
+}
+
+export async function readBundledPackages(
+	lockValue: unknown,
+	rootDirectory: string,
+): Promise<Record<string, unknown>> {
+	const lock = parseBunLock(lockValue, {});
+	const bundledPackages: Record<string, unknown> = {};
+
+	function installedDirectory(key: string): string {
+		const packageRecord = lock.packages.get(key);
+		if (!packageRecord) throw new Error(`missing package ${key}`);
+		const parent = getParentPackageKey(lock.packages, key);
+		return resolve(
+			parent === undefined ? rootDirectory : installedDirectory(parent),
+			"node_modules",
+			packageRecord.name,
+		);
+	}
+
+	async function collect(
+		directory: string,
+		parentKey: string,
+		allowMissing = true,
+	): Promise<void> {
+		let entries;
+		try {
+			entries = await readdir(directory, { withFileTypes: true });
+		} catch (error: unknown) {
+			if (allowMissing && isRecord(error) && error.code === "ENOENT") return;
+			throw error;
+		}
+		for (const entry of entries) {
+			if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+			const packageDirectory = resolve(directory, entry.name);
+			if (entry.name.startsWith("@")) {
+				await collect(packageDirectory, parentKey);
+				continue;
+			}
+			const metadata = await readInstalledPackage(packageDirectory);
+			if (!metadata || typeof metadata.name !== "string") {
+				throw new Error(
+					`missing bundled package metadata in ${packageDirectory}`,
+				);
+			}
+			const key = `${parentKey}/${metadata.name}`;
+			bundledPackages[key] = metadata;
+			await collect(resolve(packageDirectory, "node_modules"), key);
+		}
+	}
+
+	for (const key of lock.packages.keys()) {
+		const directory = installedDirectory(key);
+		const metadata = await readInstalledPackage(directory);
+		if (!metadata) continue;
+		const bundles = metadata.bundleDependencies ?? metadata.bundledDependencies;
+		if (bundles === undefined || bundles === false) continue;
+		if (
+			bundles !== true &&
+			parseStringArray(bundles, `${key}.bundleDependencies`).length === 0
+		) {
+			continue;
+		}
+		await collect(resolve(directory, "node_modules"), key, false);
+	}
+	return bundledPackages;
 }
 
 function requireEnvironmentVariable(name: string): string {
@@ -508,9 +619,11 @@ async function main(): Promise<void> {
 	if (!outputPath) throw new Error("snapshot output path is required");
 
 	const lockText = await readFile(resolve("bun.lock"), "utf8");
+	const lockValue = Bun.JSONC.parse(lockText);
 	const snapshot = createBunDependencySnapshot(
-		Bun.JSONC.parse(lockText),
+		lockValue,
 		validateEnvironment(),
+		await readBundledPackages(lockValue, process.cwd()),
 	);
 	await writeFile(resolve(outputPath), `${JSON.stringify(snapshot)}\n`, "utf8");
 	console.log(

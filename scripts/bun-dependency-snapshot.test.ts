@@ -1,5 +1,11 @@
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { createBunDependencySnapshot } from "./bun-dependency-snapshot";
+import {
+	createBunDependencySnapshot,
+	readBundledPackages,
+} from "./bun-dependency-snapshot";
 
 const metadata = {
 	sha: "0123456789abcdef0123456789abcdef01234567",
@@ -13,6 +19,43 @@ const metadata = {
 };
 
 describe("createBunDependencySnapshot", () => {
+	it("reports shipped bundled versions instead of lockfile resolutions", () => {
+		const lock = {
+			workspaces: { "": { devDependencies: { npm: "11.21.0" } } },
+			packages: {
+				npm: ["npm@11.21.0", "", { dependencies: { parser: "^1.0.0" } }],
+				"npm/parser": ["parser@1.2.0", "", {}],
+				"npm/parser/tokenizer": ["tokenizer@2.2.0", "", {}],
+			},
+		};
+		const bundledPackages = {
+			"npm/parser": {
+				name: "parser",
+				version: "1.1.0",
+				dependencies: { tokenizer: "^2.0.0" },
+			},
+			"npm/tokenizer": { name: "tokenizer", version: "2.1.0" },
+		};
+
+		const snapshot = createBunDependencySnapshot(
+			lock,
+			metadata,
+			bundledPackages,
+		);
+		const resolved = snapshot.manifests["bun.lock"].resolved;
+
+		expect(resolved["pkg:npm/parser@1.2.0"]).toBeUndefined();
+		expect(resolved["pkg:npm/tokenizer@2.2.0"]).toBeUndefined();
+		expect(resolved["pkg:npm/npm@11.21.0"].dependencies).toEqual([
+			"pkg:npm/parser@1.1.0",
+		]);
+		expect(resolved["pkg:npm/parser@1.1.0"]).toMatchObject({
+			scope: "development",
+			relationship: "indirect",
+			dependencies: ["pkg:npm/tokenizer@2.1.0"],
+		});
+	});
+
 	it("preserves direct, transitive, runtime, and development relationships", () => {
 		const snapshot = createBunDependencySnapshot(
 			{
@@ -122,5 +165,74 @@ describe("createBunDependencySnapshot", () => {
 				metadata,
 			),
 		).toThrow("app depends on missing peer package missing");
+	});
+});
+
+describe("readBundledPackages", () => {
+	it("fails when an installed dependency declares missing bundled files", async () => {
+		const root = await mkdtemp(join(tmpdir(), "bun-dependency-snapshot-"));
+		try {
+			const directory = join(root, "node_modules", "npm");
+			await mkdir(directory, { recursive: true });
+			await writeFile(
+				join(directory, "package.json"),
+				JSON.stringify({
+					name: "npm",
+					version: "11.21.0",
+					bundleDependencies: ["parser"],
+				}),
+			);
+			const lock = {
+				workspaces: { "": { devDependencies: { npm: "11.21.0" } } },
+				packages: { npm: ["npm@11.21.0", "", {}] },
+			};
+
+			await expect(readBundledPackages(lock, root)).rejects.toMatchObject({
+				code: "ENOENT",
+			});
+		} finally {
+			await rm(root, { recursive: true });
+		}
+	});
+
+	it("reads scoped and nested packages shipped inside a dependency", async () => {
+		const root = await mkdtemp(join(tmpdir(), "bun-dependency-snapshot-"));
+		const manifests = {
+			npm: { name: "npm", version: "11.21.0", bundleDependencies: ["parser"] },
+			"npm/node_modules/parser": { name: "parser", version: "1.1.0" },
+			"npm/node_modules/parser/node_modules/nested": {
+				name: "nested",
+				version: "2.1.0",
+			},
+			"npm/node_modules/@scope/tokenizer": {
+				name: "@scope/tokenizer",
+				version: "3.1.0",
+			},
+		};
+		try {
+			for (const [path, manifest] of Object.entries(manifests)) {
+				const directory = join(root, "node_modules", path);
+				await mkdir(directory, { recursive: true });
+				await writeFile(
+					join(directory, "package.json"),
+					JSON.stringify(manifest),
+				);
+			}
+			const lock = {
+				workspaces: { "": { devDependencies: { npm: "11.21.0" } } },
+				packages: { npm: ["npm@11.21.0", "", {}] },
+			};
+
+			const packages = await readBundledPackages(lock, root);
+
+			expect(packages).toEqual({
+				"npm/parser": manifests["npm/node_modules/parser"],
+				"npm/parser/nested":
+					manifests["npm/node_modules/parser/node_modules/nested"],
+				"npm/@scope/tokenizer": manifests["npm/node_modules/@scope/tokenizer"],
+			});
+		} finally {
+			await rm(root, { recursive: true });
+		}
 	});
 });
