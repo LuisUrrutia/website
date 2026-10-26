@@ -43,8 +43,8 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@commitlint/cli": "^21.2.3",
-    "@commitlint/config-conventional": "^21.2.3",
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
     "@playwright/test": "1.64.0",
     "@prettier/plugin-oxc": "0.2.3",
     "@semantic-release/commit-analyzer": "13.0.1",
